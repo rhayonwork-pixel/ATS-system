@@ -1,0 +1,63 @@
+:root[data-theme="light"] {
+/* ACME ATS — Light component styling */
+
+/* Cards & data tables */
+.card,
+.table-wrap,
+.table {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-default);
+  box-shadow: var(--shadow-sm);
+}
+
+.table { border-collapse: collapse; }
+.table-wrap { border-radius: 12px; overflow: auto; }
+
+/* Form controls & inputs */
+input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="file"]),
+select,
+textarea {
+  background: var(--bg-surface);
+  color: var(--text-primary);
+  border: 1px solid var(--border-default);
+  transition: border-color 160ms ease, box-shadow 160ms ease, background-color 160ms ease;
+}
+
+input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="file"]):focus,
+select:focus,
+textarea:focus {
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+  outline: none;
+}
+
+/* Pipeline status badges */
+.status-hired,
+.pill.status-active,
+.jstate-published,
+.jstate-approved,
+.istate-reviewed,
+.badge.success {
+  background: #DCFCE7;
+  color: #166534;
+}
+
+.status-reviewing,
+.pill.status-pending,
+.jstate-pending,
+.istate-review_pending {
+  background: #FEF3C7;
+  color: #92400E;
+}
+
+.status-new,
+.jstate-changes_requested,
+.istate-ready {
+  background: #DBEAFE;
+  color: #1E40AF;
+}
+
+/* Dark-theme rules are intentionally not included here. The production
+   stylesheet's existing dark rules remain unchanged. */
+
+}

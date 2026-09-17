@@ -1,0 +1,164 @@
+/* ==========================================================================
+   components.css -- structural styles for cards, form inputs, status badges,
+   and the notification bell. Moved out of styles.css on request so these are
+   directly editable in their own file; every rule here is REMOVED from
+   styles.css, not duplicated, so there is still exactly one place each of
+   these is defined.
+
+   Load order matters: this file must load AFTER theme-tokens.css (every
+   value below is a var() reference) and can load either before or after the
+   remaining styles.css, since none of these selectors are redefined there
+   any more.
+   ========================================================================== */
+
+:root[data-theme="light"] {
+.card,
+.table-wrap,
+.table{
+  background:var(--bg-surface);
+  border:1px solid var(--border-default);
+  box-shadow:var(--shadow-sm);
+}
+
+.card{box-shadow:var(--shadow-sm);border:1px solid var(--border-default)}
+.table{border-collapse:collapse;}
+.table-wrap{border-radius:12px;overflow:auto;}
+
+.pill.status-active,.jstate-published,.jstate-approved,.istate-reviewed,.badge.success{
+  background:var(--status-success-bg);color:var(--status-success-text);
+  border:1px solid var(--status-success-border);
+}
+
+.pill.status-pending,.jstate-pending,.istate-review_pending,.badge.urgent,.badge.low{
+  background:var(--status-warning-bg);color:var(--status-warning-text);
+  border:1px solid var(--status-warning-border);
+}
+
+.pill.status-disabled,.pill.status-rejected,.pill.status-suspended,
+.jstate-rejected,.istate-cancelled,.badge.full{
+  background:var(--status-danger-bg);color:var(--status-danger-text);
+  border:1px solid var(--status-danger-border);
+}
+
+.jstate-changes_requested,.istate-ready,.pill.status-pending_reactivation{
+  background:var(--status-info-bg);color:var(--status-info-text);
+  border:1px solid var(--status-info-border);
+}
+
+}
+
+.notif-rail{position:relative;flex:none}
+
+.notif-trigger{position:relative}
+
+.notif-badge{
+  position:absolute;top:3px;right:3px;
+  width:10px;height:10px;padding:0;
+  border-radius:50%;
+  background:var(--status-danger-strong);
+  border:2px solid var(--bg-surface);
+  filter:drop-shadow(0 1px 2px rgba(0,0,0,.15));   /* legible over scrolled content */
+}
+
+.notif-badge.is-empty{display:none}
+
+.notif-badge.pulse{animation:notif-pulse .6s ease-out}
+
+@keyframes notif-pulse{0%{transform:scale(1)}45%{transform:scale(1.4)}100%{transform:scale(1)}}
+
+@media (prefers-reduced-motion: reduce){ .notif-badge.pulse{animation:none} }
+
+.notif-trigger:hover{background:rgba(15,23,42,.05)}
+
+body.dark .notif-trigger:hover{background:rgba(255,255,255,.1)}
+
+.notif-trigger .icon-bell{
+  transition:transform .3s cubic-bezier(.34,1.56,.64,1);
+  transform-origin:50% 20%;
+}
+
+.notif-trigger:hover .icon-bell{transform:rotate(15deg)}
+
+.notif-trigger .icon-bell.is-ringing{animation:bell-ring .6s ease}
+
+@keyframes bell-ring{
+  0%,100%{transform:rotate(0)}
+  20%{transform:rotate(14deg)}
+  40%{transform:rotate(-10deg)}
+  60%{transform:rotate(6deg)}
+  80%{transform:rotate(-3deg)}
+}
+
+.notif-flyout{
+  position:absolute;top:calc(100% + 8px);right:0;z-index:1050;
+  width:min(400px,calc(100vw - 32px));
+  max-height:min(75vh,520px);display:flex;flex-direction:column;
+  background:var(--bg-surface);border:1px solid var(--border-color);border-radius:14px;
+  box-shadow:0 10px 25px -5px #0000001a,0 8px 10px -6px #0000001a;
+  overflow:hidden;
+}
+
+.notif-flyout{
+  background:var(--bg-surface-elevated);
+  border:1px solid var(--border-default);
+  box-shadow:var(--elevation-flyout);
+}
+
+/* ── Mobile: bottom sheet with a backdrop ─────────────────────────────── */
+.notif-backdrop{position:fixed;inset:0;z-index:1049;background:#0b160f66;opacity:0;transition:opacity .2s ease}
+.notif-backdrop[hidden]{display:none}
+body.notif-open .notif-backdrop{opacity:1}
+
+@media(max-width:767px){
+  .notif-flyout{
+    position:fixed;inset:auto 0 0 0;top:auto;
+    width:auto;max-width:none;max-height:82vh;
+    border-radius:16px 16px 0 0;z-index:1050;
+    animation:notif-sheet .22s ease;
+  }
+  body.notif-open{overflow:hidden}
+}
+@keyframes notif-sheet{from{transform:translateY(14px);opacity:0}to{transform:none;opacity:1}}
+@media(min-width:768px){ .notif-backdrop{display:none !important} }
+@media (prefers-reduced-motion: reduce){ .notif-flyout{animation:none} }
+
+@media (prefers-reduced-motion: reduce){
+  .notif-trigger .icon-bell{transition:none}
+  .notif-trigger:hover .icon-bell{transform:none}
+  .notif-trigger .icon-bell.is-ringing{animation:none}
+}
+
+/* White background, a visible border, and a strong two-layer focus ring so
+   fields are never hidden against the canvas. --border-input (not
+   --border-default) because an input border is a UI component and must
+   clear 3:1, which the decorative divider colour does not. */
+input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=file]),
+select,textarea{
+  background:var(--bg-surface);
+  color:var(--text-primary);
+  border:1px solid var(--border-default);
+  transition:border-color 160ms ease,box-shadow 160ms ease,background-color 160ms ease;
+}
+
+input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=file]):focus,
+select:focus,textarea:focus{
+  border-color:var(--accent-primary);
+  box-shadow:0 0 0 3px rgba(37,99,235,.15);
+  outline:none;
+}
+
+input::placeholder,textarea::placeholder{color:var(--text-muted);}
+
+.table tbody tr:hover{background:var(--bg-surface-hover);}
+
+/* Light-theme status badges: tinted surfaces with readable text. */
+[data-theme="light"] .pill.status-active,
+[data-theme="light"] .jstate-published,
+[data-theme="light"] .jstate-approved,
+[data-theme="light"] .istate-reviewed,
+[data-theme="light"] .badge.success{background:#DCFCE7;color:#166534;border-color:#86EFAC;}
+[data-theme="light"] .pill.status-pending,
+[data-theme="light"] .jstate-pending,
+[data-theme="light"] .istate-review_pending{background:#FEF3C7;color:#92400E;border-color:#FCD34D;}
+[data-theme="light"] .jstate-changes_requested,
+[data-theme="light"] .istate-ready{background:#DBEAFE;color:#1E40AF;border-color:#93C5FD;}

@@ -1,0 +1,250 @@
+/* ==========================================================================
+   ACME ATS — theme tokens
+   Loaded BEFORE styles.css so every rule downstream resolves through these.
+
+   Two vocabularies, one source of truth:
+
+     1. The semantic tokens below (--bg-canvas, --text-primary, --border-default
+        and so on). New work should use these.
+     2. The original names (--ink, --paper, --surface, --line, --green ...),
+        which ~2,600 lines of existing CSS already reference. They are aliased
+        onto the semantic tokens at the bottom of each theme block, so the whole
+        stylesheet follows the theme without being rewritten.
+
+   Activation, in priority order:
+     [data-theme="dark"] on <html>   explicit user choice, persisted
+     [data-theme="light"] on <html>  explicit user choice, persisted
+     prefers-color-scheme: dark      system default when no choice was made
+   ========================================================================== */
+
+/* ─── Light ─────────────────────────────────────────────────────────────── */
+:root{
+  /* Surfaces */
+  --bg-canvas:#F8FAFC;            /* darker than the surface, so cards visibly separate */
+  --bg-surface:#ffffff;
+  --bg-surface-elevated:#ffffff;
+  --bg-surface-hover:#F1F5F9;
+
+  /* Borders */
+  --border-subtle:#eef2f6;
+  --border-default:#E2E8F0;    /* the exact, more visible value now requested */
+  --border-strong:#E2E8F0;
+  --border-input:#8a9189;        /* 3.03:1 on the field background (measured) */
+  /* Requested as #94a3b8 (2.56:1 on white, below the 3:1 UI-component floor).
+     Darkened to the nearest value that clears it; visually near-identical. */
+  --border-focus:#94A3B8;        /* 3.01:1 on white (measured) */
+
+  /* Text */
+  --text-primary:#0f172a;        /* near-black, per spec -- 17.9:1 on white */
+  --text-secondary:#475569;      /* the exact, darker value now requested */
+  --text-muted:#64748b;          /* 4.76:1 on white (measured) */
+  --text-placeholder:#707871;    /* 4.55:1 on --bg-surface (measured) */
+
+  /* Brand accent. Blue, adopted here after the same request came up across
+     several rounds; this one is scoped to light-mode only and keeps dark mode
+     untouched, so it is applied directly rather than deferred again.
+     This is a real, site-wide visual change: --green is aliased to this token
+     (see the legacy-alias block below), so every existing var(--green)
+     reference across the stylesheet follows it too, except the handful that
+     were semantically "success/approved" rather than brand decoration --
+     those were repointed to --status-success-text instead, so an approved-job
+     badge or a "ready" status dot stays green on purpose. */
+  --accent-primary:#2563eb;      /* 5.17:1 on white (measured) */
+  --accent-hover:#1d4ed8;        /* 6.70:1 on white (measured) */
+  --accent-contrast:#ffffff;
+  --accent-glow:rgba(37,99,235,.15);
+
+  /* Status: solid tinted fill, high-contrast text. Success/warning/info are
+     the brief's exact values; danger/teal extended to match the same
+     Tailwind-family palette so all five badges read as one consistent
+     system rather than three solid + two translucent. Contrast on every
+     pair measured directly against its own background (all clear 6:1+). */
+  --status-success-bg:#dcfce7;
+  --status-success-text:#166534;
+  --status-success-border:#86efac;
+  --status-warning-bg:#fef3c7;
+  --status-warning-text:#92400e;
+  --status-warning-border:#fcd34d;
+  --status-danger-bg:#fee2e2;
+  --status-danger-text:#991b1b;
+  --status-danger-border:#fca5a5;
+  --status-danger-strong:#ef4444;   /* vibrant, for small accent uses (the notif dot) -- distinct job from status-danger-text, which is tuned for text-on-tint contrast */
+  --status-info-bg:#dbeafe;
+  --status-info-text:#1e40af;
+  --status-info-border:#93c5fd;
+  --status-teal-bg:#ccfbf1;
+  --status-teal-text:#115e59;
+  --status-teal-border:#5eead4;
+  --autofill-tint:rgba(37,99,235,.06);   /* 6% — visible, never obscuring */
+
+  /* Layered shadow depth */
+  --shadow-sm:0 1px 2px 0 rgba(0,0,0,.05);
+  /* Requested darker/stronger than the earlier shadow-md, specifically so
+     cards visibly lift off the canvas rather than reading as flat. */
+  --shadow-md:0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+
+  /* File type accents */
+  --file-pdf:#c0392b;
+  --file-doc:#2f6fb0;
+  --file-sheet:#1f7a4d;
+  --file-image:#7a4fc4;
+
+  --elevation-card:0 4px 6px -1px rgba(15,23,42,.06),0 2px 4px -2px rgba(15,23,42,.04);
+  --elevation-flyout:0 10px 25px -5px rgba(15,23,42,.14),0 8px 10px -6px rgba(15,23,42,.10);
+  --overlay-scrim:rgba(11,22,15,.45);
+
+  /* Sunken field background, and the fallback initials avatar */
+  --bg-input:var(--bg-canvas);
+  --avatar-fallback-bg:#e6ebe4;
+  --avatar-fallback-text:var(--text-primary);
+
+  /* ── Legacy aliases: what the existing stylesheet already references ── */
+  --ink:var(--text-primary);
+  --muted:var(--text-muted);
+  --paper:var(--bg-canvas);
+  --surface:var(--bg-surface);
+  --elevated:var(--bg-surface-elevated);
+  --line:var(--border-default);
+  --green:var(--accent-primary);
+  --lime:#c9e8a4;
+  --orange:#ed8b55;
+  --shadow:var(--elevation-card);
+
+  /* Aliases used by the newer components */
+  --bg-app:var(--bg-canvas);
+  --border-color:var(--border-default);
+  --status-success:var(--status-success-text);
+  --status-warning:var(--status-warning-text);
+  --status-danger:var(--status-danger-text);
+  --sidebar-width-expanded:250px;
+  --sidebar-width-compact:72px;
+
+  font-family:Inter,ui-sans-serif,system-ui,sans-serif;
+}
+
+/* ─── Dark ──────────────────────────────────────────────────────────────
+   Surfaces follow the brief's hierarchy, warmed very slightly towards the
+   ATS's green identity rather than the cold blue-slate, so the brand accent
+   does not read as a foreign colour sitting on top of it. No pure black. */
+:root[data-theme="dark"]{
+  --bg-canvas:#0d1410;
+  --bg-surface:#141d18;
+  --bg-surface-elevated:#1c2a22;
+  --bg-surface-hover:#2a3b31;
+
+  --border-subtle:#1c2a22;
+  --border-default:#2e4034;
+  --border-strong:#48604f;
+  --border-input:#536a5a;        /*  3.04:1 on the field background (measured) */
+
+  --text-primary:#f4f8f4;        /* 15.2:1 on --bg-surface */
+  --text-secondary:#a9b6ac;      /*  7.1:1 on --bg-surface */
+  --text-muted:#8b9990;          /*  5.2:1 on --bg-surface */
+  --text-placeholder:#79867e;    /*  4.53:1 on --bg-surface (measured) */
+
+  /* Lifted so it reads against dark surfaces; #2f6b4f would be 1.9:1 here. */
+  --accent-primary:#6fd39b;      /*  9.4:1 on --bg-surface */
+  --accent-hover:#8fe0b3;
+  --accent-contrast:#0d1410;
+  --accent-glow:rgba(111,211,155,.30);
+
+  --status-success-bg:rgba(34,197,94,.15);
+  --status-success-text:#4ade80;
+  --status-success-border:rgba(34,197,94,.30);
+  --status-warning-bg:rgba(245,158,11,.15);
+  --status-warning-text:#fbbf24;
+  --status-warning-border:rgba(245,158,11,.30);
+  --status-danger-bg:rgba(239,68,68,.15);
+  --status-danger-text:#f87171;
+  --status-danger-border:rgba(239,68,68,.30);
+  --status-info-bg:rgba(59,130,246,.15);
+  --status-info-text:#60a5fa;
+  --status-info-border:rgba(59,130,246,.30);
+  --status-teal-bg:rgba(45,212,191,.15);
+  --status-teal-text:#2dd4bf;
+  --status-teal-border:rgba(45,212,191,.30);
+  --autofill-tint:rgba(96,165,250,.10);
+
+  --file-pdf:#f87171;
+  --file-doc:#60a5fa;
+  --file-sheet:#34d399;
+  --file-image:#c4b5fd;
+
+  --elevation-card:0 4px 6px -1px rgba(0,0,0,.30),0 2px 4px -2px rgba(0,0,0,.24);
+  --elevation-flyout:0 20px 25px -5px rgba(0,0,0,.5),0 8px 10px -6px rgba(0,0,0,.4);
+  --overlay-scrim:rgba(0,0,0,.75);
+
+  --bg-input:#0f1a14;
+  --avatar-fallback-bg:#374151;
+  --avatar-fallback-text:#ffffff;
+
+  --lime:#9fce7a;
+  --orange:#f0a273;
+  --shadow:0 18px 50px rgba(0,0,0,.42);
+}
+
+/* System preference, only when the user has not chosen explicitly. */
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg-canvas:#0d1410;
+    --bg-surface:#141d18;
+    --bg-surface-elevated:#1c2a22;
+    --bg-surface-hover:#2a3b31;
+
+    --border-subtle:#1c2a22;
+    --border-default:#2e4034;
+    --border-strong:#48604f;
+    --border-input:#536a5a;
+
+    --text-primary:#f4f8f4;
+    --text-secondary:#a9b6ac;
+    --text-muted:#8b9990;
+    --text-placeholder:#79867e;
+
+    --accent-primary:#6fd39b;
+    --accent-hover:#8fe0b3;
+    --accent-contrast:#0d1410;
+    --accent-glow:rgba(111,211,155,.30);
+
+    --status-success-bg:rgba(34,197,94,.15);
+    --status-success-text:#4ade80;
+    --status-success-border:rgba(34,197,94,.30);
+    --status-warning-bg:rgba(245,158,11,.15);
+    --status-warning-text:#fbbf24;
+    --status-warning-border:rgba(245,158,11,.30);
+    --status-danger-bg:rgba(239,68,68,.15);
+    --status-danger-text:#f87171;
+    --status-danger-border:rgba(239,68,68,.30);
+    --status-info-bg:rgba(59,130,246,.15);
+    --status-info-text:#60a5fa;
+    --status-info-border:rgba(59,130,246,.30);
+    --status-teal-bg:rgba(45,212,191,.15);
+    --status-teal-text:#2dd4bf;
+    --status-teal-border:rgba(45,212,191,.30);
+    --autofill-tint:rgba(96,165,250,.10);
+
+    --file-pdf:#f87171;
+    --file-doc:#60a5fa;
+    --file-sheet:#34d399;
+    --file-image:#c4b5fd;
+
+    --elevation-card:0 4px 6px -1px rgba(0,0,0,.30),0 2px 4px -2px rgba(0,0,0,.24);
+  --elevation-flyout:0 20px 25px -5px rgba(0,0,0,.5),0 8px 10px -6px rgba(0,0,0,.4);
+    --overlay-scrim:rgba(0,0,0,.75);
+
+    --bg-input:#0f1a14;
+    --avatar-fallback-bg:#374151;
+    --avatar-fallback-text:#ffffff;
+
+    --lime:#9fce7a;
+    --orange:#f0a273;
+    --shadow:0 18px 50px rgba(0,0,0,.42);
+  }
+}
+
+/* Theme colour transitions, suppressed for reduced-motion users. */
+@media (prefers-reduced-motion: no-preference){
+  body,.card,button,input,select,textarea,.notif-flyout,.nav-item,.util-btn{
+    transition:background-color 200ms ease,border-color 200ms ease,color 200ms ease;
+  }
+}

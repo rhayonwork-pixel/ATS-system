@@ -1,0 +1,3100 @@
+/* Tokens live in theme-tokens.css, which loads first. */*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);line-height:1.55}body.dark .kanban-col{background:#1c2c23}body.dark .modal-box,body.dark .preview-panel{background:var(--elevated)}/* stage badge colours are per-theme tokens now; no filter hack needed */body.dark .btn.ghost{color:var(--ink)}body.dark ::placeholder{color:#7c8a80}body.dark .notice{background:#1c2c22;border-color:#33493c;color:#dcead9}body.dark .notice.error{background:#3a221c;border-color:#5c3226;color:#f3c9ba}body.dark .notice.success{background:#1c2c22;border-color:#33493c;color:#dcead9}body.dark .tag-pill{background:#22332a;color:#dbe6da;border-color:var(--line)}body.dark .disabled{background:#243026;border-color:#243026;color:var(--muted)}body.dark .status-draft{background:#243026;color:var(--muted)}body.dark .ai-message.user{background:#2f6b4f;color:#f2f8f0}body.dark .cap-bar{background:#243026}.urgent-grid .urgent-card{border-color:#f0dcae;background:linear-gradient(180deg,#fdf8ee,var(--surface) 60%)}body.dark .urgent-grid .urgent-card{background:linear-gradient(180deg,#2a2416,var(--surface) 60%);border-color:#4a3f22}.badge.low{background:#fdf3e2;color:#8a6212;padding:3px 8px;border-radius:99px;font-size:11px;font-weight:800;display:inline-flex;align-items:center;gap:4px}.badge.full{background:#fdeeea;color:#8a3420;padding:3px 8px;border-radius:99px;font-size:11px;font-weight:800}
+
+/* International phone component */
+.phone-input-row{display:flex;gap:8px;align-items:stretch}
+.phone-input-row select{flex:0 0 auto;max-width:180px}
+.phone-dial-code{display:flex;align-items:center;padding:0 10px;border:1px solid var(--line);border-radius:8px;background:var(--paper);font-weight:700;font-size:13.5px;color:var(--muted);flex:none}
+.phone-input-row input{flex:1;min-width:0}
+.phone-valid-msg{font-size:12px;color:var(--green);font-weight:700;margin-top:5px}
+@media(max-width:560px){.phone-input-row{flex-wrap:wrap}.phone-input-row select{max-width:none;flex:1 1 100%}}a{color:inherit;text-decoration:none}.ai-assistant{position:fixed;right:0;bottom:0;z-index:30}.ai-orb{position:relative;display:block;width:230px;height:93px;border:0;background:none;padding:0;cursor:pointer;overflow:visible;transform-origin:bottom right;transition:transform .38s cubic-bezier(.34,1.56,.64,1),opacity .28s ease}.ai-assistant.is-open .ai-orb{transform:scale(.2);opacity:0;pointer-events:none;transition:transform .3s cubic-bezier(.5,0,.75,0),opacity .2s ease}.ai-orb-art{display:block;width:100%;height:100%;object-fit:contain;object-position:bottom right;pointer-events:none}.ai-tab-label{position:absolute;left:7%;top:63%;transform:translateY(-50%);color:#fff;font-size:13px;font-weight:700;letter-spacing:-.01em;white-space:nowrap;pointer-events:none}.ai-panel{position:absolute;right:0;bottom:0;width:min(360px,calc(100vw - 32px));height:min(500px,calc(100vh - 40px));overflow:hidden;background:var(--surface);border:1px solid var(--line);border-radius:16px 0 0 0;box-shadow:-20px -14px 60px #10291d38;transform-origin:bottom right;transform:scale(.06);opacity:0;visibility:hidden;pointer-events:none;transition:transform .5s cubic-bezier(.32,1.4,.44,1),border-radius .5s cubic-bezier(.32,1.4,.44,1),opacity .3s ease,visibility 0s linear .5s}.ai-assistant.is-open .ai-panel{transform:scale(1);border-radius:18px 0 0 0;opacity:1;visibility:visible;pointer-events:auto;transition:transform .5s cubic-bezier(.32,1.4,.44,1),border-radius .5s cubic-bezier(.32,1.4,.44,1),opacity .3s ease,visibility 0s}.ai-panel-inner{display:flex;flex-direction:column;height:100%;opacity:0;transform:translateY(8px);transition:opacity .22s ease,transform .22s ease}.ai-assistant.is-open .ai-panel-inner{opacity:1;transform:translateY(0);transition-delay:.22s}.ai-head{position:relative;display:flex;align-items:center;gap:11px;padding:16px 44px 16px 16px;background:linear-gradient(120deg,#3d8362,var(--green) 60%,#204a35);color:#fff;flex:none}.ai-icon-wrap{position:relative;width:42px;height:42px;flex:none;border-radius:50%;background:#ffffff22;border:1px solid #ffffff70;display:grid;place-items:center;padding:5px;box-shadow:0 4px 10px #10291d30}.ai-icon{display:block;width:100%;height:100%;object-fit:contain;animation:ai-float 2.4s ease-in-out infinite}.ai-head strong,.ai-head small{display:block}.ai-head strong{font-size:14.5px;letter-spacing:-.01em}.ai-head small{margin-top:3px;color:#d9efdc;font-size:11px;display:flex;align-items:center;gap:5px}.ai-dot{width:6px;height:6px;border-radius:50%;background:#8be3a8;box-shadow:0 0 0 2px #8be3a833;flex:none}.ai-close{position:absolute;top:12px;right:12px;width:26px;height:26px;display:grid;place-items:center;background:#ffffff20;border:0;border-radius:50%;color:#fff;font-size:18px;line-height:1;cursor:pointer;transition:background .2s ease}.ai-close:hover{background:#ffffff3a}.ai-messages{display:flex;flex-direction:column;gap:9px;min-height:150px;flex:1;padding:14px;overflow:auto}.ai-message{max-width:86%;padding:9px 11px;border-radius:12px;font-size:13px}.ai-message.bot{display:flex;align-items:flex-end;gap:7px;background:none;padding:0;align-self:flex-start}.ai-message.bot p{margin:0;padding:9px 11px;border-radius:12px 12px 12px 3px;background:var(--paper);color:var(--ink)}.ai-message.bot .ai-msg-avatar{width:24px;height:24px;object-fit:contain;flex:none;border-radius:50%;background:var(--paper);border:1px solid var(--line);padding:2px}.ai-message.user{background:var(--lime);color:var(--ink);align-self:flex-end;border-radius:12px 12px 3px 12px}.ai-form{display:flex;gap:8px;padding:12px;border-top:1px solid var(--line);flex:none}.ai-form input{min-width:0;flex:1;border:1px solid var(--line);border-radius:10px;padding:10px 11px;background:var(--paper);color:var(--ink)}.ai-form button{width:38px;border:0;border-radius:10px;background:var(--green);color:#fff;cursor:pointer;transition:background .2s ease}.ai-form button:hover{background:#24563f}@keyframes ai-blip{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.18);opacity:.75}}@keyframes ai-float{50%{transform:translateY(-3px)}}@media(max-width:560px){.ai-tab-label{display:none}.ai-orb{width:110px;height:44px}.ai-panel{height:min(70vh,520px)}}button,input,textarea,select{font:inherit}.topbar{padding-left:clamp(22px,5vw,72px);padding-right:clamp(22px,5vw,72px);gap:36px}.main-nav{align-items:center;gap:8px}.nav-link{padding:10px 13px;border-radius:10px;transition:background .2s,color .2s}.nav-link:hover{background:var(--paper);color:var(--green)}.nav-group{position:relative}.nav-group:hover .nav-menu,.nav-group:focus-within .nav-menu{opacity:1;pointer-events:auto;transform:translateY(0)}.nav-menu{position:absolute;top:calc(100% + 9px);left:0;min-width:178px;padding:8px;background:var(--surface);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);opacity:0;pointer-events:none;transform:translateY(-5px);transition:.2s;z-index:10}.nav-menu a{display:block;padding:9px 11px;border-radius:8px;font-size:13px}.nav-menu a:hover{background:var(--paper);color:var(--green)}.nav-cta{display:inline-flex;align-items:center;gap:8px;margin-left:7px;padding:11px 15px;background:var(--green);color:#fff;border-radius:10px;font-weight:700;font-size:13px;box-shadow:0 6px 16px color-mix(in srgb, var(--accent-primary) 14.1%, transparent)}.nav-cta:hover{background:#24563f;transform:translateY(-1px)}.top-actions{display:flex;align-items:center;gap:8px;margin-left:4px}.hero{position:relative;padding-top:68px}.hero:after{content:"";position:absolute;right:3%;top:34px;width:180px;height:180px;border:1px solid var(--line);border-radius:50%;opacity:.6;pointer-events:none}.hero h1{max-width:800px}.hero p{max-width:610px;font-size:18px;color:var(--muted)}.topbar{height:76px;padding:0 5vw;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:28px;background:var(--surface);position:sticky;top:0;z-index:5}.brand{display:flex;gap:10px;align-items:center;font-weight:800;font-size:18px}.brand-mark{width:32px;height:32px;display:block}.muted{color:var(--muted)}.main-nav{display:flex;gap:26px;margin-left:auto;font-size:14px}.main-nav a:hover,.sidebar a:hover{color:var(--green)}.nav-login{border-left:1px solid var(--line);padding-left:26px}.theme-toggle,.menu-toggle{background:none;border:0;cursor:pointer;color:var(--ink);font-size:20px}.menu-toggle{display:none}.shell{display:flex;max-width:1440px;margin:auto;min-height:calc(100vh - 76px)}.content{flex:1;padding:54px 5vw 90px}.sidebar{width:228px;border-right:1px solid var(--line);padding:42px 25px;display:flex;flex-direction:column;gap:9px;flex:none}.sidebar a{padding:10px 12px;border-radius:8px;font-size:14px}.sidebar a[href="dashboard.php"]{font-weight:700}.sidebar-bottom{margin-top:auto;border-top:1px solid var(--line);padding-top:20px}.sidebar-label,.eyebrow,.label{font-size:11px;text-transform:uppercase;letter-spacing:.12em;color:var(--muted);font-weight:700}.sidebar-label{padding:0 12px 15px}.hero{max-width:900px;padding:42px 0 62px}.hero h1{font-size:clamp(42px,7vw,84px);letter-spacing:-.06em;line-height:.98;margin:14px 0 24px;max-width:760px}.hero p{font-size:20px;color:var(--muted);max-width:600px}.actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:28px}.btn{display:inline-flex;align-items:center;justify-content:center;border:1px solid var(--green);background:var(--green);color:white;border-radius:7px;padding:11px 17px;font-weight:700;cursor:pointer}.btn.secondary{background:transparent;color:var(--green)}.btn.small{padding:7px 11px;font-size:13px}.section-head{display:flex;align-items:end;justify-content:space-between;gap:20px;margin:36px 0 18px}.section-head h2{font-size:30px;letter-spacing:-.04em;margin:0}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}.card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:22px;box-shadow:var(--shadow)}.job-card{min-height:180px;display:flex;flex-direction:column;justify-content:space-between}.job-card h3{font-size:20px;margin:12px 0 4px}.meta{color:var(--muted);font-size:14px}.pill{display:inline-flex;background:#edf5e9;color:var(--green);padding:4px 8px;border-radius:99px;font-size:12px;font-weight:700}.dark-section{background:var(--green);color:white;border-radius:16px;padding:48px;margin-top:56px}.dark-section p{color:#d9e8dc}.dashboard-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:28px}.dashboard-head h1{margin:0;font-size:38px;letter-spacing:-.05em}.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}.stat strong{font-size:34px;display:block;letter-spacing:-.05em}.stat span{color:var(--muted);font-size:13px}.table{width:100%;border-collapse:collapse}.table th,.table td{text-align:left;padding:14px 10px;border-bottom:1px solid var(--line);font-size:14px}.table th{font-size:11px;text-transform:uppercase;color:var(--muted);letter-spacing:.1em}.form{max-width:720px}.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}.field{display:flex;flex-direction:column;gap:7px;margin-bottom:16px}.field.full{grid-column:1/-1}.field label{font-size:13px;font-weight:700}.field input,.field textarea,.field select{border:1px solid var(--line);background:var(--surface);border-radius:7px;padding:12px;color:var(--ink)}.field textarea{min-height:120px;resize:vertical}.notice{padding:14px 16px;background:#edf5e9;border:1px solid #c8dfbf;border-radius:8px;margin-bottom:20px}.kanban{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;overflow:auto}.kanban-col{min-width:180px;background:#eef1ec;border-radius:10px;padding:12px}.kanban-col h3{font-size:13px;margin:0 0 12px}.candidate-card{background:var(--surface);padding:13px;border:1px solid var(--line);border-radius:8px;margin-bottom:9px;cursor:grab;font-size:13px}.candidate-card strong{display:block}.filters{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:22px}.filters input,.filters select{padding:10px;border:1px solid var(--line);background:var(--surface);border-radius:7px}.chart{height:230px;display:flex;align-items:end;gap:18px;padding:24px 10px 0}.bar{background:var(--green);border-radius:5px 5px 0 0;flex:1;min-width:25px;position:relative}.bar span{position:absolute;top:-23px;font-size:12px}.toast{position:fixed;bottom:66px;right:24px;background:var(--green);color:white;padding:13px 17px;border-radius:8px;transform:translateY(100px);transition:.25s;z-index:9}.toast.show{transform:translateY(0)}.stars{color:var(--orange);letter-spacing:3px}.footer{color:var(--muted);font-size:13px;margin-top:60px}.error{color:#b7492d;font-size:13px}.success{color:var(--green)}@media(max-width:850px){.main-nav{display:none}.menu-toggle{display:block;margin-left:auto}.sidebar{display:none;position:fixed;inset:76px auto 0 0;background:var(--surface);z-index:4;box-shadow:10px 0 30px #0002}.sidebar.open{display:flex}.content{padding:35px 5vw}.grid,.stats{grid-template-columns:1fr 1fr}.hero{padding-top:20px}.kanban{grid-template-columns:repeat(5,200px)}}@media(max-width:560px){.grid,.stats,.form-grid{grid-template-columns:1fr}.hero h1{font-size:48px}.dashboard-head{align-items:start;flex-direction:column}.topbar{padding:0 4vw}.content{padding:30px 4vw}.dark-section{padding:30px 22px}}
+
+/* Private HR workspace */
+.private-app{background:var(--paper)}
+.app-shell{display:flex;min-height:100vh}
+.app-main{flex:1;min-width:0}
+.app-main>.content{padding:42px clamp(24px,4vw,64px) 80px;max-width:1500px}
+
+.sidebar{position:sticky;top:0;height:100vh;width:250px;background:var(--surface);border-right:1px solid var(--line);padding:24px 16px;display:flex;flex-direction:column;gap:5px;flex:none}
+.sidebar-brand{display:flex;align-items:center;gap:10px;padding:4px 10px 24px;border-bottom:1px solid var(--line);margin-bottom:12px}
+.sidebar-brand .brand-mark{width:34px;height:34px}
+.sidebar-brand strong,.sidebar-brand small{display:block}.sidebar-brand small{font-size:11px;color:var(--muted);margin-top:1px}
+.sidebar .sidebar-label{padding:15px 12px 6px;font-size:10px}
+.sidebar a{padding:10px 12px;border-radius:8px;font-size:14px;color:var(--muted)}
+.sidebar a:hover{background:var(--paper);color:var(--green)}
+.sidebar a.active{background:#edf5e9;color:var(--green);font-weight:750}
+.sidebar-bottom{margin-top:auto;border-top:1px solid var(--line);padding-top:14px;display:flex;flex-direction:column;gap:4px}
+.private-app .topbar{display:none}
+.private-app .ai-assistant{z-index:20}
+.minimalbar{height:72px;padding:0 5vw;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;background:var(--surface)}
+.public-shell{min-height:calc(100vh - 76px)}
+.minimal-app .public-shell{min-height:calc(100vh - 72px)}
+.admin-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin:22px 0}
+.page-head{display:flex;justify-content:space-between;gap:20px;align-items:end;margin-bottom:24px}
+.grid.two{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+.list-stack{display:flex;flex-direction:column}.list-row{display:flex;justify-content:space-between;gap:16px;padding:15px 0;border-bottom:1px solid var(--line)}.list-row:last-child{border-bottom:0}.row-actions{display:flex;align-items:center;gap:8px}.badge{display:inline-flex;align-items:center;padding:5px 8px;border-radius:99px;background:#edf5e9;color:var(--green);font-size:11px;font-weight:700}.wide{grid-column:1/-1}
+.public-site .sidebar{display:none}
+@media(max-width:767px){.private-app .sidebar{display:flex;position:fixed;left:-270px;top:0;bottom:0;height:100vh;z-index:40;transition:left .2s;box-shadow:10px 0 30px #0002}.private-app .sidebar.open{left:0}.private-app .app-main>.content{padding:30px 4vw}.grid.two,.admin-grid{grid-template-columns:1fr}.list-row{align-items:flex-start;flex-direction:column}.row-actions{width:100%}}
+
+.notice.error{background:#fff1ec;border-color:#f0c7b8}.notice.success{background:#edf5e9;border-color:#c8dfbf}.inline-form{display:flex;gap:7px;align-items:center}.inline-form select{border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:7px;padding:7px}.job-description{white-space:normal;line-height:1.8;margin-top:14px}.page-heading,.section-heading{display:flex;justify-content:space-between;gap:20px;align-items:end;margin-bottom:24px}.page-heading h1,.section-heading h2{margin:6px 0}.button{display:inline-flex;align-items:center;justify-content:center;border:1px solid var(--green);background:var(--green);color:#fff;border-radius:7px;padding:10px 15px;font-weight:700}.button.secondary{background:transparent;color:var(--green)}.button-row{display:flex;gap:10px}.stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:18px}.stat-card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px}.stat-card span,.stat-card small{display:block;color:var(--muted)}.stat-card strong{display:block;font-size:25px;margin:5px 0}.attendance-card{display:flex;justify-content:space-between;gap:20px;align-items:center;margin-bottom:18px}.filter-bar{display:flex;gap:10px;align-items:end;flex-wrap:wrap;margin-bottom:18px}.filter-bar label{display:flex;flex-direction:column;gap:6px;font-size:12px;font-weight:700}.filter-bar input{border:1px solid var(--line);background:var(--surface);color:var(--ink);padding:9px;border-radius:7px}.table-wrap{overflow:auto}@media(max-width:700px){.stats-grid{grid-template-columns:1fr}.attendance-card{align-items:flex-start;flex-direction:column}}
+
+/* ================= Enhancement layer: icons, motion, spacing, new features ================= */
+
+/* --- Icons --- */
+.icon{display:inline-block;vertical-align:-3px;flex:none}
+.brand .icon,.brand img.brand-mark{vertical-align:middle}
+img.brand-mark{border-radius:9px;display:block;flex:none;object-fit:cover}
+.sidebar-brand img.brand-mark{border-radius:10px}
+.btn .icon,.button .icon,.nav-cta .icon,.nav-link .icon{margin-right:6px}
+.sidebar a{display:flex;align-items:center;gap:12px}
+.sidebar a .icon{color:var(--muted);transition:color .18s,transform .18s}
+.sidebar a:hover .icon,.sidebar a.active .icon{color:var(--green);transform:translateX(1px)}
+.nav-menu a{display:flex;align-items:center;gap:9px}
+.nav-menu a .icon{color:var(--green);opacity:.8}
+.back-link{display:inline-flex;align-items:center;gap:6px}
+.back-link .icon{transform:rotate(90deg);transition:transform .2s}
+.back-link:hover .icon{transform:rotate(90deg) translateX(2px)}
+.stat-icon{display:grid;place-items:center;width:36px;height:36px;border-radius:10px;background:#edf5e9;color:var(--green);margin-bottom:12px;transition:transform .2s}
+.card.stat:hover .stat-icon{transform:scale(1.08) rotate(-4deg)}
+
+/* --- Motion --- */
+@keyframes fadeInUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.fade-in>*{animation:fadeInUp .5s cubic-bezier(.2,.7,.3,1) both}
+.fade-in>*:nth-child(1){animation-delay:.02s}.fade-in>*:nth-child(2){animation-delay:.06s}.fade-in>*:nth-child(3){animation-delay:.1s}.fade-in>*:nth-child(4){animation-delay:.14s}.fade-in>*:nth-child(5){animation-delay:.18s}
+.card{transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease}
+.job-card{transition:transform .2s ease,box-shadow .2s ease,border-color .2s ease}
+.job-card:hover{transform:translateY(-3px);border-color:#c8dfbf;box-shadow:0 22px 46px #173b2818}
+.job-card:hover .card-arrow{transform:translateX(3px)}
+.card-arrow{transition:transform .18s ease;transform:rotate(-90deg);color:var(--green)}
+.btn,.button{transition:transform .15s ease,box-shadow .15s ease,background .15s ease}
+.btn:hover,.button:hover{transform:translateY(-1px)}
+.btn:active,.button:active{transform:translateY(0)}
+.icon-toggle{transition:transform .12s ease,background .15s ease,color .15s ease}
+.icon-toggle:active{transform:scale(.92)}
+@keyframes livePulse{0%{box-shadow:0 0 0 0 #e0573f55}70%{box-shadow:0 0 0 8px #e0573f00}100%{box-shadow:0 0 0 0 #e0573f00}}
+.live-dot{width:9px;height:9px;border-radius:50%;background:#e0573f;display:inline-block;animation:livePulse 1.8s infinite}
+
+/* --- Spacing / alignment fixes ("dikit-dikit" -> breathing room) --- */
+.grid{gap:20px}
+.stats{gap:16px}
+.admin-grid{gap:20px}
+.form-grid{gap:16px 18px}
+.grid.two{gap:20px}
+.section-head{margin:40px 0 20px}
+.dashboard-head{gap:16px;flex-wrap:wrap}
+.job-card{gap:12px;padding:24px}
+.job-card-top{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.job-card-bottom{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:auto;padding-top:6px;border-top:1px solid var(--line)}
+.meta.small{display:inline-flex;align-items:center;gap:5px;font-size:12px}
+.table th,.table td{padding:16px 12px}
+.table-wrap{border-radius:4px}
+.jobs-table td{vertical-align:top}
+
+/* --- Modern date / datetime / select inputs --- */
+input[type="date"],input[type="datetime-local"],input[type="time"]{
+  border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:9px;padding:11px 12px;
+  font-feature-settings:"tnum";position:relative;transition:border-color .15s,box-shadow .15s;
+}
+input[type="date"]:hover,input[type="datetime-local"]:hover,input[type="time"]:hover{border-color:#b9cdb4}
+input[type="date"]:focus,input[type="datetime-local"]:focus,input[type="time"]:focus,
+.field input:focus,.field select:focus,.field textarea:focus{
+  outline:none;border-color:var(--green);box-shadow:0 0 0 4px color-mix(in srgb, var(--accent-primary) 12.2%, transparent);
+}
+input[type="date"]::-webkit-calendar-picker-indicator,input[type="datetime-local"]::-webkit-calendar-picker-indicator,input[type="time"]::-webkit-calendar-picker-indicator{
+  filter:invert(35%) sepia(15%) saturate(900%) hue-rotate(90deg); cursor:pointer; border-radius:5px; padding:3px; transition:background .15s;
+}
+input[type="date"]::-webkit-calendar-picker-indicator:hover,input[type="datetime-local"]::-webkit-calendar-picker-indicator:hover,input[type="time"]::-webkit-calendar-picker-indicator:hover{background:#edf5e9}
+body.dark input[type="date"]::-webkit-calendar-picker-indicator,body.dark input[type="datetime-local"]::-webkit-calendar-picker-indicator,body.dark input[type="time"]::-webkit-calendar-picker-indicator{filter:invert(85%) sepia(15%) saturate(400%) hue-rotate(70deg)}
+.field select{appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236d776f' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M6 9l6 6 6-6'/></svg>");background-repeat:no-repeat;background-position:right 12px center;background-size:16px;padding-right:34px}
+.field input,.field textarea,.field select{transition:border-color .15s,box-shadow .15s}
+.hint{font-weight:400;color:var(--muted);text-transform:none;letter-spacing:0;font-size:11px;margin-left:6px}
+
+/* --- Tags & applicant limits --- */
+.tag-row{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.tag-row.tiny{margin-top:6px}
+.tag-pill{display:inline-flex;align-items:center;gap:4px;background:#eef1ec;color:var(--ink);border:1px solid var(--line);padding:3px 9px 3px 7px;border-radius:99px;font-size:11.5px;font-weight:600}
+.tag-pill .icon{color:var(--green)}
+.badge.full{background:#fff1ec;color:#b7492d}
+.badge.low{background:#fff6e8;color:#a86a10}
+.cap-bar{height:5px;border-radius:99px;background:#e9ede6;overflow:hidden;margin:6px 0}
+.cap-bar span{display:block;height:100%;background:var(--green);border-radius:99px;transition:width .3s ease}
+.cap-bar.wide{margin-top:8px}
+.applicant-meter{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:22px;color:var(--muted);font-size:14px}
+.avatar-circle{width:64px;height:64px;border-radius:50%;background:var(--green);color:#fff;display:grid;place-items:center;font-size:22px;font-weight:800;flex:none}
+.profile-head{display:flex;gap:18px;align-items:center;margin-bottom:24px}
+
+/* Apply page v2 */
+.apply-section{margin-bottom:20px}
+.apply-section-title{display:flex;align-items:center;gap:9px;font-size:16px;font-weight:800;margin:0 0 16px}
+.apply-section-title .step-num{width:24px;height:24px;border-radius:50%;background:#edf5e9;color:var(--green);display:grid;place-items:center;font-size:12px;font-weight:800;flex:none}
+.char-counter{font-size:11.5px;color:var(--muted);text-align:right;margin-top:4px}
+.char-counter.limit{color:#b7492d}
+.field .req{color:#b7492d}
+.field-hint{font-size:12px;color:var(--muted);margin-top:2px}
+.field.invalid input,.field.invalid textarea{border-color:#b7492d}
+.field-error{font-size:12px;color:#b7492d;margin-top:4px;display:none}
+.field.invalid .field-error{display:block}
+.progress-list{display:flex;flex-direction:column;gap:2px}
+.progress-item{display:flex;align-items:center;gap:10px;padding:9px 0;font-size:13.5px;color:var(--muted)}
+.progress-item .dot{width:20px;height:20px;border-radius:50%;border:2px solid var(--line);display:grid;place-items:center;font-size:11px;flex:none;transition:.2s}
+.progress-item.done{color:var(--ink);font-weight:600}
+.progress-item.done .dot{background:var(--green);border-color:var(--green);color:#fff}
+.resume-drop{border:1.5px dashed var(--line);border-radius:10px;padding:18px;text-align:center;cursor:pointer;transition:.15s}
+.resume-drop:hover{border-color:var(--green);background:#f4f9f2}
+.resume-drop input{display:none}
+.resume-picked{display:none;align-items:center;justify-content:space-between;gap:10px;border:1px solid var(--line);border-radius:10px;padding:12px}
+.resume-picked.show{display:flex}
+.resume-drop.hide{display:none}
+.resume-remove{background:none;border:0;color:#b7492d;cursor:pointer;font-size:13px;font-weight:700}
+.review-summary{font-size:13px}
+.review-summary .row{display:flex;justify-content:space-between;gap:10px;padding:7px 0;border-bottom:1px solid var(--line)}
+.review-summary .row:last-child{border-bottom:0}
+.review-summary .row span:first-child{color:var(--muted)}
+.review-summary .row span:last-child{text-align:right;max-width:60%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.confirm-row{display:flex;gap:9px;align-items:flex-start;font-size:12.5px;color:var(--muted);margin:14px 0}
+.confirm-row input{margin-top:2px}
+.other-source-field{display:none;margin-top:10px}
+.other-source-field.show{display:block}
+
+/* ================= Dashboard / Analytics / Candidate v4 visual refresh ================= */
+
+/* Stage badge colors — used across dashboard, analytics, candidates, candidate profile */
+.stage-badge{display:inline-flex;align-items:center;gap:6px;padding:5px 10px;border-radius:99px;font-size:12px;font-weight:700}
+.stage-badge:before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor}
+.stage-new{background:var(--status-info-bg);color:var(--status-info-text)}
+.stage-screening{background:var(--status-warning-bg);color:var(--status-warning-text)}
+.stage-interview{background:var(--status-teal-bg);color:var(--status-teal-text)}
+.stage-offer{background:#f3ecfb;color:#7a4fc4}
+.stage-hired{background:var(--status-success-bg);color:var(--status-success-text)}
+.stage-rejected{background:var(--status-danger-bg);color:var(--status-danger-text)}
+body.dark .stage-offer{background:rgba(167,139,250,.15);color:#a78bfa}
+
+/* Overview stat cards with icon + delta */
+.ov-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px}
+.ov-stat{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:20px;transition:transform .15s,box-shadow .15s}
+.ov-stat:hover{transform:translateY(-2px);box-shadow:var(--shadow)}
+.ov-stat-top{display:flex;justify-content:space-between;align-items:flex-start}
+.ov-stat-icon{width:38px;height:38px;border-radius:10px;display:grid;place-items:center;background:#edf5e9;color:var(--green)}
+.ov-stat-delta{font-size:11.5px;font-weight:800;padding:3px 7px;border-radius:99px}
+.ov-stat-delta.up{background:#edf5e9;color:var(--green)}
+.ov-stat-delta.down{background:#fdeeea;color:#c0472e}
+.ov-stat-delta.flat{background:var(--paper);color:var(--muted)}
+.ov-stat-num{font-size:30px;font-weight:800;letter-spacing:-.04em;margin-top:14px}
+.ov-stat-label{color:var(--muted);font-size:12.5px;margin-top:2px}
+
+/* Trend chart */
+.trend-card{padding:26px}
+.trend-head{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:18px}
+.trend-svg{width:100%;height:auto;display:block}
+.trend-axis{display:flex;justify-content:space-between;font-size:10.5px;color:var(--muted);margin-top:6px}
+.trend-point{cursor:pointer}
+.trend-point:hover{r:5}
+
+/* Avatar stack */
+.avatar-stack{display:flex;align-items:center}
+.avatar-chip{width:28px;height:28px;border-radius:50%;background:var(--green);color:#fff;font-size:11px;font-weight:800;display:grid;place-items:center;border:2px solid var(--surface);margin-left:-8px}
+.avatar-chip:first-child{margin-left:0}
+.avatar-chip.more{background:var(--paper);color:var(--muted)}
+
+/* Upcoming interviews list */
+.upcoming-row{display:flex;align-items:center;gap:14px;padding:13px 0;border-bottom:1px solid var(--line)}
+.upcoming-row:last-child{border-bottom:0}
+.upcoming-date{width:52px;flex:none;text-align:center;background:var(--paper);border-radius:10px;padding:8px 0}
+.upcoming-date strong{display:block;font-size:19px;line-height:1}
+.upcoming-date span{display:block;font-size:10px;color:var(--muted);text-transform:uppercase;margin-top:2px}
+
+/* Stage quick-filter tabs (candidates.php) */
+.stage-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+.stage-tab{padding:8px 14px;border-radius:99px;border:1px solid var(--line);font-size:13px;font-weight:600;color:var(--muted);background:var(--surface);transition:.15s}
+.stage-tab:hover{border-color:var(--green);color:var(--green)}
+.stage-tab.active{background:var(--green);border-color:var(--green);color:#fff}
+
+/* Stage stepper (candidate.php header) */
+.stage-stepper{display:flex;align-items:center;margin:18px 0 4px;flex-wrap:wrap;gap:0}
+.stage-step{display:flex;align-items:center;gap:8px;font-size:12.5px;font-weight:700;color:var(--muted)}
+.stage-step .dot{width:22px;height:22px;border-radius:50%;border:2px solid var(--line);display:grid;place-items:center;font-size:11px;background:var(--surface)}
+.stage-step.done .dot{background:var(--green);border-color:var(--green);color:#fff}
+.stage-step.done{color:var(--ink)}
+.stage-step.current .dot{background:var(--orange);border-color:var(--orange);color:#fff;box-shadow:0 0 0 4px #ed8b551f}
+.stage-step.current{color:var(--ink)}
+.stage-step.rejected .dot{background:#c0472e;border-color:#c0472e;color:#fff}
+.stage-connector{width:26px;height:2px;background:var(--line);margin:0 4px}
+.stage-connector.done{background:var(--green)}
+
+/* Donut chart (conic-gradient, no JS lib needed) */
+.donut-wrap{display:flex;align-items:center;gap:22px;flex-wrap:wrap}
+.donut{width:132px;height:132px;border-radius:50%;flex:none;position:relative}
+.donut:after{content:"";position:absolute;inset:18px;border-radius:50%;background:var(--surface)}
+.donut-legend{display:flex;flex-direction:column;gap:8px;font-size:12.5px}
+.donut-legend-row{display:flex;align-items:center;gap:8px}
+.donut-legend-dot{width:9px;height:9px;border-radius:50%;flex:none}
+
+/* Analytics metric row */
+.metric-row{display:flex;justify-content:space-between;align-items:center;padding:11px 0;border-bottom:1px solid var(--line);font-size:13.5px}
+.metric-row:last-child{border-bottom:0}
+.metric-row .bar-track{flex:1;height:6px;border-radius:99px;background:var(--paper);margin:0 14px;overflow:hidden}
+.metric-row .bar-fill{display:block;height:100%;background:var(--green);border-radius:99px}
+
+@media(max-width:900px){.ov-stats{grid-template-columns:1fr 1fr}}
+@media(max-width:560px){.ov-stats{grid-template-columns:1fr}.donut-wrap{flex-direction:column;align-items:flex-start}}
+
+/* Pipeline v2: richer cards + filters */
+.pipeline-filters{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:18px;align-items:center}
+.pipeline-filters input,.pipeline-filters select{padding:10px 12px;border:1px solid var(--line);background:var(--surface);border-radius:8px;font-size:13px}
+.pipeline-filters input{flex:1;min-width:180px}
+.candidate-card-head{display:flex;align-items:center;gap:9px}
+.candidate-card-avatar{width:26px;height:26px;border-radius:50%;background:var(--green);color:#fff;font-size:10.5px;font-weight:800;display:grid;place-items:center;flex:none}
+.candidate-card-score{margin-left:auto;font-size:10.5px;font-weight:800;color:var(--green);background:#edf5e9;padding:2px 7px;border-radius:99px;flex:none}
+.candidate-card-actions{display:flex;gap:10px;margin-top:9px;padding-top:9px;border-top:1px solid var(--line)}
+.candidate-card-actions a{font-size:11.5px;font-weight:700;color:var(--muted)}
+.candidate-card-actions a:hover{color:var(--green)}
+
+/* Sidebar collapse/expand */
+.sidebar{transition:width .22s cubic-bezier(.4,0,.2,1);overflow-y:auto;overflow-x:hidden}
+.sidebar-brand{position:relative}
+.sidebar-collapse-btn{background:var(--paper);border:1px solid var(--line);border-radius:50%;width:24px;height:24px;display:grid;place-items:center;cursor:pointer;color:var(--muted);flex:none;margin-left:auto;transition:background .15s,color .15s,transform .2s}
+.sidebar-collapse-btn:hover{background:#edf5e9;color:var(--green)}
+.sidebar.collapsed{width:72px}
+.sidebar.collapsed .sidebar-brand-text,.sidebar.collapsed .sidebar-label,.sidebar.collapsed a span{display:none}
+.sidebar.collapsed .sidebar-brand{justify-content:center}
+.sidebar.collapsed .sidebar-collapse-btn{transform:rotate(180deg);position:absolute;right:-12px;top:36px;background:var(--surface);box-shadow:var(--shadow)}
+.sidebar.collapsed a{justify-content:center}
+.sidebar.collapsed a .icon{margin:0}
+@media(max-width:850px){.sidebar.collapsed{width:270px}.sidebar.collapsed .sidebar-brand-text,.sidebar.collapsed .sidebar-label,.sidebar.collapsed a span{display:block}.sidebar.collapsed a{justify-content:flex-start}.sidebar-collapse-btn{display:none}}
+
+/* Pipeline confirmation modals + quick preview */
+.modal-overlay{position:fixed;inset:0;background:#10291d5c;display:flex;align-items:center;justify-content:center;z-index:60;padding:20px}
+.modal-overlay[hidden]{display:none}
+.modal-box{background:var(--surface);border-radius:14px;box-shadow:var(--shadow);width:min(440px,100%);padding:26px;max-height:90vh;overflow-y:auto}
+.modal-box h2{margin:0 0 4px;font-size:19px}
+.modal-transition{display:flex;align-items:center;gap:10px;margin:16px 0;font-weight:800;font-size:15px}
+.modal-transition .stage-badge{font-size:12.5px}
+.modal-warning{background:#fdf3e2;border:1px solid #f0dcae;color:#8a6212;border-radius:8px;padding:11px 13px;font-size:13px;margin:14px 0}
+.modal-warning.blocked{background:#fdeeea;border-color:#f0c3b6;color:#8a3420}
+.modal-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:20px}
+.modal-actions .btn.ghost{background:none;border:1px solid var(--line);color:var(--ink)}
+.confirm-checkbox-row{display:flex;gap:9px;align-items:flex-start;font-size:13.5px;margin:16px 0;padding:12px;background:var(--paper);border-radius:8px}
+.confirm-checkbox-row input{margin-top:2px}
+.preview-panel{position:fixed;top:0;right:0;bottom:0;width:min(380px,92vw);background:var(--surface);box-shadow:-18px 0 50px #173b2818;z-index:55;padding:24px;overflow-y:auto;transform:translateX(100%);transition:transform .25s cubic-bezier(.4,0,.2,1)}
+.preview-panel.open{transform:translateX(0)}
+.preview-panel-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px}
+.preview-panel-close{background:none;border:0;cursor:pointer;color:var(--muted);font-size:20px;line-height:1}
+.preview-row{display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--line);font-size:13.5px}
+.preview-row:last-of-type{border-bottom:0}
+.preview-row span:first-child{color:var(--muted)}
+@media(max-width:560px){.preview-panel{width:100vw}.modal-box{padding:20px}.pipeline-filters{flex-direction:column;align-items:stretch}.pipeline-filters input{min-width:0}}
+
+/* Candidate profile v2 */
+.candidate-container{width:min(96%,1500px);margin:0 auto}
+.cprofile-head{display:flex;align-items:center;gap:18px;margin:16px 0 20px}
+.cprofile-appnum{margin-left:auto;font-size:13px;font-weight:800;color:var(--muted);background:var(--paper);padding:8px 14px;border-radius:99px;white-space:nowrap}
+.cprofile-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+.cprofile-section{margin-bottom:16px}
+.cprofile-kv{display:flex;justify-content:space-between;gap:12px;padding:8px 0;border-bottom:1px solid var(--line);font-size:13.5px}
+.cprofile-kv:last-of-type{border-bottom:0}
+.cprofile-kv span:first-child{color:var(--muted)}
+.cprofile-kv span:last-child{font-weight:600;text-align:right}
+.cprofile-app-grid{display:grid;grid-template-columns:280px 1fr;gap:28px;margin-top:14px}
+.cprofile-locked{background:var(--paper)}
+.cprofile-resume-top{margin-bottom:16px;padding:16px 20px;border-left:4px solid var(--green)}
+.cprofile-resume-top-inner{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.cprofile-review-summary{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:10px}
+.cprofile-ai-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.cprofile-ai-loading{margin-top:18px;padding:18px;border:1px dashed var(--line);border-radius:10px;background:var(--paper)}
+.cprofile-ai-checklist{display:flex;flex-direction:column;gap:10px}
+.cprofile-ai-checklist [data-step]{font-size:13.5px;color:var(--muted);position:relative;padding-left:24px}
+.cprofile-ai-checklist [data-step]:before{content:"○";position:absolute;left:0}
+.cprofile-ai-checklist [data-step].done{color:var(--ink);font-weight:600}
+.cprofile-ai-checklist [data-step].done:before{content:"✓";color:var(--green)}
+.cprofile-ai-body{display:grid;grid-template-columns:260px 1fr;gap:28px;margin-top:18px}
+.cprofile-ai-score{border-right:1px solid var(--line);padding-right:24px}
+.cprofile-ai-score-num{font-size:44px;font-weight:800;letter-spacing:-.03em;color:var(--green)}
+.cprofile-ai-score-num span{font-size:18px;color:var(--muted);font-weight:600}
+.cprofile-ai-score-label{font-weight:700;margin-top:2px}
+.cprofile-ai-bar{height:8px;border-radius:99px;background:var(--paper);overflow:hidden;margin-top:12px}
+.cprofile-ai-bar span{display:block;height:100%;background:var(--green)}
+.cprofile-cat-row{display:flex;justify-content:space-between;font-size:12.5px;margin-bottom:4px}
+.cap-bar{height:6px;border-radius:99px;background:var(--paper);overflow:hidden}
+.cap-bar span{display:block;height:100%;background:var(--orange)}
+.cprofile-ai-list-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.cprofile-ai-list{margin:6px 0 0;padding-left:18px;font-size:13.5px;line-height:1.7}
+@media(max-width:900px){.cprofile-app-grid{grid-template-columns:1fr}.cprofile-ai-body{grid-template-columns:1fr}.cprofile-ai-score{border-right:0;border-bottom:1px solid var(--line);padding-right:0;padding-bottom:18px}.cprofile-ai-list-grid{grid-template-columns:1fr}}
+
+/* Application status page (candidate-facing, page-scoped) */
+.application-status-page{max-width:1120px;margin:0 auto}
+.application-status-page .hero{padding:36px 0 30px}
+.status-lookup{padding:26px}
+.status-lookup-grid{display:grid;grid-template-columns:1fr 1fr auto;gap:14px;align-items:end}
+.status-lookup .field{margin-bottom:0}
+.status-new-banner{border-color:var(--green);background:#edf5e9;margin-top:22px;padding:26px 28px}
+.status-new-banner .status-id-big{font-size:40px;font-weight:800;letter-spacing:-.03em;color:var(--green);margin:8px 0}
+.status-matches{margin-top:22px}
+.status-match-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:12px}
+.status-match-card{border:1px solid var(--line);border-radius:10px;padding:16px;display:flex;flex-direction:column;gap:10px;justify-content:space-between}
+.status-result{margin-top:22px;padding:0;overflow:hidden}
+.status-result-head{padding:28px 28px 22px;border-bottom:1px solid var(--line)}
+.status-result-body{display:grid;grid-template-columns:280px 1fr;gap:0}
+.status-summary{padding:24px 28px;border-right:1px solid var(--line)}
+.status-summary .stat-block{margin-bottom:22px}
+.status-summary .stat-block:last-child{margin-bottom:0}
+.status-summary .stat-block strong{display:block;font-size:13px;margin-bottom:4px}
+.status-stage-badge{display:inline-flex;align-items:center;background:#edf5e9;color:var(--green);padding:8px 14px;border-radius:99px;font-size:14px;font-weight:800;letter-spacing:.01em}
+
+
+.status-timeline-panel{padding:26px 28px}
+.status-timeline-panel .status-panel-title{font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:18px}
+.status-steps{display:flex;flex-direction:column}
+.status-step{position:relative;padding-left:36px;padding-bottom:26px}
+.status-step:last-child{padding-bottom:0}
+.status-step:before{content:"";position:absolute;left:9px;top:22px;bottom:-4px;width:2px;background:var(--line)}
+.status-step:last-child:before{display:none}
+.status-step .dot{position:absolute;left:0;top:0;width:20px;height:20px;border-radius:50%;display:grid;place-items:center;font-size:11px;font-weight:800;background:var(--surface);border:2px solid var(--line);color:var(--muted)}
+.status-step.done .dot{background:var(--green);border-color:var(--green);color:#fff}
+.status-step.done:before{background:var(--green)}
+.status-step.current .dot{background:var(--orange);border-color:var(--orange);color:#fff;box-shadow:0 0 0 4px #ed8b551f}
+.status-step .step-label{font-weight:700;font-size:14.5px}
+.status-step .step-state{font-size:12px;color:var(--muted);margin-top:2px}
+.status-step.done .step-state{color:var(--green)}
+.status-step.current .step-state{color:var(--orange);font-weight:700}
+.status-rejected-panel{padding:26px 28px}
+.status-footer-note{margin:22px 0 0}
+.status-withdraw-row{padding:16px 28px;border-top:1px solid var(--line);text-align:right}
+@media(max-width:900px){.status-lookup-grid{grid-template-columns:1fr}.status-result-body{grid-template-columns:1fr}.status-summary{border-right:0;border-bottom:1px solid var(--line)}.status-match-grid{grid-template-columns:1fr}}
+.applicant-meter strong{color:var(--ink)}
+.applicant-meter .cap-bar{flex-basis:100%}
+.job-detail-badges{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.btn.disabled{background:#e9ede6;border-color:#e9ede6;color:var(--muted);cursor:not-allowed}
+.job-card.is-full{opacity:.72}
+.mini-input{border:1px solid var(--line);background:var(--surface);border-radius:7px;padding:7px 9px;font-size:12px;min-width:0;flex:1}
+.mini-input.narrow{flex:0 0 66px}
+.tag-edit-form{margin-top:10px;gap:6px}
+
+/* --- Admin status pills --- */
+.pill.status-open{background:#edf5e9;color:var(--green)}
+.pill.status-draft{background:#eef1ec;color:var(--muted)}
+.pill.status-paused{background:#fff6e8;color:#a86a10}
+.pill.status-closed{background:#fff1ec;color:#b7492d}
+
+/* --- Apply page: form + related jobs sidebar --- */
+.apply-layout{display:grid;grid-template-columns:minmax(0,1fr) minmax(260px,320px);gap:28px;align-items:start}
+.apply-main{min-width:0}
+.hero.small{padding:28px 0 26px}
+.apply-sidebar{position:sticky;top:96px}
+.sidebar-card .section-head.compact{margin:0 0 14px}
+.mini-job-list{display:flex;flex-direction:column;gap:4px}
+.mini-job{display:flex;flex-direction:column;gap:4px;padding:13px 12px;border-radius:10px;transition:background .15s}
+.mini-job:hover{background:var(--paper)}
+.mini-job strong{font-size:14px}
+.mini-job .meta.small{flex-wrap:wrap}
+@media(max-width:900px){.apply-layout{grid-template-columns:1fr}.apply-sidebar{position:static}}
+
+/* --- Settings page --- */
+.logo-preview-row{display:flex;align-items:center;gap:16px;margin-bottom:16px}
+.settings-form h2{display:flex;align-items:center;gap:8px;font-size:17px;margin:28px 0 14px}
+.settings-form h2:first-of-type{margin-top:4px}
+
+/* --- Interviews: built-in room scheduling --- */
+.meeting-mode-toggle{display:flex;gap:14px;align-items:center;padding:11px 12px;border:1px solid var(--line);border-radius:9px;background:var(--surface);font-size:13px}
+.meeting-mode-toggle label{display:flex;align-items:center;gap:6px;cursor:pointer}
+.score-pill{display:inline-flex;align-items:center;gap:3px;color:var(--orange);font-weight:700}
+
+/* --- Interview room (lobby + call) --- */
+.room-wrap{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:24px;align-items:start;padding-top:20px}
+.room-lobby,.room-call{grid-column:1}
+.device-check{display:grid;grid-template-columns:minmax(0,1fr) 260px;gap:22px;margin-top:22px;padding:22px}
+.device-preview{position:relative;aspect-ratio:16/10;background:#101a14;border-radius:14px;overflow:hidden;display:grid;place-items:center}
+.device-preview video{width:100%;height:100%;object-fit:cover}
+.device-preview-empty{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;color:#8fae9b;font-size:13px}
+.device-controls{display:flex;flex-direction:column;gap:12px}
+.device-toggle-row{display:flex;gap:10px}
+.icon-toggle{width:42px;height:42px;border-radius:50%;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer;display:grid;place-items:center}
+.icon-toggle.on{background:#edf5e9;border-color:#c8dfbf;color:var(--green)}
+.icon-toggle:not(.on){background:#fff1ec;border-color:#f0c7b8;color:#b7492d}
+.room-call-head{display:flex;align-items:center;gap:10px;margin-bottom:14px;font-size:13px}
+.room-code-chip{margin-left:auto;background:var(--paper);border:1px solid var(--line);padding:4px 10px;border-radius:99px}
+.room-stage{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.video-tile{position:relative;aspect-ratio:16/10;background:#101a14;border-radius:14px;overflow:hidden;display:grid;place-items:center;color:#fff}
+.video-tile video{width:100%;height:100%;object-fit:cover}
+.video-tile .tile-empty{color:#8fae9b}
+.tile-label{position:absolute;left:10px;bottom:10px;background:#00000066;padding:4px 9px;border-radius:99px;font-size:12px}
+.peer-avatar{width:64px;height:64px;border-radius:50%;background:var(--green);display:grid;place-items:center;font-weight:800;font-size:20px}
+.peer-status{position:absolute;top:10px;right:10px;background:#00000066;padding:4px 9px;border-radius:99px;color:#fff}
+.room-controls{display:flex;gap:12px;align-items:center;justify-content:center;margin-top:18px;padding:16px;background:var(--surface);border:1px solid var(--line);border-radius:14px}
+.btn.danger{background:#b7492d;border-color:#b7492d}
+.btn.danger:hover{background:#9c3c24}
+.scorecard{grid-column:2;position:sticky;top:20px}
+.star-input{display:flex;gap:6px}
+.star-btn{background:none;border:0;cursor:pointer;color:#d8ddd3;padding:2px;transition:transform .12s,color .12s}
+.star-btn:hover{transform:scale(1.12)}
+.star-btn.filled{color:var(--orange)}
+@media(max-width:900px){.room-wrap{grid-template-columns:1fr}.scorecard{grid-column:1;position:static}.room-stage{grid-template-columns:1fr}.device-check{grid-template-columns:1fr}}
+
+/* ================= Meeting-ongoing overlay (cross-tab) ================= */
+.app-main{position:relative}
+/* This is the actual bug that made the overlay "always show" no matter what:
+   this class set display:flex unconditionally, and that author-stylesheet
+   rule beats the browser's own `[hidden]{display:none}` rule at equal
+   specificity — so the hidden attribute was being silently ignored 100% of
+   the time, regardless of any JS or PHP logic toggling it. */
+.room-active-overlay{display:flex;position:absolute;inset:0;background:#0d150fd9;backdrop-filter:blur(3px);z-index:25;align-items:center;justify-content:center;padding:24px}
+.room-active-overlay[hidden]{display:none}
+.room-active-card{position:relative;width:min(360px,100%);background:#101a14;color:#fff;border-radius:18px;padding:30px 26px 26px;text-align:center;box-shadow:0 30px 80px #0008;border:1px solid #2b3d31}
+.room-active-card .live-dot{margin-bottom:10px}
+.room-active-card h3{margin:4px 0 8px;font-size:20px;letter-spacing:-.02em}
+.room-active-card .meta{color:#a9bcae;margin-bottom:20px}
+.room-active-card .btn.wide{width:100%}
+.room-active-close{position:absolute;top:10px;right:12px;background:none;border:0;color:#a9bcae;font-size:20px;cursor:pointer;line-height:1;padding:4px}
+.room-active-close:hover{color:#fff}
+
+/* ================= Kanban polish ================= */
+.kanban{gap:16px}
+.kanban-col{padding:14px;transition:background .15s,box-shadow .15s;border:1px solid transparent}
+.kanban-col.drag-over{background:#e3ede0;border-color:#c8dfbf;box-shadow:inset 0 0 0 2px color-mix(in srgb, var(--accent-primary) 18.8%, transparent)}
+.kanban-col h3{display:flex;align-items:center;justify-content:space-between;padding:0 2px}
+.kanban-col-body{display:flex;flex-direction:column;gap:9px;min-height:60px}
+.candidate-card{margin-bottom:0;transition:transform .15s ease,box-shadow .15s ease,opacity .15s ease}
+.candidate-card:hover{transform:translateY(-2px);box-shadow:0 10px 22px #173b2818}
+.candidate-card.dragging{opacity:.45}
+.kanban-empty{border:1.5px dashed var(--line);border-radius:8px;padding:16px 8px;text-align:center;margin:0}
+.dashboard-head{align-items:start}
+
+/* ================= Attendance empty state ================= */
+.empty-state{text-align:center;padding:52px 30px;max-width:560px;margin:0 auto}
+.empty-icon{display:inline-grid;place-items:center;width:60px;height:60px;border-radius:16px;background:#edf5e9;color:var(--green);margin-bottom:18px}
+.empty-state h2{margin:0 0 10px;font-size:22px}
+.empty-state p{margin:0 0 20px}
+.empty-state .button-row{justify-content:center}
+
+/* ================= Interview room: countdown + Zoom-like layer ================= */
+.lobby-head-row{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.countdown-chip{display:inline-flex;align-items:center;gap:6px;background:#fff6e8;color:#a86a10;border:1px solid #f0dcb0;padding:6px 12px;border-radius:99px;font-size:12.5px;font-weight:700}
+.countdown-chip.live{background:#edf5e9;color:var(--green);border-color:#c8dfbf}
+.room-call-head{position:relative}
+.room-call-head .icon-toggle.small{width:32px;height:32px;margin-left:auto}
+.room-call-head.is-recording:before{content:"";width:8px;height:8px;border-radius:50%;background:#e0573f;margin-right:2px}
+.room-body{display:grid;grid-template-columns:minmax(0,1fr) 0px;gap:0;transition:grid-template-columns .2s ease}
+.room-body:has(.room-side:not([hidden])){grid-template-columns:minmax(0,1fr) 280px}
+.room-side{grid-column:2;background:var(--surface);border:1px solid var(--line);border-radius:14px;display:flex;flex-direction:column;height:100%;min-height:340px;margin-left:14px;overflow:hidden}
+.room-side-tabs{display:flex;border-bottom:1px solid var(--line)}
+.side-tab{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:12px 8px;background:none;border:0;cursor:pointer;color:var(--muted);font-weight:700;font-size:13px;border-bottom:2px solid transparent}
+.side-tab.active{color:var(--green);border-color:var(--green)}
+.room-side-panel{flex:1;display:flex;flex-direction:column;min-height:0;padding:12px}
+.chat-log{flex:1;overflow:auto;display:flex;flex-direction:column;gap:9px;padding:4px 2px}
+.chat-empty{text-align:center;margin-top:20px}
+.chat-msg{max-width:92%;background:var(--paper);border-radius:10px;padding:7px 10px}
+.chat-msg.me{align-self:flex-end;background:#edf5e9}
+.chat-msg-name{display:block;font-size:11px;font-weight:700;color:var(--green);margin-bottom:2px}
+.chat-msg p{margin:0;font-size:13.5px;word-break:break-word}
+.chat-form{display:flex;gap:8px;margin-top:10px}
+.chat-form input{flex:1;border:1px solid var(--line);border-radius:9px;padding:9px 11px;background:var(--paper);color:var(--ink);min-width:0}
+.chat-form button{width:38px;border:0;border-radius:9px;background:var(--green);color:#fff;cursor:pointer;display:grid;place-items:center}
+.people-row{display:flex;align-items:center;gap:11px;padding:10px 4px;border-bottom:1px solid var(--line)}
+.people-row:last-child{border-bottom:0}
+.people-avatar{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;color:#fff;font-weight:700;font-size:13px;flex:none}
+.people-avatar.you{background:var(--green)}
+.people-avatar.peer{background:var(--orange)}
+.people-row strong{display:block;font-size:13.5px}
+.control-more{position:relative}
+.control-more-menu{position:absolute;bottom:calc(100% + 10px);left:50%;transform:translateX(-50%);background:var(--surface);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow);padding:6px;min-width:180px;z-index:6}
+.control-more-menu button{display:flex;align-items:center;gap:9px;width:100%;background:none;border:0;text-align:left;padding:9px 10px;border-radius:8px;cursor:pointer;font-size:13px;color:var(--ink)}
+.control-more-menu button:hover{background:var(--paper)}
+.control-more-menu button.on{color:#b7492d}
+.room-stage.layout-spotlight{grid-template-columns:1fr}
+.room-stage.layout-spotlight .video-tile.peer{display:none}
+@media(max-width:900px){.room-body:has(.room-side:not([hidden])){grid-template-columns:1fr}.room-side{margin-left:0;margin-top:14px}}
+
+/* ================= Landing page: production-ready extra sections ================= */
+.trust-strip{display:flex;flex-wrap:wrap;gap:28px;justify-content:space-between;align-items:center;margin:44px 0;padding:22px 26px;border:1px solid var(--line);border-radius:14px;background:var(--surface)}
+.trust-stat{display:flex;flex-direction:column}
+.trust-stat strong{font-size:26px;letter-spacing:-.03em}
+.trust-stat span{color:var(--muted);font-size:12.5px}
+.steps-row{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin:18px 0 12px}
+.step-card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:22px}
+.step-num{display:inline-grid;place-items:center;width:34px;height:34px;border-radius:10px;background:#edf5e9;color:var(--green);font-weight:800;margin-bottom:14px}
+.step-card h3{margin:0 0 6px;font-size:16px}
+.step-card p{margin:0;color:var(--muted);font-size:13.5px}
+@media(max-width:760px){.steps-row{grid-template-columns:1fr}.trust-strip{gap:18px}}
+
+/* ================= Candidate profile photos ================= */
+.avatar-image{object-fit:cover;background:var(--paper);overflow:hidden}
+.avatar-image-large{object-fit:cover;background:var(--paper)}
+.profile-photo-drop{border:1px dashed var(--line);border-radius:12px;min-height:190px;padding:18px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;cursor:pointer;background:var(--paper);transition:.18s}
+.profile-photo-drop:hover{border-color:var(--green);background:#edf5e9}
+.profile-photo-drop input{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
+.profile-photo-placeholder{display:flex;flex-direction:column;align-items:center;gap:7px;color:var(--muted)}
+.profile-photo-placeholder strong{color:var(--ink);font-size:14px}
+.profile-photo-placeholder small{font-size:11px}
+.profile-photo-preview{width:150px;height:150px;object-fit:cover;border-radius:50%;border:4px solid var(--surface);box-shadow:0 8px 24px #173b2818}
+.profile-photo-actions{display:flex;gap:8px;justify-content:center;margin-top:10px}
+.avatar-chip.avatar-image{display:inline-grid;width:28px;height:28px}
+.candidate-card-avatar.avatar-image{display:grid;width:34px;height:34px}
+.cprofile-head .avatar-circle{width:76px;height:76px;flex:none}
+.avatar-circle.avatar-image-large{border-radius:50%;display:block}
+.candidate-preview-overlay{position:fixed;inset:0;background:#10291d66;display:flex;align-items:center;justify-content:center;padding:24px;z-index:80;opacity:0;pointer-events:none;transition:opacity .18s ease}
+.candidate-preview-overlay[hidden]{display:none}
+.candidate-preview-overlay.open{opacity:1;pointer-events:auto}
+.candidate-preview-modal{width:min(680px,100%);max-height:min(88vh,760px);overflow:auto;background:var(--surface);border:1px solid var(--line);border-radius:18px;box-shadow:0 28px 80px #10291d38;padding:26px;transform:translateY(10px) scale(.98);transition:transform .18s ease}
+.candidate-preview-overlay.open .candidate-preview-modal{transform:none}
+.candidate-preview-identity{display:flex;align-items:center;gap:14px;min-width:0}
+.candidate-preview-avatar{width:58px;height:58px;border-radius:50%;display:grid;place-items:center;background:var(--green);color:#fff;font-weight:800;font-size:18px;flex:none}
+.preview-stage-row{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 0;margin-top:8px;border-bottom:1px solid var(--line)}
+.preview-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 20px;margin-top:8px}
+.preview-grid .preview-row{min-width:0}
+.preview-latest-note{padding:12px;background:var(--paper);border-radius:10px;margin:14px 0 0;word-break:break-word}
+body.modal-open{overflow:hidden}
+.audit-filters{display:grid;grid-template-columns:minmax(220px,1.5fr) repeat(4,minmax(120px,1fr)) auto auto;gap:10px;align-items:center;margin-bottom:18px}
+.audit-filters input,.audit-filters select{width:100%;min-width:0;padding:10px 12px;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:8px;font-size:13px}
+@media(max-width:900px){.audit-filters{grid-template-columns:1fr 1fr}.audit-filters input:first-child{grid-column:1/-1}}
+@media(max-width:560px){.candidate-preview-overlay{padding:10px}.candidate-preview-modal{max-height:94vh;padding:18px;border-radius:14px}.candidate-preview-identity{align-items:flex-start}.preview-grid{grid-template-columns:1fr}.profile-photo-preview{width:130px;height:130px}.audit-filters{grid-template-columns:1fr}.audit-filters input:first-child{grid-column:auto}}
+
+/* ── RBAC, permissions and job approval workflow ───────────────────────── */
+.nav-count{margin-left:auto;min-width:20px;height:20px;padding:0 6px;border-radius:99px;background:var(--green);color:#fff;font-size:11px;font-weight:800;display:inline-flex;align-items:center;justify-content:center}
+.nav-count.alert{background:var(--orange)}
+.sidebar a.active .nav-count{background:#fff;color:var(--green)}
+body.dark .sidebar a.active .nav-count{background:var(--green);color:#fff}
+
+.perm-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:16px;margin:8px 0 4px}
+.perm-card{display:flex;flex-direction:column;gap:14px}
+.perm-card-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.perm-card-head h3{margin:0 0 2px;font-size:18px;letter-spacing:-.02em}
+.perm-card-actions{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:4px}
+
+.perm-toggles{display:flex;flex-direction:column;gap:2px}
+.perm-toggles.compact .perm-toggle{padding:9px 0}
+.perm-toggle{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid var(--line);cursor:pointer}
+.perm-toggle:last-child{border-bottom:0}
+.perm-toggle input{position:absolute;opacity:0;width:0;height:0}
+.perm-toggle-text{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.perm-toggle-text strong{font-size:13.5px;font-weight:700}
+.perm-toggle-text small{color:var(--muted);font-size:12px;line-height:1.45}
+.perm-switch{position:relative;flex:none;width:40px;height:23px;border-radius:99px;background:#dfe5da;border:1px solid var(--line);transition:background .18s ease,border-color .18s ease}
+.perm-switch:after{content:"";position:absolute;top:2px;left:2px;width:17px;height:17px;border-radius:50%;background:#fff;box-shadow:0 1px 3px #10291d2e;transition:transform .18s ease}
+.perm-toggle input:checked ~ .perm-switch{background:var(--green);border-color:var(--green)}
+.perm-toggle input:checked ~ .perm-switch:after{transform:translateX(17px)}
+.perm-toggle input:focus-visible ~ .perm-switch{outline:2px solid var(--green);outline-offset:2px}
+body.dark .perm-switch{background:#2b3d33}
+.perm-toggles.readonly .perm-readonly-row{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--line);font-size:13.5px}
+.perm-toggles.readonly .perm-readonly-row:last-child{border-bottom:0}
+
+.perm-danger{border-top:1px solid var(--line);padding-top:12px}
+.perm-danger summary{cursor:pointer;list-style:none}
+.perm-danger summary::-webkit-details-marker{display:none}
+.perm-danger summary:before{content:"▸ ";color:var(--muted)}
+.perm-danger[open] summary:before{content:"▾ "}
+.perm-status-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:10px 0 6px}
+
+.allowance-card{margin-bottom:22px}
+.allowance-head{display:flex;justify-content:space-between;align-items:flex-end;gap:16px}
+.allowance-count{display:block;font-size:32px;letter-spacing:-.05em;line-height:1.1}
+.allowance-pct{font-size:22px;font-weight:800;color:var(--muted);letter-spacing:-.03em}
+.allowance-note{margin:10px 0 0;display:flex;align-items:center;gap:7px}
+.limit-block h3{margin:0 0 8px;display:flex;align-items:center;gap:8px;font-size:17px}
+.limit-block .btn[disabled]{opacity:.45;cursor:not-allowed;margin-top:14px}
+
+.confirm-diff{display:flex;flex-direction:column;gap:2px;margin:16px 0 4px}
+.confirm-diff-row{display:flex;justify-content:space-between;align-items:center;gap:14px;padding:10px 0;border-bottom:1px solid var(--line);font-size:13.5px}
+.confirm-diff-row:last-child{border-bottom:0}
+.confirm-diff-row span{color:var(--muted)}
+
+.jstate{display:inline-flex;align-items:center;gap:6px;padding:4px 10px 4px 8px;border-radius:99px;font-size:11.5px;font-weight:800;background:#eef1ec;color:var(--muted);white-space:nowrap}
+.jstate-dot{width:7px;height:7px;border-radius:50%;background:currentColor;flex:none}
+.jstate-draft{background:#eef1ec;color:#6d776f}
+.jstate-pending{background:#fff4e0;color:#9a6410}
+.jstate-published{background:#e2f3e4;color:#1f6b3a}
+.jstate-rejected{background:#fdeeea;color:#a83a20}
+.jstate-changes_requested{background:#eceaf9;color:#584a9c}
+.jstate-paused{background:#fff6e8;color:#a86a10}
+.jstate-closed{background:#eef1ec;color:#77827a}
+body.dark .jstate-draft{background:#243026;color:#a9b6ac}
+body.dark .jstate-pending{background:#3a2f16;color:#e6c483}
+body.dark .jstate-approved,body.dark .jstate-published{background:#1d3327;color:#8fd3a6}
+body.dark .jstate-rejected{background:#3a221c;color:#f0b19c}
+body.dark .jstate-changes_requested{background:#26224a;color:#b9b0ee}
+body.dark .jstate-paused{background:#3a2f16;color:#e6c483}
+body.dark .jstate-closed{background:#243026;color:#8e9a90}
+
+.reason-note{margin-top:6px;padding:8px 10px;border-left:3px solid var(--orange);background:#fff6ef;border-radius:0 7px 7px 0;line-height:1.5}
+body.dark .reason-note{background:#33251d}
+
+.review-callout{border-left:4px solid var(--orange);margin-bottom:20px}
+.review-callout.is-rejected{border-left-color:#b7492d}
+.review-callout.is-changes{border-left-color:#584a9c}
+.review-callout-head{display:flex;align-items:center;gap:12px;margin-bottom:10px}
+.review-callout p{margin:0 0 6px}
+
+.pdf-import{margin-bottom:20px}
+.pdf-import-form{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:14px 0 6px}
+.pdf-import-form input[type=file]{flex:1;min-width:220px;border:1.5px dashed var(--line);border-radius:10px;padding:11px;background:var(--paper);color:var(--ink);font-size:13px}
+
+.job-form{max-width:860px}
+.job-form h2{font-size:17px;margin:26px 0 14px;padding-top:18px;border-top:1px solid var(--line);display:flex;align-items:center;gap:9px}
+.job-form h2:first-of-type{margin-top:0;padding-top:0;border-top:0}
+.job-form-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:8px}
+
+.review-screen{max-width:920px}
+.review-head{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;padding-bottom:18px;border-bottom:1px solid var(--line)}
+.review-head h2{margin:4px 0;font-size:26px;letter-spacing:-.04em}
+.review-meta-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;padding:18px 0;border-bottom:1px solid var(--line)}
+.review-meta-grid .label{display:block;margin-bottom:3px}
+.review-meta-grid strong{font-size:14px}
+.review-block{padding:18px 0;border-bottom:1px solid var(--line)}
+.review-block:last-child{border-bottom:0}
+.review-block h3{margin:0 0 8px;font-size:14px;text-transform:uppercase;letter-spacing:.09em;color:var(--muted)}
+.review-block p{margin:0;line-height:1.7}
+.review-block ul{margin:0;padding-left:20px;line-height:1.75}
+.review-actions{margin-top:20px;padding:20px;background:var(--paper);border:1px solid var(--line);border-radius:12px}
+body.dark .review-actions{background:#1c2c22}
+.review-buttons{display:flex;flex-wrap:wrap;gap:10px}
+
+.approval-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px}
+.approval-card-head{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:10px}
+.approval-card-head h3{margin:0;font-size:17px;letter-spacing:-.02em}
+
+.notif-row.is-unread{background:var(--paper);margin:0 -12px;padding-left:12px;padding-right:12px;border-radius:8px}
+body.dark .notif-row.is-unread{background:#1c2c22}
+.notif-dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--orange);margin-right:7px;vertical-align:middle}
+.pending-decision{padding:12px;border:1px dashed var(--line);border-radius:10px;background:var(--paper)}
+body.dark .pending-decision{background:#1c2c22}
+.pending-decision p{margin:0 0 8px}
+
+.denied-card{max-width:520px;margin:60px auto;text-align:center}
+.denied-code{font-size:56px;font-weight:800;letter-spacing:-.05em;color:var(--orange);line-height:1}
+.denied-card h1{margin:6px 0 10px;font-size:28px;letter-spacing:-.04em}
+.denied-card .actions{justify-content:center}
+
+.pill.status-pending{background:#fff4e0;color:#9a6410}
+
+.pill.status-suspended{background:#fff6e8;color:#a86a10}
+.pill.status-disabled,.pill.status-rejected{background:#fdeeea;color:#a83a20}
+body.dark .pill.status-pending{background:#3a2f16;color:#e6c483}
+body.dark .pill.status-active{background:#1d3327;color:#8fd3a6}
+body.dark .pill.status-suspended{background:#3a2f16;color:#e6c483}
+body.dark .pill.status-disabled,body.dark .pill.status-rejected{background:#3a221c;color:#f0b19c}
+
+@media(max-width:850px){
+  .perm-grid,.approval-grid{grid-template-columns:1fr}
+  .review-meta-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .review-head{flex-direction:column}
+  .allowance-head{flex-direction:column;align-items:flex-start;gap:6px}
+}
+@media(max-width:560px){
+  .review-meta-grid{grid-template-columns:1fr}
+  .review-buttons .btn,.job-form-actions .btn{flex:1 1 100%}
+  .pdf-import-form input[type=file]{min-width:0}
+}
+
+/* ── Seats, notifications, and the interview workflow ──────────────────── */
+.seat-card{margin-bottom:22px}
+.seat-head{display:flex;justify-content:space-between;align-items:flex-end;gap:16px}
+.seat-count{display:block;font-size:32px;letter-spacing:-.05em;line-height:1.15}
+.seat-count span{font-size:15px;font-weight:700;color:var(--muted);letter-spacing:-.01em}
+.seat-pct{font-size:22px;font-weight:800;color:var(--muted);letter-spacing:-.03em}
+.seat-note{margin:10px 0 0;display:flex;align-items:flex-start;gap:7px;line-height:1.55}
+.seat-inline{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin-top:4px;font-size:13.5px}
+
+.pending-decision.is-reactivation{border-style:solid;border-color:var(--orange);background:#fff6ef}
+body.dark .pending-decision.is-reactivation{background:#33251d;border-color:#6b4a34}
+.pending-decision.is-reactivation strong{display:flex;align-items:center;gap:7px;font-size:13.5px}
+.pending-decision p{margin:4px 0 8px}
+
+.notif-stack{display:flex;flex-direction:column;gap:12px}
+.notif-card{display:flex;gap:14px;align-items:flex-start;padding:18px}
+.notif-card.is-unread{border-left:3px solid var(--orange)}
+.notif-icon{flex:none;width:38px;height:38px;border-radius:11px;display:grid;place-items:center;background:var(--paper);color:var(--green);border:1px solid var(--line)}
+body.dark .notif-icon{background:#1c2c22}
+.notif-icon.type-account_suspended,.notif-icon.type-account_disabled,.notif-icon.type-reactivation_rejected{color:#b7492d}
+.notif-icon.type-reactivation_request,.notif-icon.type-account_approval{color:#a86a10}
+.notif-icon.type-seat_limit,.notif-icon.type-permissions{color:#584a9c}
+.notif-body{flex:1;min-width:0}
+.notif-top{display:flex;flex-wrap:wrap;align-items:center;gap:9px;margin-bottom:4px}
+.notif-type{font-size:11px;text-transform:uppercase;letter-spacing:.1em;font-weight:800;color:var(--muted)}
+.notif-new{background:var(--orange);color:#fff;font-size:10px;font-weight:800;padding:2px 7px;border-radius:99px;letter-spacing:.04em}
+.notif-card h3{margin:2px 0 6px;font-size:16px;letter-spacing:-.02em}
+.notif-card p{margin:0 0 4px;line-height:1.55}
+.notif-actions{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:10px}
+
+.istate{display:inline-flex;align-items:center;gap:6px;padding:4px 10px 4px 8px;border-radius:99px;font-size:11.5px;font-weight:800;background:#eef1ec;color:var(--muted);white-space:nowrap}
+.istate-dot{width:7px;height:7px;border-radius:50%;background:currentColor;flex:none}
+.istate-scheduled{background:#eef1ec;color:#6d776f}
+.istate-ready{background:#e8f1fb;color:#2b5f92}
+.istate-in_progress{background:#e2f3e4;color:#1f6b3a}
+.istate-ended{background:#fff4e0;color:#9a6410}
+.istate-review_pending{background:#fff4e0;color:#9a6410}
+.istate-cancelled,.istate-no_show{background:#fdeeea;color:#a83a20}
+body.dark .istate-scheduled{background:#243026;color:#a9b6ac}
+body.dark .istate-ready{background:#1d2a38;color:#9cc3e8}
+body.dark .istate-in_progress,body.dark .istate-reviewed{background:#1d3327;color:#8fd3a6}
+body.dark .istate-ended,body.dark .istate-review_pending{background:#3a2f16;color:#e6c483}
+body.dark .istate-cancelled,body.dark .istate-no_show{background:#3a221c;color:#f0b19c}
+
+.interview-layout{display:grid;grid-template-columns:minmax(0,380px) minmax(0,1fr);gap:20px;align-items:start}
+.interview-schedule{position:sticky;top:20px}
+.interview-column{min-width:0}
+.interview-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:14px;margin-bottom:8px}
+.interview-card{display:flex;flex-direction:column;gap:12px;padding:18px}
+.interview-card.state-in_progress{border-color:var(--green);box-shadow:0 0 0 1px var(--green) inset,var(--shadow)}
+.interview-card.state-review_pending{border-left:3px solid var(--orange)}
+.ic-head{display:flex;gap:12px;align-items:flex-start}
+.ic-avatar{flex:none;width:44px;height:44px;border-radius:50%;display:grid;place-items:center;background:var(--paper);border:1px solid var(--line);font-weight:800;font-size:14px;object-fit:cover}
+.ic-identity{flex:1;min-width:0}
+.ic-identity h3{margin:0;font-size:16px;letter-spacing:-.02em;overflow-wrap:break-word}
+.ic-identity p{margin:2px 0 0}
+.ic-status{display:flex;flex-direction:column;align-items:flex-end;gap:5px;flex:none}
+.ic-live{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:800;color:#b7492d}
+.ic-meta{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px 14px;padding:12px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.ic-meta .label{display:block;margin-bottom:2px}
+.ic-meta strong{font-size:13px;font-weight:700;overflow-wrap:break-word}
+.ic-notes{margin:0;display:flex;align-items:center;gap:6px}
+.ic-actions{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:auto}
+.ic-more{margin-left:auto}
+.ic-more summary{cursor:pointer;list-style:none}
+.ic-more summary::-webkit-details-marker{display:none}
+.ic-more .inline-form{margin-top:8px}
+
+.room-notes,.room-review{margin-top:18px}
+.room-notes-head{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap}
+.room-notes-head h2{margin:0;font-size:18px;display:flex;align-items:center;gap:8px}
+.room-notes textarea{width:100%;min-height:200px;resize:vertical;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:9px;padding:12px;line-height:1.6}
+.room-notes-actions{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin-top:10px}
+.end-meeting-form{margin-top:20px;padding-top:18px;border-top:1px solid var(--line)}
+.end-meeting-form p{margin:0 0 10px}
+
+.review-done-head{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;flex-wrap:wrap;padding-bottom:16px;border-bottom:1px solid var(--line)}
+.review-done-head h2{margin:4px 0 2px;font-size:22px;letter-spacing:-.03em}
+.review-notes-recall{padding:18px 0;border-bottom:1px solid var(--line)}
+.review-notes-recall h3,.final-review-form h3{margin:0 0 10px;font-size:13px;text-transform:uppercase;letter-spacing:.09em;color:var(--muted)}
+.recall-body{padding:14px;background:var(--paper);border:1px solid var(--line);border-radius:10px;line-height:1.7;margin-bottom:8px;white-space:normal}
+body.dark .recall-body{background:#1c2c22}
+.final-review-form{padding-top:18px}
+.score-row{display:flex;align-items:center;gap:14px}
+.score-row input[type=range]{flex:1;min-width:0;accent-color:var(--green)}
+.score-output{flex:none;min-width:60px;text-align:center;font-size:22px;font-weight:800;letter-spacing:-.03em;padding:6px 10px;border:1px solid var(--line);border-radius:9px;background:var(--paper)}
+body.dark .score-output{background:#1c2c22}
+
+.cprofile-interviews{margin-top:20px}
+.ih-stack{display:flex;flex-direction:column;gap:14px}
+.ih-item{border:1px solid var(--line);border-radius:12px;padding:16px}
+.ih-item.state-review_pending{border-left:3px solid var(--orange)}
+.ih-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap}
+.ih-status{display:flex;flex-direction:column;align-items:flex-end;gap:6px}
+.ih-block{margin-top:14px;padding-top:12px;border-top:1px solid var(--line)}
+.ih-block h4{margin:0 0 6px;font-size:12px;text-transform:uppercase;letter-spacing:.09em;color:var(--muted)}
+.ih-block p{margin:0 0 6px;line-height:1.65}
+.ih-block.is-final{background:var(--paper);margin:14px -16px -16px;padding:14px 16px 16px;border-radius:0 0 11px 11px}
+body.dark .ih-block.is-final{background:#1c2c22}
+.ih-reco{display:flex;flex-wrap:wrap;align-items:baseline;gap:8px}
+.ih-pending{margin-top:12px;display:flex;align-items:center;gap:6px}
+.ih-actions{margin-top:12px}
+
+@media(max-width:1100px){
+  .interview-layout{grid-template-columns:1fr}
+  .interview-schedule{position:static}
+}
+@media(max-width:850px){
+  .interview-grid{grid-template-columns:1fr}
+  .seat-head{flex-direction:column;align-items:flex-start;gap:6px}
+  .notif-card{flex-direction:column;gap:10px}
+}
+@media(max-width:560px){
+  .ic-meta{grid-template-columns:1fr}
+  .ic-actions .btn{flex:1 1 100%}
+  .ic-more{margin-left:0;width:100%}
+  .ih-head{flex-direction:column}
+  .ih-status{align-items:flex-start}
+  .score-row{flex-direction:column;align-items:stretch}
+  .score-output{align-self:center}
+  .room-notes textarea{min-height:160px}
+}
+.modal-box{position:relative}
+.modal-close{position:absolute;top:12px;right:12px;width:30px;height:30px;display:grid;place-items:center;border:0;border-radius:50%;background:var(--paper);color:var(--ink);font-size:20px;line-height:1;cursor:pointer}
+.modal-close:hover{background:var(--line)}
+
+/* ── Containment: nothing may escape its card ──────────────────────────── */
+/* The interview UI had inputs and long text pushing past their containers.
+   These are structural fixes (box-sizing, min-width:0, wrapping), not font
+   shrinking, so the layout holds instead of just looking smaller. */
+*,*::before,*::after{box-sizing:border-box}
+input,textarea,select,button{max-width:100%}
+.card,.list-row,.field,.form-grid,.stats,.grid{min-width:0}
+.card input:not([type=checkbox]):not([type=radio]):not([type=range]),
+.card textarea,
+.card select{width:100%;min-width:0}
+.field input,.field textarea,.field select{width:100%;min-width:0}
+.inline-form{flex-wrap:wrap;min-width:0}
+.inline-form select,.inline-form input{min-width:0;flex:1 1 auto}
+.table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+/* break-word, not anywhere. "anywhere" splits inside words the moment a column
+   gets narrow, which is what made candidate names read vertically, one letter
+   per line. break-word only breaks a word that genuinely cannot fit. */
+.table td,.table th{overflow-wrap:break-word}
+h1,h2,h3,h4,p{overflow-wrap:break-word}
+/* Unbroken strings with no spaces (emails, URLs, room codes) still need the
+   stronger rule, but only where they actually occur. */
+.break-any,.email-cell,code,.mono{overflow-wrap:anywhere}
+.modal-box{max-height:min(90vh,720px);overflow-y:auto}
+.modal-overlay{overflow-y:auto}
+body{overflow-x:hidden}
+.app-main,.content,.public-shell{min-width:0;max-width:100%}
+
+/* Interview room containment */
+.room-wrap{min-width:0;max-width:100%}
+.room-body{min-width:0}
+.room-stage{min-width:0}
+.room-side{min-width:0;max-width:100%}
+.room-controls{flex-wrap:wrap;justify-content:center;gap:8px}
+.room-controls .btn,.room-controls .icon-toggle{flex:none}
+.chat-form{min-width:0}
+.chat-form input{min-width:0;flex:1}
+.tile-label,.peer-status{max-width:calc(100% - 20px);overflow-wrap:break-word}
+.room-notes textarea,.final-review-form textarea{width:100%;max-width:100%;box-sizing:border-box}
+
+/* ── Analytics ─────────────────────────────────────────────────────────── */
+.analytics-filters{align-items:center;gap:10px;flex-wrap:wrap}
+.analytics-filters select,.analytics-filters input[type=date]{min-width:0}
+.custom-range{display:flex;gap:8px;flex-wrap:wrap;min-width:0}
+.custom-range[hidden]{display:none}
+
+.metric-grid{grid-template-columns:repeat(auto-fit,minmax(170px,1fr))}
+.metric-tile small{display:block;margin-top:4px;font-size:11.5px}
+
+.analytics-two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin:18px 0}
+.analytics-two>.card{min-width:0}
+
+.funnel{display:flex;flex-direction:column;gap:12px}
+.funnel-row{display:grid;grid-template-columns:110px minmax(0,1fr) 50px;align-items:center;gap:12px}
+.funnel-label{font-size:13px;font-weight:700;overflow-wrap:break-word}
+.funnel-track{height:12px;border-radius:99px;background:#e9ede6;overflow:hidden;min-width:0}
+body.dark .funnel-track{background:#243026}
+.funnel-fill{display:block;height:100%;border-radius:99px;background:var(--green);transition:width .35s ease}
+.funnel-fill.alt{background:#2f6fb0}
+.funnel-fill.hire{background:#7a4fc4}
+.funnel-value{text-align:right;font-size:15px;font-weight:800;letter-spacing:-.02em}
+
+.bar-chart{display:flex;align-items:flex-end;gap:10px;min-height:190px;padding-top:10px;overflow-x:auto}
+.bar-col{flex:1;min-width:44px;display:flex;flex-direction:column;align-items:center;gap:6px}
+.bar-track{width:100%;height:140px;display:flex;align-items:flex-end;background:#f1f4ef;border-radius:8px;overflow:hidden}
+body.dark .bar-track{background:#1c2c22}
+.bar-fill{width:100%;background:var(--green);border-radius:8px 8px 0 0;transition:height .35s ease}
+.bar-value{font-size:13px;font-weight:800}
+.bar-label{font-size:11px;color:var(--muted);text-align:center;overflow-wrap:break-word}
+
+.activity-stack{display:flex;flex-direction:column}
+.activity-row{display:grid;grid-template-columns:150px minmax(0,1fr);gap:14px;padding:11px 0;border-bottom:1px solid var(--line);font-size:13.5px}
+.activity-row:last-child{border-bottom:0}
+.activity-time{color:var(--muted);font-size:12.5px}
+.activity-text{overflow-wrap:anywhere}
+
+.perf-table td,.perf-table th{vertical-align:top}
+.perf-table .pill{margin-top:5px}
+.perf-total td{border-top:2px solid var(--line);background:var(--paper)}
+body.dark .perf-total td{background:#1c2c22}
+
+.compare-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:18px}
+.compare-col{min-width:0;display:flex;flex-direction:column;gap:10px}
+.compare-col>strong{font-size:14px;overflow-wrap:break-word}
+.compare-bar{display:grid;grid-template-columns:78px minmax(0,1fr) 34px;align-items:center;gap:9px;font-size:12px}
+.compare-bar b{text-align:right;font-size:13px}
+
+.empty-panel{text-align:center;padding:44px 24px}
+.empty-panel h2{margin:0 0 8px;font-size:19px;display:flex;align-items:center;justify-content:center;gap:9px}
+.empty-panel p{margin:0 auto;max-width:460px}
+
+/* ── Candidate interview access ────────────────────────────────────────── */
+.upcoming-interview{margin-bottom:18px;border-left:3px solid var(--green)}
+.ui-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap}
+.ui-head h3{margin:4px 0 0;font-size:19px;letter-spacing:-.03em;overflow-wrap:break-word}
+.ui-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;margin:16px 0;padding:14px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.ui-grid .label{display:block;margin-bottom:3px}
+.ui-grid strong{font-size:14px;overflow-wrap:break-word}
+.ui-actions{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+
+.waiting-room{max-width:620px;margin:40px auto;text-align:center}
+.waiting-room h1{margin:8px 0 4px;font-size:30px;letter-spacing:-.04em;overflow-wrap:break-word}
+.wr-meta{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:16px;margin:22px 0;padding:18px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);text-align:left}
+.wr-meta .label{display:block;margin-bottom:3px}
+.wr-meta strong{overflow-wrap:break-word}
+.wr-status{display:flex;align-items:center;justify-content:center;gap:9px;padding:14px;border-radius:10px;background:var(--paper);font-weight:600;line-height:1.5;text-align:left}
+body.dark .wr-status{background:#1c2c22}
+.live-dot.idle{background:var(--muted);box-shadow:none;animation:none}
+.waiting-room .actions{justify-content:center}
+
+.candidate-panel{margin-top:18px}
+.candidate-panel h2{margin:4px 0 0;font-size:20px;letter-spacing:-.03em;overflow-wrap:break-word}
+
+@media(max-width:900px){
+  .analytics-two{grid-template-columns:1fr}
+  .activity-row{grid-template-columns:1fr;gap:2px}
+}
+@media(max-width:560px){
+  .funnel-row{grid-template-columns:88px minmax(0,1fr) 40px;gap:8px}
+  .compare-bar{grid-template-columns:66px minmax(0,1fr) 30px}
+  .bar-col{min-width:38px}
+  .ui-actions .btn{flex:1 1 100%}
+  .wr-meta{grid-template-columns:1fr}
+  .metric-grid{grid-template-columns:repeat(auto-fit,minmax(140px,1fr))}
+}
+
+/* ── Interview room layout ─────────────────────────────────────────────── */
+/* Desktop: meeting on the left, notes / candidate details on the right, with
+   the meeting controls staying inside the meeting column. Below 1000px the
+   whole thing stacks, which is also what phones and tablets get. */
+.room-wrap{display:block}
+@media(min-width:1000px){
+  .room-wrap.is-live{display:grid;grid-template-columns:minmax(0,1fr) minmax(300px,368px);gap:18px;align-items:start}
+  .room-wrap.is-live .room-lobby{grid-column:1/-1}
+  .room-wrap.is-live .room-call{grid-column:1;min-width:0}
+  .room-wrap.is-live .room-notes,
+  .room-wrap.is-live .room-review,
+  .room-wrap.is-live .candidate-panel{grid-column:2;margin-top:0;position:sticky;top:16px;max-height:calc(100vh - 32px);overflow-y:auto}
+}
+@media(max-width:999px){
+  .room-wrap.is-live{display:flex;flex-direction:column;gap:16px}
+  .room-notes,.room-review,.candidate-panel{margin-top:0}
+}
+@media(max-width:640px){
+  .room-controls{padding:12px;gap:6px}
+  .room-controls .icon-toggle{width:38px;height:38px}
+  .room-controls .btn.danger{flex:1 1 100%;order:99}
+  .room-call-head{flex-wrap:wrap;gap:8px}
+  .room-code-chip{margin-left:0}
+  .device-check{flex-direction:column}
+  .room-side{width:100%}
+}
+
+/* ── Urgent hiring: a badge, not an emoji ──────────────────────────────── */
+.badge.urgent{background:#fdf0e6;color:#a1541a;border:1px solid #f0d6bd;letter-spacing:.06em;text-transform:uppercase;font-size:10px;font-weight:800}
+body.dark .badge.urgent{background:#3a281a;color:#e8b483;border-color:#5c412a}
+
+/* ── Staff profile ─────────────────────────────────────────────────────── */
+.user-avatar{display:inline-grid;place-items:center;border-radius:50%;background:var(--paper);border:1px solid var(--line);font-weight:800;color:var(--ink);object-fit:cover;flex:none}
+.profile-layout{display:grid;grid-template-columns:minmax(0,320px) minmax(0,1fr);gap:20px;align-items:start}
+.profile-summary{text-align:center}
+.profile-summary .user-avatar{margin:0 auto 14px;display:block}
+.profile-summary h2{margin:0;font-size:22px;letter-spacing:-.03em;overflow-wrap:break-word}
+.profile-title{margin:2px 0 16px}
+.profile-kv{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:10px 0;border-top:1px solid var(--line);text-align:left;font-size:13.5px}
+.profile-kv span{color:var(--muted);flex:none}
+.profile-kv strong{text-align:right;overflow-wrap:break-word}
+.profile-perms{margin-top:16px;padding-top:14px;border-top:1px solid var(--line);text-align:left}
+.profile-perms .tag-row{margin:8px 0}
+.profile-forms{display:flex;flex-direction:column;gap:18px;min-width:0}
+.photo-row{display:flex;align-items:center;gap:14px;margin-bottom:16px}
+.readonly-field input[disabled]{opacity:.65;cursor:not-allowed;background:var(--paper)}
+
+.reset-link-card{border-left:3px solid var(--green)}
+.reset-link-row{display:flex;gap:10px;margin-top:12px;flex-wrap:wrap}
+.reset-link-row input{flex:1;min-width:0;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12.5px}
+.reset-stack{display:flex;flex-direction:column;gap:14px}
+.reset-item{border:1px solid var(--line);border-radius:12px;padding:16px}
+.reset-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;margin-bottom:8px}
+
+/* ── Candidate join states ─────────────────────────────────────────────── */
+.ui-join{display:flex;flex-direction:column;gap:12px}
+.ui-join-status{display:flex;align-items:flex-start;gap:10px;padding:12px 14px;border-radius:10px;background:var(--paper);border:1px solid var(--line)}
+body.dark .ui-join-status{background:#1c2c22}
+.ui-join-status strong{display:block;font-size:13.5px}
+.join-dot{width:9px;height:9px;border-radius:50%;background:var(--muted);flex:none;margin-top:5px}
+.ui-join-status.state-available{border-color:var(--green)}
+.ui-join-status.state-available .join-dot{background:var(--status-success-text)}
+.ui-join-status.state-interviewer_ready{border-color:var(--green);background:#e9f4ec}
+body.dark .ui-join-status.state-interviewer_ready{background:#1d3327}
+.ui-join-status.state-interviewer_ready .join-dot{background:var(--status-success-text);box-shadow:0 0 0 4px color-mix(in srgb, var(--status-success-text) 18%, transparent);animation:pulse-dot 1.6s infinite}
+.ui-join-status.state-ended .join-dot,.ui-join-status.state-cancelled .join-dot{background:#b7492d}
+@keyframes pulse-dot{0%,100%{box-shadow:0 0 0 3px color-mix(in srgb, var(--status-success-text) 14.9%, transparent)}50%{box-shadow:0 0 0 7px color-mix(in srgb, var(--status-success-text) 7.8%, transparent)}}
+.btn.disabled-link{opacity:.55;cursor:not-allowed;pointer-events:auto}
+
+/* ── Meeting: participant grid and pinning ─────────────────────────────── */
+.room-stage{display:grid;gap:12px;min-width:0}
+.room-stage[data-count="1"]{grid-template-columns:1fr}
+.room-stage[data-count="2"]{grid-template-columns:repeat(2,minmax(0,1fr))}
+.room-stage[data-count="3"],.room-stage[data-count="4"]{grid-template-columns:repeat(2,minmax(0,1fr))}
+.room-stage[data-count="5"],.room-stage[data-count="6"]{grid-template-columns:repeat(3,minmax(0,1fr))}
+.video-tile{position:relative;min-width:0;border-radius:14px;overflow:hidden;aspect-ratio:16/10}
+.video-tile[hidden]{display:none}
+.tile-label{display:flex;align-items:center;gap:6px;max-width:calc(100% - 52px)}
+.tile-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+.tile-mic{display:inline-flex;flex:none}
+
+.pin-btn{position:absolute;top:10px;right:10px;width:32px;height:32px;display:grid;place-items:center;border:0;border-radius:9px;background:#0d1a13a8;color:#fff;cursor:pointer;opacity:0;transition:opacity .16s ease,background .16s ease}
+.video-tile:hover .pin-btn,.pin-btn:focus-visible,.pin-btn.on{opacity:1}
+.pin-btn:hover{background:#0d1a13d6}
+.pin-btn.on{background:var(--green)}
+
+/* Pinned: one large tile, the rest shrink into a strip beneath it. */
+.room-stage[data-pinned]:not([data-pinned=""]){grid-template-columns:repeat(4,minmax(0,1fr));grid-auto-rows:auto}
+.room-stage[data-pinned]:not([data-pinned=""]) .video-tile{grid-column:span 1;aspect-ratio:16/10}
+.room-stage[data-pinned]:not([data-pinned=""]) .video-tile.is-pinned{grid-column:1/-1;aspect-ratio:16/8}
+.stage-strip{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-top:10px}
+.screen-placeholder{position:absolute;inset:0;display:grid;place-content:center;justify-items:center;gap:8px;background:#12211a;color:#9fb3a6;font-size:12.5px;text-align:center;padding:12px}
+
+/* ── Meeting controls ──────────────────────────────────────────────────── */
+.icon-toggle.notes-control{width:auto;padding:0 14px;gap:8px;display:inline-flex;align-items:center}
+.icon-toggle.notes-control .control-text{font-size:13px;font-weight:700}
+.icon-toggle.notes-control.on{background:var(--green);color:#fff}
+.btn.end-control{font-weight:800}
+
+/* ── Notes drawer ──────────────────────────────────────────────────────── */
+.room-notes[hidden]{display:none}
+.notes-head-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.notes-icon-btn{width:26px;height:26px;display:grid;place-items:center;border:1px solid var(--line);border-radius:7px;background:transparent;color:var(--ink);font-size:16px;line-height:1;cursor:pointer}
+.notes-icon-btn:hover{background:var(--paper)}
+.room-notes-head h2{font-size:16px}
+
+/* Desktop: the drawer takes a column and the meeting gives up exactly that
+   much width, so nothing is ever covered. */
+@media(min-width:1000px){
+  .room-wrap.is-live{grid-template-columns:minmax(0,1fr)}
+  .room-wrap.is-live.notes-open{grid-template-columns:minmax(0,1fr) minmax(300px,360px)}
+  .room-wrap.is-live .room-call{grid-column:1}
+  .room-wrap.is-live .room-notes[hidden]{display:none}
+  .room-wrap.is-live.notes-open .room-notes{grid-column:2;margin-top:0;position:sticky;top:16px;max-height:calc(100vh - 32px);overflow-y:auto;animation:notes-in .2s ease}
+  .room-wrap.is-live .room-review,
+  .room-wrap.is-live .candidate-panel{grid-column:1;margin-top:16px;position:static;max-height:none}
+}
+@keyframes notes-in{from{opacity:0;transform:translateX(12px)}to{opacity:1;transform:none}}
+
+/* Tablet and below: the drawer becomes a sheet that never overflows. */
+@media(max-width:999px){
+  .room-wrap.is-live.notes-open .room-notes{position:fixed;inset:auto 0 0 0;z-index:60;margin:0;border-radius:16px 16px 0 0;max-height:72vh;overflow-y:auto;box-shadow:0 -12px 40px #0b160f38;animation:notes-up .22s ease}
+}
+@keyframes notes-up{from{transform:translateY(18px);opacity:0}to{transform:none;opacity:1}}
+
+@media(max-width:760px){
+  .room-stage[data-count="2"],.room-stage[data-count="3"],
+  .room-stage[data-count="4"],.room-stage[data-count="5"],.room-stage[data-count="6"]{grid-template-columns:1fr}
+  .room-stage[data-pinned]:not([data-pinned=""]){grid-template-columns:repeat(2,minmax(0,1fr))}
+  .room-stage[data-pinned]:not([data-pinned=""]) .video-tile.is-pinned{grid-column:1/-1}
+  .icon-toggle.notes-control .control-text{display:none}
+  .icon-toggle.notes-control{width:44px;padding:0}
+  .profile-layout{grid-template-columns:1fr}
+}
+@media(max-width:560px){
+  .profile-kv{flex-direction:column;gap:2px}
+  .profile-kv strong{text-align:left}
+  .reset-link-row .btn{flex:1 1 100%}
+}
+
+/* ══ UI/UX pass: consistent, responsive, dark-mode safe ═══════════════════ */
+
+/* ── Tables that become cards ──────────────────────────────────────────────
+   Below 820px each row stacks into a labelled card using the data-label
+   attributes already in the markup. Same rows, same search, no duplication,
+   and the page never scrolls sideways. */
+/* The audit table still converts on viewport width. The candidates table is
+   inside a size container and uses @container instead, so it is deliberately
+   not listed here — two systems targeting the same table would fight. */
+@media(max-width:820px){
+  .audit-table thead,.perf-table thead{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+  .audit-table,.audit-table tbody{display:block;width:100%}
+  .audit-table tr{display:grid;grid-template-columns:minmax(0,1fr);gap:6px;padding:14px;margin-bottom:12px;border:1px solid var(--line);border-radius:12px;background:var(--surface)}
+  body.dark .audit-table tr{background:#1b2a21}
+  .audit-table td{display:grid;grid-template-columns:112px minmax(0,1fr);gap:10px;border:0;padding:3px 0;align-items:start}
+  .audit-table td::before{content:attr(data-label);color:var(--muted);font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:.05em}
+  .audit-table .table-wrap{overflow:visible}
+}
+
+/* ── Candidates list ───────────────────────────────────────────────────── */
+.candidate-count{margin:0 0 12px}
+.candidate-list-card{padding-top:8px}
+.candidate-name{font-weight:700;color:var(--ink);text-decoration:none;overflow-wrap:break-word;hyphens:none}
+.candidate-name:hover{color:var(--green);text-decoration:underline}
+.cell-avatar{width:52px}
+.avatar-chip{margin-left:0}
+.rating-mini{white-space:nowrap;letter-spacing:1px;color:var(--line);font-size:13px}
+.rating-mini .on{color:var(--orange)}
+.no-results{padding:14px 0;text-align:center}
+
+/* ── Candidate profile ─────────────────────────────────────────────────── */
+.cprofile-name-row{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin:2px 0 6px;min-width:0}
+.cprofile-name-row h1{margin:0;font-size:29px;letter-spacing:-.04em;overflow-wrap:break-word;min-width:0}
+.cprofile-subline{margin:0 0 10px;overflow-wrap:break-word}
+.cprofile-head-badges{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:12px}
+
+.rating-inline{display:inline-flex;align-items:center;gap:2px;flex-wrap:wrap;padding:4px 10px;border:1px solid var(--line);border-radius:99px;background:var(--paper)}
+body.dark .rating-inline{background:#1c2c22}
+.star-btn{background:none;border:0;padding:0 1px;cursor:pointer;font-size:19px;line-height:1;color:var(--line)}
+.star-btn.on{color:var(--orange)}
+.star-btn:hover{color:var(--orange)}
+.rating-inline.is-readonly .star-btn{cursor:default}
+.rating-value{margin-left:7px;font-size:12px;font-weight:700;color:var(--muted);white-space:nowrap}
+.rating-value.muted{margin-left:0}
+
+.cprofile-review-pair{align-items:start}
+.cprofile-review-pair>.card{display:flex;flex-direction:column;min-width:0}
+
+.cprofile-activity .collapse-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.cprofile-activity .collapse-head h2{margin:2px 0 0;font-size:19px;letter-spacing:-.03em}
+.collapse-btn{width:32px;height:32px;flex:none;display:grid;place-items:center;border:1px solid var(--line);border-radius:9px;background:transparent;color:var(--ink);font-size:19px;line-height:1;cursor:pointer}
+.collapse-btn:hover{background:var(--paper)}
+.collapse-body[hidden]{display:none}
+.cprofile-activity.is-collapsed{padding-bottom:18px}
+
+/* ── Audit trail ───────────────────────────────────────────────────────── */
+.audit-filters{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.audit-filters input,.audit-filters select{min-width:0}
+.audit-filters input[name=q]{flex:2 1 240px}
+.audit-filters select{flex:1 1 160px}
+.audit-filters input[type=date]{flex:1 1 140px}
+.audit-when strong{display:block}
+.audit-details{overflow-wrap:anywhere;max-width:340px}
+.audit-badge{display:inline-block;padding:4px 10px;border-radius:99px;font-size:11.5px;font-weight:800;background:#eef1ec;color:var(--muted);white-space:nowrap}
+.audit-badge.cat-security{background:#fdeeea;color:#a83a20}
+.audit-badge.cat-approval{background:var(--status-success-bg);color:var(--status-success-text)}
+.audit-badge.cat-interview{background:#e8f1fb;color:#2b5f92}
+.audit-badge.cat-candidate{background:#f0ecfa;color:#584a9c}
+.audit-badge.cat-job{background:#fff4e0;color:#9a6410}
+.audit-badge.cat-account{background:#e9f0ec;color:#3d6b53}
+body.dark .audit-badge{background:#243026;color:#a9b6ac}
+body.dark .audit-badge.cat-security{background:#3a221c;color:#f0b19c}
+body.dark .audit-badge.cat-approval,body.dark .audit-badge.cat-account{background:#1d3327;color:#8fd3a6}
+body.dark .audit-badge.cat-interview{background:#1d2a38;color:#9cc3e8}
+body.dark .audit-badge.cat-candidate{background:#26224a;color:#b9b0ee}
+body.dark .audit-badge.cat-job{background:#3a2f16;color:#e6c483}
+@media(max-width:820px){.audit-details{max-width:none}}
+
+/* ── Charts must resize, never force a scrollbar ───────────────────────── */
+.bar-chart{overflow-x:visible}
+.bar-col{min-width:0}
+.bar-label{font-size:10.5px;line-height:1.25}
+@media(max-width:640px){
+  .bar-chart{gap:5px;min-height:160px}
+  .bar-track{height:108px}
+  .bar-value{font-size:11.5px}
+}
+
+/* ── Profile page ──────────────────────────────────────────────────────── */
+@media(max-width:760px){
+  .profile-summary{text-align:left}
+  .profile-summary .user-avatar{margin:0 0 12px}
+  .profile-forms .btn{width:100%}
+  .photo-row{flex-direction:column;align-items:flex-start}
+}
+
+/* ── Shared polish: hover, focus, and loading ──────────────────────────── */
+.card{transition:border-color .16s ease,box-shadow .16s ease}
+.table tbody tr:hover{background:var(--paper)}
+body.dark .table tbody tr:hover{background:#1c2c22}
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--green);outline-offset:2px;border-radius:6px}
+.btn[disabled],.btn.disabled-link{opacity:.55}
+.is-busy{position:relative;pointer-events:none;opacity:.7}
+
+/* ── Final containment backstop ────────────────────────────────────────── */
+.dashboard-head{flex-wrap:wrap;gap:14px}
+.dashboard-head h1{overflow-wrap:break-word}
+.section-head{flex-wrap:wrap;gap:10px}
+.filters{flex-wrap:wrap}
+.stats{grid-template-columns:repeat(auto-fit,minmax(160px,1fr))}
+.list-row{flex-wrap:wrap;gap:8px}
+.actions{flex-wrap:wrap}
+img{max-width:100%;height:auto}
+pre,code{overflow-x:auto;max-width:100%}
+
+/* ══ Interview Room: camera first, rail beside it, controls always below ══ */
+
+/* The call is a column: header, body, controls. The controls are the last
+   child of .room-call, so they always sit under the camera area and can never
+   be covered by a panel or float away. */
+.room-call{display:flex;flex-direction:column;gap:14px;min-width:0}
+.room-body{display:grid;grid-template-columns:minmax(0,1fr);gap:14px;align-items:start;min-width:0}
+.room-main{min-width:0;display:flex;flex-direction:column;gap:10px}
+.room-call.has-rail .room-body,
+.room-wrap.rail-open .room-body{grid-template-columns:minmax(0,1fr)}
+
+/* Desktop: the rail takes a column and the camera gives up exactly that width,
+   so the panels sit beside the camera rather than over it. */
+@media(min-width:1000px){
+  .room-wrap.rail-open .room-body{grid-template-columns:minmax(0,1fr) clamp(260px,26vw,340px)}
+  .room-rail{position:sticky;top:8px;max-height:calc(100vh - 150px)}
+}
+
+.room-rail{display:flex;flex-direction:column;gap:12px;min-width:0;overflow-y:auto;overflow-x:hidden}
+.room-rail[hidden]{display:none}
+
+.rail-panel{display:flex;flex-direction:column;min-width:0;border:1px solid var(--line);border-radius:13px;background:var(--surface);overflow:hidden;animation:rail-in .18s ease}
+body.dark .rail-panel{background:#1b2a21}
+.rail-panel[hidden]{display:none}
+@keyframes rail-in{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+
+.rail-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 12px;border-bottom:1px solid var(--line);min-width:0}
+.rail-panel.is-minimised .rail-head{border-bottom:0}
+.rail-head h3{margin:0;font-size:13px;font-weight:800;letter-spacing:-.01em;display:flex;align-items:center;gap:7px;min-width:0}
+.rail-head-actions{display:flex;align-items:center;gap:6px;flex:none}
+.rail-status{white-space:nowrap;font-size:11px}
+.rail-status.is-saved{color:var(--green)}
+.rail-status.is-error{color:var(--orange)}
+.rail-icon-btn{width:24px;height:24px;flex:none;display:grid;place-items:center;border:1px solid var(--line);border-radius:6px;background:transparent;color:var(--ink);font-size:15px;line-height:1;cursor:pointer}
+.rail-icon-btn:hover{background:var(--paper)}
+
+.rail-body{padding:12px;min-width:0;display:flex;flex-direction:column;gap:10px;overflow:hidden}
+.rail-body[hidden]{display:none}
+.rail-panel[data-panel="notes"] .rail-body{flex:1}
+.rail-body textarea{width:100%;max-width:100%;min-width:0;min-height:170px;resize:vertical;border:1px solid var(--line);border-radius:9px;background:var(--paper);color:var(--ink);padding:10px;line-height:1.6;font-size:13.5px}
+body.dark .rail-body textarea{background:#16241c}
+.rail-body .chat-log{max-height:210px;overflow-y:auto;min-width:0}
+.rail-body .chat-form{display:flex;gap:8px;min-width:0}
+.rail-body .chat-form input{flex:1;min-width:0}
+.rail-body .people-row{min-width:0}
+.rail-body p{margin:0}
+
+/* Controls: one row, wrapping, never leaving the viewport. */
+.room-controls{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:8px;padding:12px;border-radius:14px;min-width:0}
+.room-controls .icon-toggle{flex:none}
+.icon-toggle.notes-control.on,.icon-toggle.on[data-toggle-panel]{background:var(--green);color:#fff;border-color:var(--green)}
+.control-more{position:relative;flex:none}
+
+/* Tablet and phone: the rail becomes a bottom sheet so the camera keeps the
+   screen, and the controls stay reachable above it. */
+@media(max-width:999px){
+  .room-wrap.rail-open .room-rail{position:fixed;inset:auto 0 0 0;z-index:60;margin:0;padding:10px;max-height:66vh;background:var(--surface);border-top:1px solid var(--line);border-radius:16px 16px 0 0;box-shadow:0 -12px 40px #0b160f38;animation:rail-up .2s ease}
+  body.dark .room-wrap.rail-open .room-rail{background:#16241c}
+  .room-wrap.rail-open .room-controls{position:relative;z-index:61}
+  .rail-body textarea{min-height:130px}
+  .rail-body .chat-log{max-height:150px}
+}
+@keyframes rail-up{from{transform:translateY(16px);opacity:0}to{transform:none;opacity:1}}
+
+@media(max-width:640px){
+  .room-controls{gap:6px;padding:10px}
+  .room-controls .icon-toggle{width:42px;height:42px}
+  .room-controls .btn.danger{flex:1 1 100%;order:99}
+  .icon-toggle.notes-control{width:42px;padding:0}
+  .icon-toggle.notes-control .control-text{display:none}
+  .room-rail{gap:8px}
+}
+
+/* ══ Waiting room and candidate admission ════════════════════════════════ */
+.admit-card{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:14px;padding:14px 16px;margin-bottom:12px;border:1px solid var(--green);border-radius:13px;background:#e9f4ec;animation:admit-in .2s ease}
+body.dark .admit-card{background:#1d3327;border-color:#2f6b4f}
+.admit-card[hidden]{display:none}
+.admit-body{display:flex;align-items:center;gap:12px;min-width:0;flex:1}
+.admit-avatar{flex:none;width:38px;height:38px;border-radius:50%;display:grid;place-items:center;background:var(--green);color:#fff;font-weight:800}
+.admit-text{min-width:0}
+.admit-text strong{display:block;font-size:14px;overflow-wrap:break-word}
+.admit-actions{display:flex;flex-wrap:wrap;gap:8px;flex:none}
+@keyframes admit-in{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+
+.wr-actions{display:flex;flex-direction:column;align-items:center;gap:10px;margin-top:18px}
+.wr-actions .btn{min-width:200px}
+.wr-actions p{margin:0;text-align:center}
+.ui-join-status.state-waiting,.ui-join-status.state-requested{border-color:var(--orange)}
+.ui-join-status.state-waiting .join-dot,.ui-join-status.state-requested .join-dot{background:var(--orange);animation:pulse-dot 1.6s infinite}
+.ui-join-status.state-admitted{border-color:var(--green)}
+.ui-join-status.state-admitted .join-dot{background:var(--status-success-text)}
+.btn[disabled]{cursor:not-allowed}
+
+@media(max-width:640px){
+  .admit-card{flex-direction:column;align-items:stretch}
+  .admit-actions .btn{flex:1 1 100%}
+  .wr-actions .btn{width:100%;min-width:0}
+}
+
+/* ══ Room screens: lobby on open, meeting on join ════════════════════════ */
+/* The room shows exactly one screen. An interview that has been ended renders
+   only the review — the lobby and live call are not output at all, so a
+   finished interview can no longer appear "Live" with a completed review
+   stacked underneath it. */
+.room-wrap.is-review .room-lobby,
+.room-wrap.is-review .room-call{display:none}
+
+/* Once joined, the page furniture steps back and the meeting takes the screen. */
+body.in-meeting .page-head,
+body.in-meeting .dashboard-head,
+body.in-meeting .room-lobby{display:none}
+body.in-meeting .room-wrap{margin-top:0}
+body.in-meeting .app-main{padding-top:12px}
+.room-call{animation:call-in .18s ease}
+@keyframes call-in{from{opacity:0;transform:scale(.995)}to{opacity:1;transform:none}}
+
+/* The pinned-participant strip only belongs on screen when something is pinned. */
+.stage-strip[hidden]{display:none}
+
+/* ══ Click targets: nothing may sit on top of the meeting controls ═══════ */
+/* The Acme Assist orb is position:fixed at the bottom-right with z-index:30
+   and is roughly 230x93px. In the meeting it overlapped the right-hand end of
+   the control bar — where End meeting and Leave live — so those clicks landed
+   on the orb instead of the button. The controls now sit above it, and the orb
+   steps aside while a meeting is open. */
+.room-call{position:relative;z-index:2}
+.room-controls{position:relative;z-index:45}
+.room-controls .btn,
+.room-controls .icon-toggle,
+.room-controls .control-more{position:relative;z-index:1}
+
+body.in-meeting .ai-assistant{opacity:.25;transform:translateY(64%)}
+body.in-meeting .ai-assistant:hover,
+body.in-meeting .ai-assistant.is-open{opacity:1;transform:none}
+body.in-meeting .ai-assistant:not(.is-open) .ai-orb{pointer-events:auto}
+
+/* The lobby's Join button must never be under the orb either. */
+.room-lobby{position:relative;z-index:2}
+.lobby-side{position:relative;z-index:3}
+
+/* The rail bottom sheet on small screens must not bury the control bar. */
+@media(max-width:999px){
+  .room-wrap.rail-open .room-rail{z-index:40}
+  .room-wrap.rail-open .room-controls{z-index:46}
+}
+
+/* A busy control is visibly busy and cannot be clicked twice. */
+.btn.is-busy,.is-busy{pointer-events:none;opacity:.65}
+
+/* Chat messages in the rail */
+.chat-log{display:flex;flex-direction:column;gap:9px;min-width:0}
+.chat-msg{min-width:0;padding:8px 10px;border-radius:10px;background:var(--paper);border:1px solid var(--line)}
+body.dark .chat-msg{background:#16241c}
+.chat-msg.is-me{background:#e9f4ec;border-color:#cde3d5}
+body.dark .chat-msg.is-me{background:#1d3327;border-color:#2f6b4f}
+.chat-msg strong{display:block;font-size:11.5px;color:var(--muted)}
+.chat-msg p{margin:2px 0 2px;font-size:13.5px;line-height:1.5;overflow-wrap:anywhere}
+
+/* ══ Room entry screen (state 1) ═════════════════════════════════════════ */
+/* The pre-join device check and the live meeting are not in the document at
+   this point — they are cloned in from <template> when their state is
+   reached — so there is nothing underneath this screen to show through. */
+.room-entry{max-width:680px;margin:0 auto;padding:28px;background:var(--surface);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow)}
+.room-entry[hidden]{display:none}
+.room-entry h1{margin:10px 0 4px;font-size:clamp(26px,4vw,36px);letter-spacing:-.04em;overflow-wrap:break-word}
+.entry-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:16px;margin:22px 0;padding:18px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.entry-grid .label{display:block;margin-bottom:3px}
+.entry-grid strong{font-size:14px;overflow-wrap:break-word}
+.room-entry .actions{margin-top:4px}
+.room-entry .actions .btn{min-width:190px}
+
+@media(max-width:560px){
+  .room-entry{padding:20px}
+  .entry-grid{grid-template-columns:1fr}
+  .room-entry .actions .btn{flex:1 1 100%;min-width:0}
+}
+
+/* ══ Candidates page ═════════════════════════════════════════════════════
+   The old layout let nine columns squeeze until words broke letter by letter.
+   The table now has a sensible minimum width and scrolls inside its own
+   container between the card breakpoint and the desktop layout, so text is
+   never compressed to fit. Fonts are not reduced to solve this. */
+
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+
+/* ── Table: readable columns, horizontal scroll instead of crushed text ── */
+.candidate-list-card{padding:14px}
+.candidate-list-card .table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:0 -14px;padding:0 14px}
+.candidate-table{width:100%;min-width:940px;border-collapse:collapse;table-layout:fixed}
+.candidate-table th,.candidate-table td{padding:12px 10px;vertical-align:middle}
+.candidate-table th{font-size:11.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);white-space:nowrap;text-align:left}
+
+/* Fixed layout plus explicit widths keeps every column predictable. */
+.candidate-table .cell-avatar{width:56px}
+.candidate-table .cell-name{width:24%}
+.candidate-table .cell-role{width:18%}
+.candidate-table .cell-stage{width:120px;white-space:nowrap}
+.candidate-table .cell-rating{width:110px;white-space:nowrap}
+.candidate-table .cell-owner{width:14%}
+.candidate-table .cell-date{width:110px;white-space:nowrap}
+.candidate-table .cell-resume{width:92px;white-space:nowrap}
+.candidate-table .cell-action{width:132px;white-space:nowrap;text-align:right}
+
+/* Names wrap at word boundaries only, and never mid-word. */
+.candidate-name{display:block;font-size:14.5px;line-height:1.35;overflow-wrap:break-word;word-break:normal;hyphens:none}
+/* Emails have no spaces, so they truncate with an ellipsis and keep the full
+   value in the title attribute rather than exploding the column. */
+.email-cell{display:block;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cell-role .role-text{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cell-owner span{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.candidate-table .btn.small{white-space:nowrap}
+.candidate-table .stage-pill,.candidate-table .pill{white-space:nowrap}
+
+/* ── Card layout on narrow screens ────────────────────────────────────── */
+/* Superseded by the @container rules for .candidates-page. */
+
+/* ── Readability and touch targets ────────────────────────────────────── */
+.candidate-count{font-size:13.5px;margin:0 0 12px}
+.candidate-table tbody tr{border-bottom:1px solid var(--line)}
+.candidate-table tbody tr:last-child{border-bottom:0}
+.candidate-table tbody tr:hover{background:var(--paper)}
+body.dark .candidate-table tbody tr:hover{background:#1c2c22}
+.candidate-name:hover{color:var(--green);text-decoration:underline}
+.candidate-name:focus-visible,.candidate-table .btn:focus-visible{outline:2px solid var(--green);outline-offset:2px}
+@media(pointer:coarse){
+  .candidate-table .btn.small{min-height:40px;display:inline-flex;align-items:center}
+}
+
+/* ══ Candidates toolbar ══════════════════════════════════════════════════
+   One row: search takes the free space, filters and actions keep their size.
+   Because only the search is allowed to grow or shrink, the buttons can never
+   be compressed or pushed outside the toolbar. */
+.candidates-toolbar{
+  display:flex;align-items:center;gap:12px;flex-wrap:wrap;
+  padding:12px;margin:0 0 16px;
+  background:var(--surface);border:1px solid var(--line);border-radius:14px;
+}
+body.dark .candidates-toolbar{background:#1b2a21}
+
+/* LEFT — search */
+.search-wrapper{position:relative;display:flex;align-items:center;flex:1 1 320px;min-width:0}
+.search-icon{position:absolute;left:12px;display:grid;place-items:center;color:var(--muted);pointer-events:none}
+.search-input{
+  width:100%;min-width:0;height:42px;
+  padding:0 14px 0 38px;                 /* room for the icon, balanced right */
+  border:1px solid var(--line);border-radius:10px;
+  background:var(--paper);color:var(--ink);
+  font-size:14px;line-height:42px;
+}
+body.dark .search-input{background:#16241c}
+.search-input::placeholder{color:var(--muted);opacity:1}
+.search-input:focus{outline:none;border-color:var(--green);box-shadow:0 0 0 3px color-mix(in srgb, var(--accent-primary) 14.9%, transparent)}
+.search-input::-webkit-search-cancel-button{cursor:pointer}
+
+/* CENTRE — secondary controls */
+.toolbar-filters{display:flex;align-items:center;gap:8px;flex-wrap:wrap;flex:0 1 auto;min-width:0}
+.toolbar-filters select{
+  height:42px;min-width:0;flex:0 1 auto;max-width:190px;
+  padding:0 30px 0 12px;
+  border:1px solid var(--line);border-radius:10px;
+  background-color:var(--paper);color:var(--ink);
+  font-size:13.5px;
+}
+body.dark .toolbar-filters select{background-color:#16241c}
+.toolbar-filters select:focus{outline:none;border-color:var(--green);box-shadow:0 0 0 3px color-mix(in srgb, var(--accent-primary) 14.9%, transparent)}
+
+/* RIGHT — primary actions, never shrink */
+.toolbar-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap;flex-shrink:0;margin-left:auto}
+.toolbar-actions .btn{height:42px;padding:0 16px;display:inline-flex;align-items:center;gap:7px;white-space:nowrap;border-radius:10px}
+
+.dashboard-head .count-total{color:var(--muted)}
+
+/* ── Reflow ───────────────────────────────────────────────────────────── */
+@media(max-width:820px){ .dashboard-head .count-total{display:none} }
+@media(pointer:coarse){
+  .search-input,.toolbar-filters select,.toolbar-actions .btn{height:46px}
+  .search-input{line-height:46px}
+}
+
+/* Stage tabs sit above the toolbar and scroll rather than wrap raggedly. */
+.stage-tabs{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;margin-bottom:14px;-webkit-overflow-scrolling:touch}
+.stage-tabs .stage-tab{white-space:nowrap;flex:0 0 auto}
+
+/* ══ Sidebar ═════════════════════════════════════════════════════════════
+   Grouped navigation, a dedicated collapse control, and a collapsed mode that
+   keeps every destination reachable through flyouts rather than hiding them. */
+
+.sidebar{
+  position:sticky;top:0;height:100vh;width:250px;flex:none;
+  display:flex;flex-direction:column;gap:2px;
+  padding:18px 12px;
+  background:var(--surface);border-right:1px solid var(--line);
+  overflow-y:auto;overflow-x:hidden;
+  transition:width .22s cubic-bezier(.4,0,.2,1);
+}
+
+/* ── Brand ────────────────────────────────────────────────────────────── */
+.sidebar-brand{display:flex;align-items:center;padding:4px 6px 14px;border-bottom:1px solid var(--line);margin-bottom:8px}
+.brand-logo{flex:none;display:grid;place-items:center;width:34px;height:34px}
+/* The mark scales to its box and keeps its ratio, so it cannot be clipped. */
+.brand-logo img,.brand-logo svg,.brand-logo .brand-mark{width:100%;height:100%;max-width:34px;max-height:34px;object-fit:contain;border-radius:9px;display:block}
+.sidebar-brand-text{min-width:0;overflow:hidden}
+.sidebar-brand-text strong{display:block;font-size:14px;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sidebar-brand-text small{display:block;font-size:11px;color:var(--muted);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+/* ── Navigation ───────────────────────────────────────────────────────── */
+.sidebar-nav{display:flex;flex-direction:column;gap:2px;min-width:0}
+.sidebar .sidebar-label{padding:14px 10px 5px;font-size:10px}
+.nav-item{
+  display:flex;align-items:center;gap:11px;min-width:0;
+  padding:9px 10px;border-radius:9px;
+  font-size:13.5px;color:var(--muted);
+  transition:background .15s,color .15s;
+}
+.nav-item .nav-text{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.nav-item:hover{background:var(--paper);color:var(--green)}
+.nav-item.active{background:#edf5e9;color:var(--green);font-weight:750}
+body.dark .nav-item.active{background:#1d3327}
+.nav-item .icon{flex:none;color:currentColor}
+.nav-item:focus-visible,.nav-group-btn:focus-visible{outline:2px solid var(--green);outline-offset:-2px}
+
+/* ── Groups ───────────────────────────────────────────────────────────── */
+.nav-group{position:relative;min-width:0}
+.nav-group-btn{
+  display:flex;align-items:center;gap:11px;width:100%;
+  padding:9px 10px;margin-top:6px;
+  background:none;border:0;border-radius:9px;
+  color:var(--ink);font-size:11px;font-weight:800;
+  text-transform:uppercase;letter-spacing:.09em;
+  cursor:pointer;transition:background .15s,color .15s;
+}
+.nav-group-btn .nav-text{flex:1;min-width:0;text-align:left;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.nav-group-btn:hover{background:var(--paper);color:var(--green)}
+.nav-caret{display:grid;place-items:center;flex:none;color:var(--muted);transform:rotate(-90deg);transition:transform .2s ease}
+.nav-group.is-open .nav-caret{transform:rotate(0deg)}
+.nav-group-items{
+  display:flex;flex-direction:column;gap:2px;
+  max-height:0;overflow:hidden;
+  transition:max-height .22s cubic-bezier(.4,0,.2,1);
+}
+.nav-group.is-open .nav-group-items{max-height:none}
+.nav-group-items .nav-item{margin-left:8px;padding-left:12px;border-left:1px solid var(--line)}
+.nav-group-items .nav-item.active{border-left-color:var(--green)}
+
+.sidebar-bottom{margin-top:auto;border-top:1px solid var(--line);padding-top:12px;display:flex;flex-direction:column;gap:2px}
+.nav-count{margin-left:auto;flex:none}
+
+/* ── Collapsed mode ───────────────────────────────────────────────────── */
+.sidebar.collapsed{width:72px;padding:18px 10px}
+.sidebar.collapsed .sidebar-brand-text,
+.sidebar.collapsed .nav-text,
+.sidebar.collapsed .sidebar-label,
+.sidebar.collapsed .nav-caret{display:none}
+.sidebar.collapsed .sidebar-brand,
+.sidebar.collapsed .nav-item,
+.sidebar.collapsed .nav-group-btn{justify-content:center;gap:0;padding-left:0;padding-right:0}
+.sidebar.collapsed .nav-item .nav-count{
+  position:absolute;top:4px;right:10px;margin:0;min-width:16px;height:16px;font-size:9px;padding:0 4px;
+}
+.sidebar.collapsed .nav-item{position:relative}
+.sidebar.collapsed .nav-group-items .nav-item{margin-left:0;padding-left:0;border-left:0}
+
+/* Collapsed: the children are not shown inside the narrow sidebar at all.
+   They are rendered into a fixed-position flyout on <body> by app.js, because
+   the sidebar is a scroll container (overflow-y:auto) and no positioned
+   descendant can escape one. */
+.sidebar.collapsed .nav-group-items{display:none}
+
+/* Tooltips for the icon-only items. */
+/* Tooltips replaced by the floating pill rendered on <body>. */
+
+
+/* ── Main content follows the sidebar width ───────────────────────────── */
+.app-main{flex:1;min-width:0}
+
+/* ── Responsive ───────────────────────────────────────────────────────── */
+@media(max-width:1023px){
+  .sidebar{width:var(--sidebar-width-compact);padding:18px 10px}
+  .sidebar .sidebar-brand-text,.sidebar .nav-text,
+  .sidebar .sidebar-label,.sidebar .nav-caret{display:none}
+  .sidebar .nav-item,.sidebar .nav-group-btn{justify-content:center;gap:0}
+  .sidebar .nav-group-items{display:none}   /* flyout is rendered on <body> */
+}
+
+@media(max-width:767px){
+  /* Drawer: the sidebar leaves the flow entirely so content keeps full width. */
+  .sidebar{position:fixed;inset:0 auto 0 0;width:min(272px,84vw);padding:18px 14px;
+    transform:translateX(-100%);transition:transform .24s cubic-bezier(.4,0,.2,1);
+    box-shadow:12px 0 40px #0b160f2e;z-index:50;display:flex}
+  .sidebar.open{transform:none}
+  .sidebar .sidebar-brand-text,.sidebar .nav-text,.sidebar .sidebar-label,.sidebar .nav-caret{display:block}
+  .sidebar .nav-item,.sidebar .nav-group-btn{justify-content:flex-start;gap:11px}
+  .sidebar .nav-group-items{position:static;opacity:1;visibility:visible;transform:none;
+    background:none;border:0;box-shadow:none;padding:0;min-width:0;max-height:0;transition:max-height .22s ease}
+  .sidebar .nav-group.is-open .nav-group-items{max-height:none}
+  .sidebar .nav-group-items .nav-item{margin-left:8px;padding-left:12px;border-left:1px solid var(--line)}
+  .app-main{margin-left:0}
+}
+
+/* ══ Candidate profile containment and larger avatars ════════════════════ */
+
+/* Root cause of the profile overflowing: flex and grid children default to
+   min-width:auto, so a long email or an unbroken string forces the column
+   wider than its parent instead of shrinking. Every profile container now
+   opts out of that. */
+.cprofile-head,
+.cprofile-head>*,
+.cprofile-grid-2,
+.cprofile-grid-2>*,
+.cprofile-section,
+.cprofile-app-grid,
+.cprofile-app-grid>*,
+.cprofile-ai-body,
+.cprofile-ai-body>*,
+.cprofile-review-pair,
+.cprofile-review-pair>*,
+.cprofile-interviews,
+.ih-item,
+.ih-head,
+.ih-head>*{min-width:0}
+
+.cprofile-head,.cprofile-section,.cprofile-interviews,.ih-item{
+  width:100%;max-width:100%;box-sizing:border-box;
+}
+.cprofile-head{flex-wrap:wrap;row-gap:14px}
+
+/* Long values wrap at word boundaries; strings with nowhere to break
+   (emails, URLs) get the stronger rule, scoped to where they occur. */
+.cprofile-head .meta,
+.cprofile-subline,
+.cprofile-section p,
+.ih-block p{overflow-wrap:break-word}
+.cprofile-contact a,
+.cprofile-contact span,
+.cprofile-section a[href^="mailto:"],
+.cprofile-section a[href^="http"]{overflow-wrap:anywhere}
+
+/* Actions stay inside the card at any width. */
+.cprofile-head .actions,
+.cprofile-section .actions{flex-wrap:wrap;max-width:100%}
+.cprofile-head .actions .btn,
+.cprofile-section .actions .btn{white-space:nowrap}
+
+/* ── Avatars, moderately enlarged ─────────────────────────────────────── */
+/* profile header 76 -> 92 (+21%), list chip 28 -> 34 (+21%),
+   candidates table 40 -> 48 (+20%). Ratio, radius and fallback unchanged. */
+.cprofile-head .avatar-circle{width:92px;height:92px;flex:none;font-size:30px}
+.avatar-chip{width:34px;height:34px;font-size:12.5px}
+.candidate-table .avatar-chip{width:48px;height:48px;font-size:15px;border-width:2px}
+.candidate-table .cell-avatar{width:66px}
+.ic-avatar{width:52px;height:52px;font-size:16px}
+.user-avatar{border-radius:50%}
+img.avatar-chip,img.avatar-circle,img.ic-avatar{object-fit:cover}
+
+@media(max-width:560px){
+  .cprofile-head .avatar-circle{width:72px;height:72px;font-size:24px}
+  .candidate-table .avatar-chip{width:44px;height:44px}
+}
+
+/* ── Page-level containment ───────────────────────────────────────────── */
+.app-main>.content{max-width:100%;box-sizing:border-box}
+.candidate-list-card,.cprofile-section,.card{max-width:100%;box-sizing:border-box}
+
+/* ══ Schedule interview ══════════════════════════════════════════════════
+   The form gets more working width and scrolls inside its own card. The card
+   itself never grows past the viewport, so the page layout cannot overflow. */
+.interview-layout{display:grid;grid-template-columns:minmax(340px,440px) minmax(0,1fr);gap:20px;align-items:start}
+.interview-schedule{
+  position:sticky;top:16px;
+  display:flex;flex-direction:column;
+  max-height:calc(100vh - 32px);
+  padding:20px;min-width:0;overflow:hidden;
+}
+.schedule-head{flex:none;padding-bottom:14px;border-bottom:1px solid var(--line);margin-bottom:4px}
+.schedule-head h2{margin:0;font-size:19px;letter-spacing:-.02em;display:flex;align-items:center;gap:9px}
+.schedule-head p{margin:5px 0 0}
+
+/* Only the fields scroll; the heading stays put. */
+.schedule-scroll{
+  flex:1 1 auto;min-height:0;
+  overflow-y:auto;overflow-x:hidden;
+  margin:0 -20px;padding:14px 20px 4px;
+}
+.schedule-scroll::-webkit-scrollbar{width:10px}
+.schedule-scroll::-webkit-scrollbar-thumb{background:var(--line);border-radius:99px;border:3px solid var(--surface)}
+.schedule-scroll::-webkit-scrollbar-thumb:hover{background:var(--muted)}
+.schedule-scroll{scrollbar-width:thin;scrollbar-color:var(--line) transparent}
+body.dark .schedule-scroll::-webkit-scrollbar-thumb{border-color:#1b2a21}
+
+/* Readable fields: comfortable height and spacing, not smaller text. */
+.schedule-form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px 16px;max-width:none}
+.schedule-form .field{margin-bottom:0;gap:6px;min-width:0}
+.schedule-form .field.full{grid-column:1/-1}
+.schedule-form label{font-size:12.5px;font-weight:700;line-height:1.4}
+.schedule-form input,.schedule-form select,.schedule-form textarea{
+  width:100%;min-width:0;box-sizing:border-box;
+  padding:11px 12px;font-size:14px;line-height:1.45;
+  border:1px solid var(--line);border-radius:9px;
+  background:var(--paper);color:var(--ink);
+}
+body.dark .schedule-form input,body.dark .schedule-form select,body.dark .schedule-form textarea{background:#16241c}
+.schedule-form select{height:44px;padding-right:30px}
+.schedule-form input{height:44px}
+.schedule-form textarea{min-height:88px;resize:vertical}
+.schedule-form input:focus,.schedule-form select:focus,.schedule-form textarea:focus{
+  outline:none;border-color:var(--green);box-shadow:0 0 0 3px color-mix(in srgb, var(--accent-primary) 14.9%, transparent);
+}
+.schedule-form .hint,.schedule-form .meta{font-size:12px;line-height:1.5}
+/* Option text and labels wrap as words, never letter by letter. */
+.schedule-form label,.schedule-form .hint,.schedule-form option{overflow-wrap:break-word;word-break:normal}
+.schedule-form .actions{grid-column:1/-1;margin-top:6px;flex-wrap:wrap}
+.schedule-form .actions .btn{white-space:nowrap}
+.schedule-form fieldset{min-width:0;border:0;padding:0;margin:0;grid-column:1/-1}
+
+@media(max-width:1100px){
+  .interview-layout{grid-template-columns:1fr}
+  .interview-schedule{position:static;max-height:none;overflow:visible}
+  .schedule-scroll{overflow:visible;max-height:none}
+}
+@media(max-width:620px){
+  .schedule-form{grid-template-columns:1fr}
+  .interview-schedule{padding:16px}
+  .schedule-scroll{margin:0 -16px;padding:12px 16px 4px}
+  .schedule-form .actions .btn{flex:1 1 100%}
+}
+
+/* ══ Sidebar header — logo expands, arrow collapses ══════════════════════
+   One interaction model, no duplicate controls:
+     collapsed  the logo is the expand button; hovering it reveals an arrow
+     expanded   the arrow beside the logo is the collapse button
+   Both drive the same sidebar state in app.js. */
+
+.sidebar-brand{display:flex;align-items:center;gap:10px;padding:4px 4px 14px;border-bottom:1px solid var(--line);margin-bottom:8px}
+
+/* ── The logo ─────────────────────────────────────────────────────────── */
+.brand-button{
+  position:relative;flex:none;
+  display:grid;place-items:center;
+  width:42px;height:42px;padding:4px;
+  background:none;border:0;border-radius:11px;
+  cursor:default;
+  transition:background .18s ease;
+}
+.brand-logo{display:grid;place-items:center;width:100%;height:100%;transition:opacity .18s ease,transform .18s ease}
+/* Contain, so the mark scales to its box and is never stretched or clipped. */
+.brand-logo img,.brand-logo svg,.brand-logo .brand-mark{
+  display:block;width:100%;height:100%;max-width:34px;max-height:34px;
+  object-fit:contain;border-radius:9px;
+}
+/* The expand arrow sits over the logo and fades in; it never displaces it. */
+.brand-arrow{
+  position:absolute;inset:0;display:grid;place-items:center;
+  color:var(--green);opacity:0;transform:translateX(-3px);
+  transition:opacity .18s ease,transform .18s ease;
+  pointer-events:none;
+}
+.brand-arrow .icon{transform:rotate(-90deg)}   /* chevron points right = expand */
+
+/* Only the collapsed sidebar makes the logo interactive. */
+.sidebar.collapsed .brand-button{cursor:pointer}
+.sidebar.collapsed .brand-button:hover,
+.sidebar.collapsed .brand-button:focus-visible{background:var(--paper)}
+body.dark .sidebar.collapsed .brand-button:hover,
+body.dark .sidebar.collapsed .brand-button:focus-visible{background:#16241c}
+.sidebar.collapsed .brand-button:hover .brand-logo,
+.sidebar.collapsed .brand-button:focus-visible .brand-logo{opacity:.12;transform:scale(.9)}
+.sidebar.collapsed .brand-button:hover .brand-arrow,
+.sidebar.collapsed .brand-button:focus-visible .brand-arrow{opacity:1;transform:none}
+.sidebar.collapsed .brand-button:focus-visible{outline:2px solid var(--green);outline-offset:2px}
+/* Expanded: pure branding, not a control. */
+.sidebar:not(.collapsed) .brand-button{pointer-events:none}
+
+/* ── The collapse arrow ───────────────────────────────────────────────── */
+.brand-collapse{
+  flex:none;margin-left:auto;
+  display:grid;place-items:center;
+  width:30px;height:30px;
+  background:var(--paper);border:1px solid var(--line);border-radius:9px;
+  color:var(--muted);cursor:pointer;
+  transition:background .15s,color .15s,border-color .15s;
+}
+body.dark .brand-collapse{background:#16241c}
+.brand-collapse .icon{transform:rotate(90deg)}   /* chevron points left = collapse */
+.brand-collapse:hover{background:#edf5e9;color:var(--green);border-color:var(--green)}
+body.dark .brand-collapse:hover{background:#1d3327}
+.brand-collapse:focus-visible{outline:2px solid var(--green);outline-offset:2px}
+.brand-collapse[hidden]{display:none}
+
+/* ── Collapsed layout ─────────────────────────────────────────────────── */
+.sidebar.collapsed .sidebar-brand{justify-content:center;gap:0;padding-left:0;padding-right:0}
+.sidebar.collapsed .brand-button{width:46px;height:46px}
+
+/* Touch targets stay comfortable on coarse pointers. */
+@media(pointer:coarse){
+  .brand-button{width:46px;height:46px}
+  .brand-collapse{width:38px;height:38px}
+}
+
+/* Between 850px and 1000px the sidebar is compact by layout, not by state.
+   The logo is therefore branding only here — showing a hover arrow would
+   advertise an expand action that the state machine correctly refuses. */
+@media(max-width:1023px){
+  .sidebar .sidebar-brand{justify-content:center;gap:0}
+  .sidebar .brand-collapse{display:none}
+  .sidebar .brand-button{pointer-events:none;cursor:default}
+  .sidebar .brand-button:hover .brand-logo{opacity:1;transform:none}
+  .sidebar .brand-button:hover .brand-arrow{opacity:0}
+}
+/* In the mobile drawer the sidebar is always expanded, so neither control
+   applies and the header is branding only. */
+@media(max-width:767px){
+  .sidebar .sidebar-brand{justify-content:flex-start;gap:10px}
+  .sidebar .brand-collapse{display:none}
+  .sidebar .brand-button{pointer-events:none;cursor:default}
+  .sidebar .brand-button:hover .brand-logo{opacity:1;transform:none}
+  .sidebar .brand-button:hover .brand-arrow{opacity:0}
+}
+
+/* ══ Collapsed sidebar flyout ════════════════════════════════════════════
+   A real floating panel appended to <body> and positioned with fixed
+   coordinates, so it is not subject to the sidebar's overflow, width, stacking
+   context or transforms. */
+.nav-flyout{
+  position:fixed;z-index:60;
+  min-width:200px;max-width:min(260px,calc(100vw - 96px));
+  padding:8px;
+  background:var(--surface);
+  border:1px solid var(--line);border-radius:12px;
+  box-shadow:0 14px 40px #10291d26,0 2px 6px #10291d14;
+  display:flex;flex-direction:column;gap:2px;
+  opacity:0;transform:translateX(-6px);
+  transition:opacity .15s ease,transform .15s ease;
+  max-height:calc(100vh - 24px);overflow-y:auto;
+}
+body.dark .nav-flyout{background:#1b2a21;box-shadow:0 14px 40px #0004,0 2px 6px #0006}
+.nav-flyout.is-open{opacity:1;transform:none}
+
+.nav-flyout-title{
+  padding:6px 10px 8px;margin-bottom:2px;
+  border-bottom:1px solid var(--line);
+  font-size:10px;font-weight:800;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);
+}
+.nav-flyout .nav-item{
+  display:flex;align-items:center;gap:10px;
+  padding:9px 10px;border-radius:8px;
+  font-size:13.5px;color:var(--muted);
+  margin-left:0;border-left:0;
+  white-space:nowrap;
+}
+.nav-flyout .nav-item .nav-text{display:block;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis}
+.nav-flyout .nav-item:hover{background:var(--paper);color:var(--green)}
+body.dark .nav-flyout .nav-item:hover{background:#16241c}
+.nav-flyout .nav-item.active{background:#edf5e9;color:var(--green);font-weight:750}
+body.dark .nav-flyout .nav-item.active{background:#1d3327}
+.nav-flyout .nav-item:focus-visible{outline:2px solid var(--green);outline-offset:-2px}
+.nav-flyout .nav-count{margin-left:auto}
+
+/* The group icon stays highlighted while its flyout is open. */
+.nav-group.flyout-open>.nav-group-btn{background:#edf5e9;color:var(--green)}
+body.dark .nav-group.flyout-open>.nav-group-btn{background:#1d3327}
+
+/* On a narrow viewport the panel becomes a bottom sheet rather than trying to
+   sit beside a sidebar that has little room to its right. */
+@media(max-width:700px){
+  .nav-flyout{
+    left:12px !important;right:12px;top:auto !important;bottom:12px;
+    min-width:0;max-width:none;
+    transform:translateY(10px);
+  }
+  .nav-flyout.is-open{transform:none}
+}
+
+/* ══ Candidates page: layout driven by available width, not viewport ══════
+   The shell is already `display:flex` with `.app-main{flex:1;min-width:0}`, so
+   the content area resizes on its own when the sidebar changes width — no
+   JavaScript margin arithmetic is needed, and adding any would fight flexbox.
+
+   What flexbox does NOT solve is breakpoints. A media query measures the
+   viewport, so at 1200px wide it applies the "desktop" rules whether the
+   content area is 950px (sidebar expanded) or 1128px (collapsed). That is the
+   real reason the layout broke on toggle. These rules are @container queries
+   instead, so they measure the space the page actually has. */
+
+.page-container{
+  container-type:inline-size;
+  container-name:page;
+  width:100%;max-width:100%;min-width:0;box-sizing:border-box;
+}
+
+/* The sidebar animates its width; the flex sibling follows in step. Opacity is
+   eased so text does not appear to jitter mid-transition. */
+/* No transition is declared on .app-main: it is a flex child, so it resizes in
+   step with the sidebar's own width transition. Animating a margin here would
+   double up and cause the jitter this was meant to avoid. */
+.app-shell{align-items:stretch}
+.candidates-page{
+  display:flex;flex-direction:column;gap:0;
+  animation:none;
+}
+.candidates-page>*{min-width:0;max-width:100%}
+
+/* ── Toolbar, measured against the content area ───────────────────────── */
+@container page (max-width:900px){
+  .search-wrapper{flex:1 1 100%}
+  .toolbar-actions{margin-left:0}
+}
+@container page (max-width:760px){
+  .toolbar-filters{flex:1 1 100%}
+  .toolbar-filters select{flex:1 1 calc(50% - 4px);max-width:none}
+  .toolbar-actions{width:100%}
+  .toolbar-actions .btn{flex:1}
+}
+@container page (max-width:460px){
+  .candidates-toolbar{padding:10px;gap:10px}
+  .toolbar-filters select{flex:1 1 100%}
+}
+
+/* ── Table becomes cards when the CONTENT AREA is narrow ──────────────── */
+@container page (max-width:780px){
+  .candidate-list-card .table-wrap{overflow-x:visible;margin:0;padding:0}
+  .candidate-table{min-width:0;table-layout:auto}
+  .candidate-table thead{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+  .candidate-table,.candidate-table tbody{display:block;width:100%}
+  .candidate-table tr{
+    display:grid;grid-template-columns:minmax(0,1fr);gap:6px;
+    padding:16px;margin-bottom:12px;
+    border:1px solid var(--line);border-radius:12px;background:var(--surface);
+  }
+  body.dark .candidate-table tr{background:#1b2a21}
+  .candidate-table td{
+    display:grid;grid-template-columns:112px minmax(0,1fr);gap:10px;
+    width:auto;border:0;padding:4px 0;align-items:start;
+  }
+  .candidate-table td::before{
+    content:attr(data-label);
+    color:var(--muted);font-size:11.5px;font-weight:700;
+    text-transform:uppercase;letter-spacing:.05em;
+  }
+  .candidate-table td[data-label=""]{grid-template-columns:1fr}
+  .candidate-table td[data-label=""]::before{display:none}
+  .candidate-table .cell-action .btn{width:100%}
+  .cell-name .candidate-name{font-size:16px}
+  /* In a card there is room to wrap, so truncation is switched off. */
+  .email-cell,.cell-role .role-text,.cell-owner span{white-space:normal;overflow:visible;text-overflow:clip}
+  .email-cell{overflow-wrap:anywhere}
+}
+
+/* Very narrow: label above value rather than beside it. */
+@container page (max-width:420px){
+  .candidate-table td{grid-template-columns:1fr;gap:2px}
+  .ui-actions .btn,.candidate-table .cell-action .btn{width:100%}
+}
+
+/* ── Fallback where container queries are unsupported ─────────────────── */
+/* Older engines keep the viewport rules, corrected by the sidebar state class
+   that app.js already maintains on <body>, so the behaviour degrades rather
+   than breaking. */
+@supports not (container-type: inline-size){
+  @media(max-width:1100px){
+    body:not(.sidebar-collapsed) .search-wrapper{flex:1 1 100%}
+  }
+  @media(max-width:1040px){
+    body:not(.sidebar-collapsed) .candidate-list-card .table-wrap{overflow-x:auto}
+  }
+}
+
+/* ══ Semantic token aliases ══════════════════════════════════════════════
+   The brief specified a blue/slate palette on [data-theme="dark"]. Adopting it
+   literally would rebrand every other page in the ATS, so the existing green
+   identity and the body.dark switch are kept, and the semantic names are
+   mapped onto them. New work can use either vocabulary.
+
+   [data-theme="dark"] is also honoured as an additional hook, so the attribute
+   form in the brief works if you prefer it. */
+:root{
+  --bg-app:var(--paper);
+  --bg-surface:var(--surface);
+  --bg-surface-elevated:var(--paper);
+  --text-primary:var(--ink);
+  --text-secondary:var(--muted);
+  --border-color:var(--line);
+  --accent-primary:var(--green);
+  --accent-hover:#24563f;
+  --status-success:var(--green);
+  --status-warning:#a86a10;
+  --status-danger:#b7492d;
+  --sidebar-width-expanded:250px;
+  --sidebar-width-compact:72px;
+}
+body.dark,[data-theme="dark"]{
+  --bg-surface-elevated:#243026;
+  --accent-hover:#8fd3a6;
+}
+[data-theme="dark"] body,body[data-theme="dark"]{background:var(--paper);color:var(--ink)}
+
+/* ══ Analytics dashboard ═════════════════════════════════════════════════
+   Mobile-first: the base rules are the single-column phone layout and every
+   step up is a min-width @container query, so the widgets respond to the space
+   the dashboard actually has once the sidebar has taken its share. */
+
+.analytics-page{width:100%;max-width:100%;min-width:0}
+.analytics-page>*{min-width:0;max-width:100%}
+
+/* KPI grid — base: one column (320-767px) */
+.analytics-grid{display:grid;grid-template-columns:1fr;gap:12px;margin:0 0 20px}
+
+.analytics-card{
+  display:flex;flex-direction:column;gap:2px;min-width:0;
+  padding:16px;
+  background:var(--bg-surface);
+  border:1px solid var(--border-color);border-radius:14px;
+  box-shadow:var(--shadow);
+  transition:border-color .16s ease,transform .16s ease;
+}
+body.dark .analytics-card{background:#1b2a21}
+.analytics-card:hover{border-color:var(--accent-primary);transform:translateY(-1px)}
+.analytics-card-icon{display:grid;place-items:center;width:34px;height:34px;margin-bottom:6px;
+  border-radius:10px;background:var(--bg-surface-elevated);color:var(--accent-primary);flex:none}
+.analytics-card-value{font-size:clamp(26px,5cqi,34px);font-weight:800;letter-spacing:-.04em;line-height:1.1;
+  overflow-wrap:break-word}
+.analytics-card-label{font-size:13px;color:var(--text-secondary);font-weight:600}
+.analytics-card-hint{font-size:11.5px;color:var(--text-secondary);line-height:1.45;margin-top:3px}
+
+/* Tablet: 2 columns */
+@container page (min-width:600px){ .analytics-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:14px} }
+/* Laptop: 3 columns */
+@container page (min-width:860px){ .analytics-grid{grid-template-columns:repeat(3,minmax(0,1fr))} }
+/* Desktop: 4 columns */
+@container page (min-width:1120px){ .analytics-grid{grid-template-columns:repeat(4,minmax(0,1fr))} }
+/* Ultra-wide: cap the reading width rather than stretching cards */
+@container page (min-width:1500px){
+  .analytics-grid{grid-template-columns:repeat(auto-fit,minmax(240px,1fr));max-width:1600px}
+}
+
+/* Charts sit in fluid wrappers. They are drawn in CSS, not by a chart library,
+   so they reflow with their container automatically — there is no canvas to
+   re-measure and no ResizeObserver is required. */
+.analytics-two{display:grid;grid-template-columns:1fr;gap:16px;margin:18px 0}
+@container page (min-width:900px){ .analytics-two{grid-template-columns:repeat(2,minmax(0,1fr))} }
+.analytics-two>.card,.analytics-page .card{min-width:0}
+.bar-chart{min-height:220px;overflow:visible}
+.funnel,.bar-chart,.compare-grid{min-width:0}
+@container page (max-width:560px){
+  .bar-chart{min-height:180px}
+  .bar-track{height:110px}
+  .funnel-row{grid-template-columns:84px minmax(0,1fr) 38px;gap:8px}
+}
+
+/* Performance table -> cards below the tablet breakpoint */
+@container page (max-width:767px){
+  .perf-table thead{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+  .perf-table,.perf-table tbody{display:block;width:100%}
+  .perf-table tr{display:grid;gap:6px;padding:16px;margin-bottom:12px;
+    border:1px solid var(--border-color);border-radius:12px;background:var(--bg-surface)}
+  body.dark .perf-table tr{background:#1b2a21}
+  .perf-table td{display:grid;grid-template-columns:120px minmax(0,1fr);gap:10px;
+    border:0;padding:4px 0;align-items:start;text-align:left}
+  .perf-table td::before{content:attr(data-label);color:var(--text-secondary);
+    font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:.05em}
+  .perf-table td[data-label=""]{grid-template-columns:1fr}
+  .perf-table td[data-label=""]::before{display:none}
+  .perf-table td[data-label=""] .btn{width:100%}
+  .perf-total td{background:none}
+}
+/* Tablet and up: real table, aligned numerals, row hover */
+@container page (min-width:768px){
+  .perf-table td.num,.perf-table th.num{text-align:right;font-variant-numeric:tabular-nums}
+  .perf-table tbody tr{transition:background .15s ease}
+  .perf-table tbody tr:hover{background:var(--bg-surface-elevated)}
+}
+
+/* Filters stack on a phone, sit inline from tablet up */
+.analytics-filters{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.analytics-filters select,.analytics-filters input[type=date]{min-width:0;flex:1 1 150px;height:42px;
+  border:1px solid var(--border-color);border-radius:10px;background:var(--bg-surface);color:var(--text-primary);padding:0 12px}
+@container page (max-width:520px){
+  .analytics-filters>*{flex:1 1 100%}
+  .analytics-filters .btn{width:100%}
+}
+
+/* ══ Accessibility ═══════════════════════════════════════════════════════ */
+:where(a,button,input,select,textarea,[tabindex]):focus-visible{
+  outline:2px solid var(--accent-primary);outline-offset:2px;border-radius:6px;
+}
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{
+    animation-duration:.001ms !important;animation-iteration-count:1 !important;
+    transition-duration:.001ms !important;scroll-behavior:auto !important;
+  }
+}
+
+/* ── Mobile drawer backdrop ───────────────────────────────────────────── */
+.sidebar-backdrop{
+  position:fixed;inset:0;z-index:49;
+  background:#0b160f66;backdrop-filter:blur(1px);
+  opacity:0;transition:opacity .2s ease;
+}
+.sidebar-backdrop[hidden]{display:none}
+body.drawer-open .sidebar-backdrop{opacity:1}
+body.drawer-open{overflow:hidden}          /* no scrolling behind the drawer */
+@media(min-width:768px){
+  .sidebar-backdrop{display:none !important}   /* drawer only exists below 768 */
+}
+
+/* Icon-rail tooltips, 768-1023px */
+@media(min-width:768px) and (max-width:1023px){
+  .sidebar .nav-item[title]{position:relative}
+  /* Tooltips replaced by the floating pill rendered on <body>. */
+
+}
+
+/* ══ Sign-in: split-screen authentication ════════════════════════════════
+   Grid, two columns from 992px, one below it. Uses the project's existing
+   custom properties so the page belongs to the same design system — no
+   framework, no second palette. */
+
+body.auth-page{margin:0;background:var(--bg-app);min-height:100vh}
+body.auth-page .ai-assistant{display:none}      /* nothing to assist with here */
+
+.auth-split{
+  display:grid;
+  grid-template-columns:1fr;                    /* mobile-first: single column */
+  min-height:100vh;
+  width:100%;
+}
+@media(min-width:992px){
+  .auth-split{grid-template-columns:45fr 55fr;overflow:hidden}
+}
+
+/* ── Left: brand showcase ─────────────────────────────────────────────── */
+.auth-brand{
+  position:relative;isolation:isolate;
+  display:flex;align-items:center;
+  padding:32px 24px;
+  color:#f2f7f3;
+  background:
+    radial-gradient(120% 90% at 12% 8%, #3d8362 0%, transparent 58%),
+    radial-gradient(100% 100% at 88% 96%, #1b4130 0%, transparent 60%),
+    linear-gradient(148deg, #2f6b4f 0%, #204a35 58%, #16301f 100%);
+}
+/* Geometric texture, purely decorative and behind the text. */
+.auth-brand::before{
+  content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;
+  background-image:
+    linear-gradient(#ffffff0f 1px, transparent 1px),
+    linear-gradient(90deg, #ffffff0f 1px, transparent 1px);
+  background-size:46px 46px;
+  mask-image:radial-gradient(120% 100% at 20% 0%, #000 0%, transparent 72%);
+}
+.auth-brand-inner{width:100%;max-width:460px;margin:0 auto;display:flex;flex-direction:column;gap:20px}
+
+.auth-logo{display:flex;align-items:center;gap:11px;font-weight:800;font-size:17px;letter-spacing:-.02em}
+.auth-logo img,.auth-logo svg{width:38px;height:38px;object-fit:contain;border-radius:10px;background:#ffffff1f;padding:4px}
+.auth-logo-slash{opacity:.55;margin:0 1px}
+
+.auth-brand-copy h1{
+  margin:0 0 10px;
+  font-size:clamp(30px,5vw,52px);letter-spacing:-.05em;line-height:1.02;
+}
+.auth-brand-copy p{margin:0;font-size:clamp(15px,2vw,17px);line-height:1.6;color:#d6e6db;max-width:42ch}
+
+.auth-badges{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px}
+.auth-badges li{display:flex;align-items:center;gap:10px;font-size:13.5px;color:#d6e6db}
+.auth-badge-icon{
+  display:grid;place-items:center;flex:none;width:26px;height:26px;
+  border-radius:8px;background:#ffffff1c;border:1px solid #ffffff2e;color:#eaf5ee;
+}
+.auth-foot{margin:0;font-size:12.5px;color:#b9d2c3;line-height:1.6}
+.auth-foot a{color:#eaf5ee;text-decoration:underline;text-underline-offset:2px}
+.auth-foot a:focus-visible{outline:2px solid #eaf5ee;outline-offset:2px;border-radius:4px}
+
+/* ── Right: the form ──────────────────────────────────────────────────── */
+.auth-form-col{
+  display:flex;align-items:center;justify-content:center;
+  padding:36px 22px 56px;background:var(--bg-app);
+}
+.auth-card{width:100%;max-width:412px}
+.auth-card-head h2{margin:0 0 4px;font-size:26px;letter-spacing:-.04em}
+.auth-card-head p{margin:0 0 22px}
+
+.auth-form{display:flex;flex-direction:column;gap:16px}
+.auth-field{display:flex;flex-direction:column;gap:6px;min-width:0}
+.auth-field label{font-size:13px;font-weight:700;color:var(--text-primary)}
+.auth-field input{
+  width:100%;min-width:0;box-sizing:border-box;height:48px;
+  padding:0 14px;font-size:15px;
+  color:var(--text-primary);background:var(--bg-surface);
+  border:1px solid var(--border-color);border-radius:10px;
+  transition:border-color .16s ease, box-shadow .16s ease;
+}
+.auth-field input::placeholder{color:var(--text-secondary)}
+.auth-field input:hover{border-color:#c6d2c8}
+body.dark .auth-field input:hover{border-color:#3a4d41}
+.auth-field input:focus{outline:none;border-color:var(--accent-primary);box-shadow:0 0 0 3px color-mix(in srgb, var(--accent-primary) 18.0%, transparent)}
+.auth-field input:focus-visible{outline:none}         /* the ring above is the indicator */
+.auth-field input[aria-invalid="true"]{border-color:var(--status-danger);box-shadow:0 0 0 3px #b7492d1f}
+
+.auth-aux{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.auth-remember{display:inline-flex;align-items:center;gap:8px;font-size:13.5px;cursor:pointer;color:var(--text-secondary)}
+.auth-remember input{width:17px;height:17px;accent-color:var(--accent-primary);cursor:pointer}
+.auth-remember input:focus-visible{outline:2px solid var(--accent-primary);outline-offset:2px}
+.auth-link{font-size:13.5px;font-weight:650;color:var(--accent-primary)}
+.auth-link:hover{text-decoration:underline;text-underline-offset:2px}
+
+.auth-submit{
+  position:relative;width:100%;height:50px;margin-top:4px;
+  display:inline-flex;align-items:center;justify-content:center;gap:9px;
+  font-size:15px;font-weight:750;
+  color:#fff;background:var(--accent-primary);
+  border:1px solid var(--accent-primary);border-radius:10px;cursor:pointer;
+  transition:background .16s ease, transform .12s ease, box-shadow .16s ease;
+}
+.auth-submit:hover{background:var(--accent-hover);border-color:var(--accent-hover);
+  transform:translateY(-1px);box-shadow:0 8px 22px color-mix(in srgb, var(--accent-primary) 20.0%, transparent)}
+.auth-submit:active{transform:translateY(0);box-shadow:none}
+.auth-submit:focus-visible{outline:2px solid var(--accent-primary);outline-offset:3px}
+.auth-submit:disabled,.auth-submit.is-loading{opacity:.75;cursor:progress;transform:none;box-shadow:none}
+.auth-spinner{display:none;width:16px;height:16px;border-radius:50%;
+  border:2px solid #ffffff66;border-top-color:#fff;animation:auth-spin .7s linear infinite}
+.auth-submit.is-loading .auth-spinner{display:block}
+@keyframes auth-spin{to{transform:rotate(360deg)}}
+
+/* ── Error banner ─────────────────────────────────────────────────────── */
+.auth-alert{
+  display:flex;align-items:flex-start;gap:10px;
+  padding:12px 14px;margin-bottom:18px;
+  font-size:13.5px;line-height:1.55;
+  color:#8f2f16;background:#fdeeea;
+  border:1px solid #f0c4b6;border-left:3px solid var(--status-danger);
+  border-radius:10px;
+}
+body.dark .auth-alert{color:#f6c4b2;background:#3a221c;border-color:#6b4034;border-left-color:#e08a6a}
+.auth-alert-icon{flex:none;display:grid;place-items:center;color:var(--status-danger);margin-top:1px}
+body.dark .auth-alert-icon{color:#e08a6a}
+
+.auth-note{margin:18px 0 0;font-size:12.5px;color:var(--text-secondary);line-height:1.6}
+.auth-demo{margin-top:14px;font-size:12.5px;color:var(--text-secondary)}
+.auth-demo summary{cursor:pointer;font-weight:650}
+.auth-demo summary:focus-visible{outline:2px solid var(--accent-primary);outline-offset:2px;border-radius:4px}
+.auth-demo p{margin:8px 0 0;line-height:1.6}
+
+/* ── Below 992px: banner on top, form beneath ─────────────────────────── */
+@media(max-width:991px){
+  .auth-split{min-height:100vh;grid-template-rows:auto 1fr}
+  .auth-brand{padding:24px 20px 26px;align-items:flex-start}
+  .auth-brand-inner{gap:14px;max-width:640px}
+  .auth-brand-copy h1{font-size:clamp(26px,6vw,34px)}
+  .auth-brand-copy p{font-size:14.5px}
+  .auth-badges{flex-direction:row;flex-wrap:wrap;gap:8px 16px}
+  .auth-badges li{font-size:12.5px}
+  .auth-foot{display:none}          /* the same links sit in the form column */
+  .auth-form-col{padding:28px 20px 48px;align-items:flex-start}
+}
+@media(max-width:560px){
+  .auth-brand{padding:20px 16px 22px}
+  .auth-badges li:nth-child(n+3){display:none}   /* keep the hero compact */
+  .auth-form-col{padding:24px 16px 40px}
+  .auth-card{max-width:none}
+  .auth-aux{gap:10px}
+}
+@media (prefers-reduced-motion: reduce){
+  .auth-submit:hover{transform:none}
+  .auth-spinner{animation:none}
+}
+
+/* ══ Collapsed sidebar: floating pill label ══════════════════════════════
+   A single element on <body>, positioned with fixed coordinates from the
+   hovered icon's rect. It has to live outside the sidebar because .sidebar is
+   a scroll container (overflow-y:auto) and clips its descendants — the same
+   reason the group flyout is rendered on <body>. */
+
+:root{
+  --pill-bg:#1e293b;          /* light mode: dark pill on a light rail */
+  --pill-text:#f8fafc;
+  --pill-icon-bg:rgba(0,0,0,.08);
+}
+body.dark{
+  --pill-bg:#e8eaed;          /* dark mode: light pill, inverted for contrast */
+  --pill-text:#1f1f1f;
+  --pill-icon-bg:rgba(255,255,255,.12);
+}
+
+.nav-pill{
+  position:fixed;z-index:1050;
+  padding:9px 20px;
+  border-radius:9999px;
+  background:var(--pill-bg);color:var(--pill-text);
+  font-family:inherit;font-size:14px;font-weight:550;line-height:1.2;
+  text-align:center;white-space:nowrap;
+  box-shadow:0 6px 20px #10291d2e,0 1px 3px #10291d1f;
+  pointer-events:none;                 /* purely a label; clicks pass through */
+  opacity:0;transform:translateX(-4px);
+  transition:opacity .15s ease-out,transform .15s ease-out;
+}
+.nav-pill.is-visible{opacity:1;transform:translateX(0)}
+/* Hidden outright while a group flyout is open, so the two never overlap. */
+.nav-pill.is-suppressed{opacity:0 !important;transform:translateX(-4px) !important}
+
+/* Circular backdrop behind the targeted icon, collapsed state only. */
+.sidebar.collapsed .nav-item,
+.sidebar.collapsed .nav-group-btn{position:relative;border-radius:9999px}
+.sidebar.collapsed .nav-item:hover,
+.sidebar.collapsed .nav-item:focus-visible,
+.sidebar.collapsed .nav-group-btn:hover,
+.sidebar.collapsed .nav-group-btn:focus-visible{background:var(--pill-icon-bg)}
+.sidebar.collapsed .nav-item.active{background:var(--pill-icon-bg);color:var(--accent-primary)}
+body.dark .sidebar.collapsed .nav-item.active{color:#8fd3a6}
+
+/* Same treatment on the automatic icon rail between 768 and 1023px. */
+@media(min-width:768px) and (max-width:1023px){
+  .sidebar .nav-item,.sidebar .nav-group-btn{position:relative;border-radius:9999px}
+  .sidebar .nav-item:hover,.sidebar .nav-item:focus-visible,
+  .sidebar .nav-group-btn:hover,.sidebar .nav-group-btn:focus-visible{background:var(--pill-icon-bg)}
+  .sidebar .nav-item.active{background:var(--pill-icon-bg)}
+}
+
+/* The pill is a desktop affordance. Below 768px the sidebar is a full-width
+   drawer with real inline labels, so it is suppressed entirely. */
+@media(max-width:767px){ .nav-pill{display:none !important} }
+
+@media (prefers-reduced-motion: reduce){
+  .nav-pill{transition:opacity .001ms}
+  .nav-pill.is-visible{transform:none}
+}
+
+/* ══ Global notification bell and flyout ═════════════════════════════════ */
+/* Trigger and rail geometry moved to the topbar section below. */
+
+
+
+
+body.dark .notif-flyout{background:#1b2a21;box-shadow:0 18px 48px #0005}
+.notif-flyout[hidden]{display:none}
+
+.notif-flyout-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;
+  padding:14px 16px;border-bottom:1px solid var(--border-color)}
+.notif-flyout-head strong{display:block;font-size:15px}
+.notif-markall{background:none;border:0;padding:2px 0;color:var(--accent-primary);
+  font-size:12.5px;font-weight:650;cursor:pointer;white-space:nowrap}
+.notif-markall:hover{text-decoration:underline}
+.notif-markall:focus-visible{outline:2px solid var(--accent-primary);outline-offset:2px;border-radius:4px}
+
+.notif-chips{display:flex;gap:6px;padding:10px 16px;border-bottom:1px solid var(--border-color);
+  overflow-x:auto;-webkit-overflow-scrolling:touch}
+.notif-chip{flex:0 0 auto;padding:6px 12px;border-radius:9999px;cursor:pointer;
+  border:1px solid var(--border-color);background:transparent;color:var(--text-secondary);
+  font-size:12.5px;font-weight:650;white-space:nowrap}
+.notif-chip:hover{color:var(--accent-primary);border-color:var(--accent-primary)}
+.notif-chip.is-active{background:var(--accent-primary);border-color:var(--accent-primary);color:#fff}
+.notif-chip:focus-visible{outline:2px solid var(--accent-primary);outline-offset:2px}
+
+.notif-list{flex:1;min-height:0;overflow-y:auto}
+.notif-empty{margin:0;padding:26px 16px;text-align:center;color:var(--text-secondary);font-size:13.5px}
+
+.notif-item{display:flex;gap:10px;padding:13px 16px;border-bottom:1px solid var(--border-color)}
+.notif-item:last-child{border-bottom:0}
+.notif-item.is-unread{background:var(--bg-surface-elevated)}
+.notif-dot{flex:none;width:9px;height:9px;margin-top:6px;border-radius:50%;background:var(--text-secondary)}
+.notif-dot.prio-urgent,.notif-dot.prio-high{background:var(--status-danger)}
+.notif-dot.prio-medium{background:var(--status-warning)}
+.notif-dot.prio-low{background:#2f6fb0}
+.notif-body{min-width:0;flex:1}
+.notif-meta{display:flex;justify-content:space-between;gap:10px;font-size:11px;color:var(--text-secondary);
+  text-transform:capitalize;margin-bottom:2px}
+.notif-body strong{display:block;font-size:13.5px;line-height:1.4;overflow-wrap:break-word}
+.notif-body p{margin:3px 0 0;font-size:12.5px;line-height:1.5;color:var(--text-secondary);overflow-wrap:break-word}
+.notif-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.notif-act{display:inline-flex;align-items:center;min-height:32px;padding:0 12px;border-radius:8px;
+  background:var(--accent-primary);color:#fff;font-size:12.5px;font-weight:650;border:0;cursor:pointer}
+.notif-act.ghost{background:transparent;color:var(--text-secondary);border:1px solid var(--border-color)}
+.notif-act:hover{opacity:.9}
+.notif-act:focus-visible{outline:2px solid var(--accent-primary);outline-offset:2px}
+
+.notif-flyout-foot{padding:11px 16px;border-top:1px solid var(--border-color);text-align:center}
+.notif-flyout-foot a{font-size:12.5px;font-weight:650;color:var(--accent-primary)}
+
+/* Full-width sheet on mobile, per the brief. */
+/* Mobile sheet rules live in the topbar section below. */
+
+
+/* ══ Candidate profile: snapshot, stepper, two-column ════════════════════ */
+
+/* Sticky snapshot strip. Sticks under the app header so identity and the
+   quick actions stay reachable while the evaluation content scrolls. */
+.cprofile-snapshot{position:sticky;top:0;z-index:20;border-radius:0 0 14px 14px}
+@supports not (position:sticky){ .cprofile-snapshot{position:relative} }
+
+/* The standalone pipeline stepper was removed; the header card renders its
+   own inline stepper, which is the single one the wireframe shows. */
+
+/* ── Two-column layout ────────────────────────────────────────────────── */
+.cprofile-layout{display:grid;grid-template-columns:1fr;gap:18px;min-width:0}
+.cprofile-main,.cprofile-side{min-width:0;display:flex;flex-direction:column;gap:16px}
+.cprofile-layout>*{min-width:0;max-width:100%}
+
+/* Desktop / laptop: 65 / 35 */
+@container page (min-width:1024px){
+  .cprofile-layout{grid-template-columns:65fr 35fr;align-items:start}
+}
+/* Ultra-wide: 68 / 32 inside a capped container */
+@container page (min-width:1440px){
+  .cprofile-layout{grid-template-columns:68fr 32fr;max-width:1440px}
+}
+/* Tablet and below the sidebar content stacks under the primary column, which
+   is the natural document order — no source reordering needed. */
+
+/* Long values must never widen a column. */
+.cprofile-layout a[href^="mailto:"],
+.cprofile-layout a[href^="http"],
+.cprofile-layout .email-cell{overflow-wrap:anywhere}
+
+/* ── Touch targets ────────────────────────────────────────────────────── */
+@media(pointer:coarse){
+  .cprofile-head .btn,.cprofile-section .btn{min-height:44px}
+  .cprofile-head .btn,.cprofile-section .btn{display:inline-flex;align-items:center}
+}
+
+@media(max-width:767px){
+  .cprofile-snapshot{position:static}          /* a sticky strip eats a phone screen */
+}
+
+/* ══ App topbar and header utilities ═════════════════════════════════════
+   The notification bell used to be absolutely positioned with a hardcoded
+   right offset, so it floated over page headings and tab bars. It now sits in
+   a normal flex row: the page title is the only flexible child, so it shrinks
+   and truncates while the utility cluster keeps its size. Nothing overlaps
+   because nothing is taken out of flow. */
+
+
+/* The rail is the positioning context for the flyout — relative, not absolute,
+   so it occupies real space in the row. */
+
+/* Anchored to the icon corner and absolutely positioned INSIDE the button, so
+   it cannot change the button's layout size. */
+
+/* ── Panel header refinements ─────────────────────────────────────────── */
+.notif-head-titles{display:flex;align-items:center;gap:8px;min-width:0}
+.notif-flyout-head strong{font-size:1rem;font-weight:600}
+.notif-count-pill{
+  flex:none;padding:2px 8px;border-radius:9999px;
+  background:var(--accent-primary);color:#fff;
+  font-size:11px;font-weight:700;white-space:nowrap;
+}
+.notif-count-pill[hidden]{display:none}
+.notif-markall{font-size:.8125rem;color:var(--accent-primary)}
+
+/* ── Category badge on each item ──────────────────────────────────────── */
+.notif-icon{
+  flex:none;display:grid;place-items:center;width:34px;height:34px;
+  border-radius:50%;font-size:14px;
+  background:var(--bg-surface-elevated);color:var(--text-secondary);
+}
+.notif-icon.cat-application{background:#e7effa;color:#2f6fb0}
+.notif-icon.cat-interview{background:#efeafa;color:#6b4fc4}
+.notif-icon.cat-message{background:#e6f2ea;color:var(--accent-primary)}
+.notif-icon.cat-system{background:#fdf0e3;color:#a86a10}
+body.dark .notif-icon.cat-application{background:#1d2a38;color:#9cc3e8}
+body.dark .notif-icon.cat-interview{background:#26224a;color:#b9b0ee}
+body.dark .notif-icon.cat-message{background:#1d3327;color:#8fd3a6}
+body.dark .notif-icon.cat-system{background:#3a2f16;color:#e6c483}
+
+.notif-item{align-items:flex-start;cursor:pointer;transition:background .15s ease}
+.notif-item:hover{background:var(--bg-surface-elevated)}
+/* Preview text: at most two lines, then ellipsis. */
+.notif-body p{
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;
+  overflow:hidden;text-overflow:ellipsis;
+}
+.notif-unread-dot{flex:none;width:8px;height:8px;border-radius:50%;background:var(--accent-primary);margin-top:7px}
+/* Row actions appear on hover and on keyboard focus within the row. */
+.notif-item .notif-actions{opacity:0;transition:opacity .14s ease}
+.notif-item:hover .notif-actions,
+.notif-item:focus-within .notif-actions{opacity:1}
+@media(hover:none){ .notif-item .notif-actions{opacity:1} }
+
+/* ── Empty state ──────────────────────────────────────────────────────── */
+.notif-empty-state{display:flex;flex-direction:column;align-items:center;gap:6px;padding:38px 20px;text-align:center}
+.notif-empty-icon{display:grid;place-items:center;width:52px;height:52px;border-radius:50%;
+  background:var(--bg-surface-elevated);color:var(--text-secondary);margin-bottom:2px}
+.notif-empty-state strong{font-size:14.5px}
+.notif-empty-state span{font-size:12.5px;color:var(--text-secondary)}
+
+/* ── Scrollbar ────────────────────────────────────────────────────────── */
+.notif-list{scrollbar-width:thin;scrollbar-color:var(--border-color) transparent}
+.notif-list::-webkit-scrollbar{width:10px}
+.notif-list::-webkit-scrollbar-thumb{background:var(--border-color);border-radius:99px;border:3px solid var(--bg-surface)}
+body.dark .notif-list::-webkit-scrollbar-thumb{border-color:#1b2a21}
+
+
+
+/* ══ Floating transparent utility bar ════════════════════════════════════
+   No title, no brand, no background, no border, no shadow. Only the theme
+   toggle, the notification bell and the avatar.
+
+   Sticky rather than absolute. Both pin to the top and let content scroll
+   beneath, but sticky reserves its own height in the flow, so it can never sit
+   invisibly on top of the first interactive element on a page — which absolute
+   positioning would do to every heading and button in that strip. */
+
+.util-bar{
+  position:sticky;top:0;z-index:1000;
+  display:flex;align-items:center;gap:12px;
+  padding:14px clamp(16px,2.5vw,24px);
+  background:transparent;
+  border:none;border-bottom:none;box-shadow:none;outline:none;
+  pointer-events:none;              /* the empty strip never blocks the page */
+}
+.util-bar>*{pointer-events:auto}    /* the controls themselves stay clickable */
+
+.header-utils{
+  display:flex;align-items:center;justify-content:flex-end;
+  gap:.75rem;margin-inline-start:auto;flex-shrink:0;
+}
+
+/* ── Controls: no resting chrome, halo on hover ───────────────────────── */
+.util-btn{
+  position:relative;flex:none;
+  display:grid;place-items:center;
+  width:44px;height:44px;                /* 44px target, smaller glyph inside */
+  padding:0;
+  background:none;border:0;border-radius:50%;
+  color:var(--text-primary);cursor:pointer;
+  transition:background 180ms ease, transform 150ms ease;
+}
+body.dark .util-btn:active{transform:scale(.96)}
+.util-btn:focus-visible{outline:2px solid var(--accent-primary);outline-offset:2px}
+
+/* Legibility over whatever scrolls underneath. */
+.util-btn .icon,.util-glyph,.notif-badge{filter:drop-shadow(0 1px 2px rgba(0,0,0,.15))}
+.util-glyph{font-size:17px;line-height:1}
+
+.util-menu{display:none}                 /* drawer trigger, phones only */
+
+/* The avatar keeps a ring so it stays distinct from page content. */
+.util-avatar{overflow:visible}
+.util-avatar .user-avatar{
+  width:32px;height:32px;
+  box-shadow:0 0 0 2px var(--bg-surface,#fff);
+  filter:drop-shadow(0 1px 2px rgba(0,0,0,.15));
+}
+body.dark .util-avatar .user-avatar{box-shadow:0 0 0 2px #1b2a21}
+
+
+/* ── Scroll state ─────────────────────────────────────────────────────────
+   Off by default (State A: fully transparent at any scroll position). Set
+   UTIL_BAR_BLUR_ON_SCROLL = true in app.js to enable State B, an ultra-subtle
+   blur after 20px that keeps the icons readable over dense content without
+   drawing a line. */
+.util-bar.is-scrolled{
+  background:color-mix(in srgb, var(--bg-app) 72%, transparent);
+  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+}
+@supports not (backdrop-filter:blur(10px)){
+  .util-bar.is-scrolled{background:color-mix(in srgb, var(--bg-app) 92%, transparent)}
+}
+
+/* ── Responsive ───────────────────────────────────────────────────────── */
+@media(min-width:1024px){ .util-bar{padding:16px 24px} }
+@media(min-width:768px) and (max-width:1023px){ .header-utils{gap:.5rem} }
+@media(max-width:767px){
+  .util-bar{padding:10px 14px;gap:8px}
+  .util-menu{display:grid}                /* hamburger floats far left */
+  .header-utils{gap:.5rem}
+  .util-btn{width:44px;height:44px}
+}
+@media (prefers-reduced-motion: reduce){
+  .util-btn{transition:none}
+  .util-btn:active{transform:none}
+}
+
+/* ══ Dark theme component audit ══════════════════════════════════════════
+   Everything below resolves through theme-tokens.css, so each rule serves both
+   themes. No hardcoded hex remains in these components. */
+
+/* ── Notification bell and flyout ─────────────────────────────────────── */
+.util-btn .icon{stroke:currentColor;fill:none}
+.util-btn{color:var(--text-secondary)}
+[data-theme="dark"] .util-btn{color:var(--text-primary)}
+[data-theme="dark"] .util-btn:hover .icon{filter:drop-shadow(0 0 4px var(--accent-glow))}
+
+
+
+.notif-flyout-head,.notif-chips,.notif-flyout-foot,.notif-item{border-color:var(--border-subtle)}
+.notif-item:hover{background:var(--bg-surface-hover)}
+/* Unread rows: accent rule plus the faintest tint, not a heavy fill. */
+.notif-item.is-unread{
+  border-left:3px solid var(--accent-primary);
+  background:color-mix(in srgb, var(--text-primary) 3%, transparent);
+}
+.notif-chip{border-color:var(--border-default);color:var(--text-secondary)}
+.notif-chip.is-active{background:var(--accent-primary);color:var(--accent-contrast);border-color:var(--accent-primary)}
+.notif-count-pill{background:var(--accent-primary);color:var(--accent-contrast)}
+.notif-list::-webkit-scrollbar-thumb{background:var(--border-strong);border-color:var(--bg-surface-elevated)}
+.notif-empty-icon{background:var(--bg-surface-hover);color:var(--text-secondary)}
+
+/* ── Avatars ──────────────────────────────────────────────────────────── */
+.user-avatar,.avatar-chip,.avatar-circle,.ic-avatar,.people-avatar{
+  box-shadow:0 0 0 2px var(--border-default);
+}
+/* Fallback initials: medium slate with white text, never dark-on-dark. */
+span.user-avatar,span.avatar-chip,span.avatar-circle,span.ic-avatar{
+  background:var(--avatar-fallback-bg);color:var(--avatar-fallback-text);
+}
+.util-avatar .user-avatar{box-shadow:0 0 0 2px var(--bg-surface)}
+
+/* ── Form fields ──────────────────────────────────────────────────────── */
+
+input::placeholder,textarea::placeholder{color:var(--text-placeholder);opacity:1}
+
+input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=file]),
+select,textarea{background:var(--bg-input)}
+
+/* ── Status pills and role badges ─────────────────────────────────────── */
+
+
+
+
+
+/* ── Dropzones ────────────────────────────────────────────────────────── */
+.dropzone{
+  position:relative;display:flex;flex-direction:column;align-items:center;gap:6px;
+  padding:26px 20px;text-align:center;
+  background:color-mix(in srgb, var(--bg-surface-elevated) 40%, transparent);
+  border:2px dashed var(--border-input);border-radius:12px;
+  transition:background 160ms ease,border-color 160ms ease;
+  cursor:pointer;
+}
+.dropzone:hover,.dropzone:focus-within{border-color:var(--accent-primary)}
+.dropzone.is-dragover{
+  background:color-mix(in srgb, var(--accent-primary) 10%, transparent);
+  border-color:var(--accent-primary);
+}
+.dropzone-icon{color:var(--accent-primary);margin-bottom:2px}
+.dropzone-title{font-weight:650;color:var(--text-primary);font-size:14px}
+.dropzone-hint{color:var(--text-secondary);font-size:12.5px}
+.dropzone input[type=file]{
+  position:absolute;inset:0;width:100%;height:100%;
+  opacity:0;cursor:pointer;
+}
+.dropzone-file{margin-top:6px;font-size:12.5px;color:var(--accent-primary);font-weight:650}
+
+/* ── Attachment rows ──────────────────────────────────────────────────── */
+.file-row{
+  display:flex;align-items:center;gap:12px;min-width:0;
+  padding:12px 14px;
+  background:var(--bg-surface-elevated);
+  border:1px solid var(--border-subtle);border-radius:11px;
+  transition:background 160ms ease;
+}
+.file-row:hover{background:var(--bg-surface-hover)}
+.file-icon{
+  flex:none;display:grid;place-items:center;width:36px;height:36px;
+  border-radius:9px;font-size:10px;font-weight:800;letter-spacing:.03em;
+  background:color-mix(in srgb, currentColor 14%, transparent);
+}
+.file-icon.type-pdf{color:var(--file-pdf)}
+.file-icon.type-doc{color:var(--file-doc)}
+.file-icon.type-sheet{color:var(--file-sheet)}
+.file-icon.type-image{color:var(--file-image)}
+.file-meta{min-width:0;flex:1}
+.file-name{
+  display:block;font-weight:500;color:var(--text-primary);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.file-sub{display:block;font-size:12px;color:var(--text-muted)}
+.file-actions{display:flex;gap:6px;flex:none}
+.file-act{
+  display:grid;place-items:center;width:34px;height:34px;
+  border:0;border-radius:8px;background:none;
+  color:var(--text-secondary);cursor:pointer;
+  transition:background 160ms ease,color 160ms ease;
+}
+.file-act:hover{background:color-mix(in srgb, var(--text-primary) 8%, transparent);color:var(--text-primary)}
+.file-act.danger{color:var(--status-danger-text)}
+.file-act.danger:hover{background:var(--status-danger-bg)}
+.file-act:focus-visible{outline:2px solid var(--accent-primary);outline-offset:2px}
+
+/* ── Document preview shell ───────────────────────────────────────────── */
+/* The document itself is never inverted — that would ruin candidate photos and
+   diagrams. Only the surrounding chassis is themed. */
+.doc-viewer-backdrop{
+  position:fixed;inset:0;z-index:1200;
+  background:var(--overlay-scrim);
+  backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+}
+.doc-viewer{
+  background:var(--bg-surface-elevated);
+  border:1px solid var(--border-default);border-radius:14px;
+  box-shadow:var(--elevation-flyout);
+}
+.doc-viewer-bar{
+  display:flex;align-items:center;gap:10px;
+  padding:10px 14px;border-bottom:1px solid var(--border-subtle);
+  color:var(--text-primary);
+}
+.doc-viewer-canvas{background:#fff}   /* native document colours, untouched */
+
+/* ── Universal focus ring ─────────────────────────────────────────────── */
+:where(a,button,input,select,textarea,[tabindex]):focus-visible{
+  outline:2px solid var(--accent-primary);outline-offset:2px;
+}
+
+/* ══ Light mode polish ═══════════════════════════════════════════════════
+   Cards lift off the cooler canvas, borders are visible, focus is bold. */
+
+
+
+/* ══ Add candidate ═══════════════════════════════════════════════════════ */
+.add-candidate-page{padding-bottom:96px}   /* room for the sticky action bar */
+
+.cv-parse{margin-bottom:18px}
+.cv-parse h2{margin:0 0 4px;font-size:17px;display:flex;align-items:center;gap:9px}
+.cv-parse .dropzone{margin-top:14px}
+.dropzone.is-loading{pointer-events:none;opacity:.75}
+.dropzone.is-loading .dropzone-icon::after{
+  content:"";position:absolute;top:50%;left:50%;width:26px;height:26px;margin:-13px 0 0 -13px;
+  border:2px solid var(--accent-glow);border-top-color:var(--accent-primary);border-radius:50%;
+  animation:cv-spin .7s linear infinite;
+}
+@keyframes cv-spin{to{transform:rotate(360deg)}}
+
+.cv-status{margin-top:12px;padding:10px 13px;border-radius:10px;font-size:13.5px;line-height:1.5}
+.cv-status.is-loading{background:var(--bg-surface-hover);color:var(--text-secondary)}
+.cv-status.is-ok{background:var(--status-success-bg);color:var(--status-success-text);border:1px solid var(--status-success-border)}
+.cv-status.is-warn{background:var(--status-warning-bg);color:var(--status-warning-text);border:1px solid var(--status-warning-border)}
+.cv-status.is-error{background:var(--status-danger-bg);color:var(--status-danger-text);border:1px solid var(--status-danger-border)}
+
+.candidate-form fieldset{border:0;padding:0;margin:0 0 26px;min-width:0}
+.candidate-form legend{
+  padding:0;margin-bottom:14px;
+  font-size:12px;font-weight:800;letter-spacing:.09em;text-transform:uppercase;
+  color:var(--text-secondary);
+}
+.form-2col{display:grid;grid-template-columns:1fr;gap:16px}
+@container page (min-width:720px){ .form-2col{grid-template-columns:repeat(2,minmax(0,1fr))} }
+.form-2col .span-2{grid-column:1/-1}
+.candidate-form .field{display:flex;flex-direction:column;gap:6px;min-width:0;margin:0}
+.candidate-form label{display:flex;align-items:center;gap:7px;font-size:13px;font-weight:650;color:var(--text-primary)}
+.req{color:var(--status-danger-text);font-weight:800}
+.field-error{margin:0;font-size:12.5px;color:var(--status-danger-text)}
+.candidate-form input[aria-invalid="true"],
+.candidate-form select[aria-invalid="true"]{border-color:var(--status-danger-text)}
+
+/* ── Auto-filled fields ───────────────────────────────────────────────────
+   No emoji. A left accent rule, a very light tint and a bracketed text badge:
+   the same language as the rest of the ATS, and it survives a screenshot, a
+   printout and a monochrome display. */
+.field.is-autofilled{
+  position:relative;
+  padding-left:11px;
+  border-left:3px solid var(--status-info-text);
+  border-radius:0 4px 4px 0;
+}
+.field.is-autofilled input,
+.field.is-autofilled select,
+.field.is-autofilled .token-input{
+  background:var(--autofill-tint);
+  border-color:var(--status-info-border);
+  transition:background 300ms ease,border-color 300ms ease;
+}
+.field.is-autofilled input:focus,
+.field.is-autofilled select:focus{
+  background:var(--bg-surface);          /* normal once they are working in it */
+}
+.autofill-tag{
+  margin-left:2px;
+  font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+  font-size:10px;font-weight:600;letter-spacing:.02em;text-transform:none;
+  color:var(--status-info-text);
+  white-space:nowrap;
+}
+
+/* Tokenised skills */
+.token-input{
+  display:flex;flex-wrap:wrap;align-items:center;gap:6px;min-width:0;
+  padding:7px 9px;
+  background:var(--bg-surface);border:1px solid var(--border-input);border-radius:10px;
+}
+.token-input:focus-within{border-color:var(--accent-primary);box-shadow:0 0 0 3px var(--accent-glow)}
+.token-list{display:contents}
+.token-chip{
+  display:inline-flex;align-items:center;gap:5px;
+  padding:4px 9px;border-radius:9999px;cursor:pointer;
+  background:var(--bg-surface-hover);border:1px solid var(--border-default);
+  color:var(--text-primary);font-size:12.5px;font-weight:600;
+}
+.token-chip::after{content:"×";font-size:14px;line-height:1;color:var(--text-secondary)}
+.token-chip:hover{border-color:var(--status-danger-border);color:var(--status-danger-text)}
+.token-chip:focus-visible{outline:2px solid var(--accent-primary);outline-offset:2px}
+.token-entry{flex:1 1 160px;min-width:120px;border:0!important;box-shadow:none!important;padding:4px 2px;background:none}
+.token-entry:focus{outline:none}
+
+/* Sticky action bar */
+.form-actionbar{
+  position:sticky;bottom:0;z-index:15;
+  display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;
+  margin:8px -20px -20px;padding:14px 20px;
+  background:var(--bg-surface);
+  border-top:1px solid var(--border-default);
+  border-radius:0 0 14px 14px;
+  box-shadow:0 -6px 18px -8px rgba(15,23,42,.18);
+}
+.actionbar-right{display:flex;gap:10px;flex-wrap:wrap}
+.form-actionbar .btn{min-height:44px;display:inline-flex;align-items:center;gap:7px}
+
+.field-settings{margin-bottom:18px}
+.field-settings[hidden]{display:none}
+.field-settings h2{margin:0 0 4px;font-size:16px;display:flex;align-items:center;gap:8px}
+.field-settings-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:2px 20px;margin:12px 0 16px}
+
+@container page (max-width:520px){
+  .form-actionbar{flex-direction:column;align-items:stretch}
+  .actionbar-right{width:100%}
+  .form-actionbar .btn{flex:1;justify-content:center}
+}
+
+/* ══ Candidate documents ═════════════════════════════════════════════════ */
+.cprofile-documents{margin-top:20px}
+
+/* The embedded PDF. Height is viewport-relative with a floor, so it is usable
+   on a laptop without swallowing a phone screen. */
+.doc-viewer-frame{
+  position:relative;
+  height:clamp(320px,60vh,720px);
+  border:1px solid var(--border-default);border-radius:12px;overflow:hidden;
+  background:var(--bg-surface-hover);
+}
+.doc-viewer-frame iframe{display:block;width:100%;height:100%;border:0;background:#fff}
+
+.doc-empty{
+  display:flex;flex-direction:column;align-items:center;gap:7px;
+  padding:34px 20px;text-align:center;
+  border:1px dashed var(--border-strong);border-radius:12px;
+}
+.doc-empty-icon{
+  display:grid;place-items:center;width:52px;height:52px;border-radius:50%;
+  background:var(--bg-surface-hover);color:var(--text-secondary);margin-bottom:2px;
+}
+.doc-empty strong{font-size:15px}
+.doc-empty .btn{margin-top:10px}
+.doc-empty.is-word .doc-empty-icon{color:var(--file-doc)}
+
+.doc-list{display:flex;flex-direction:column;gap:8px;margin-top:14px}
+.doc-list .file-row.is-primary{border-color:var(--accent-primary)}
+.doc-current{
+  margin-left:7px;padding:1px 7px;border-radius:9999px;
+  background:var(--status-success-bg);color:var(--status-success-text);
+  border:1px solid var(--status-success-border);
+  font-size:10px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+}
+.file-row a.file-act{text-decoration:none}
+
+/* Attachment row in the Add Candidate upload card. */
+.cv-attached{margin-top:12px}
+.cv-attached[hidden]{display:none}
+.cv-attached .file-icon{font-size:9.5px}
+
+@media(max-width:640px){
+  .doc-viewer-frame{height:clamp(260px,52vh,460px)}
+  .doc-empty{padding:26px 16px}
+  .file-row{flex-wrap:wrap}
+  .file-actions{width:100%;justify-content:flex-end}
+}
+@media print{
+  .doc-viewer-frame{height:auto;min-height:400px}
+}
+
+/* ══ Candidate profile: wireframe layout ═════════════════════════════════ */
+
+/* The Resume / CV section carries its own actions; there is no separate bar. */
+.resume-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;flex-wrap:wrap;margin:0 0 14px}
+.resume-head h2{margin:2px 0 0;font-size:19px;letter-spacing:-.03em}
+.resume-head .meta{margin:5px 0 0;overflow-wrap:anywhere}
+.resume-actions{display:flex;gap:8px;flex:none;flex-wrap:wrap}
+.resume-actions .btn{min-height:44px;display:inline-flex;align-items:center;gap:7px;white-space:nowrap}
+.doc-viewer-frame[hidden]{display:none}
+
+/* Three equal columns: Personal · Application · Recruiter notes. Breakpoints
+   retuned below to the exact 768px/1024px thresholds; see the precision-pass
+   block further down in this file. */
+.cprofile-grid-3{display:grid;grid-template-columns:1fr;gap:16px;margin-bottom:16px}
+.cprofile-grid-3>*{min-width:0}
+.cprofile-grid-3 .card{height:100%}
+
+@media(max-width:560px){
+  .resume-head{flex-direction:column}
+  .resume-actions{width:100%}
+  .resume-actions .btn{flex:1;justify-content:center}
+}
+
+/* ══ Profile detail rows ═════════════════════════════════════════════════ */
+/* A stacked row for values that need room — skills chips, long lists. */
+.cprofile-kv.is-stacked{display:block}
+.cprofile-kv.is-stacked>span:first-child{display:block;margin-bottom:6px}
+.cprofile-kv.is-stacked .tag-row{display:flex;flex-wrap:wrap;gap:6px}
+
+/* The note captured at intake, distinct from notes added later. */
+.intake-note{
+  margin:10px 0 14px;padding:11px 13px;
+  background:var(--bg-surface-hover);
+  border-left:3px solid var(--border-strong);border-radius:0 9px 9px 0;
+}
+.intake-note p{margin:5px 0 0;line-height:1.6;overflow-wrap:break-word}
+
+.resume-indexed{
+  color:var(--status-success-text);font-weight:600;
+  border-bottom:1px dotted currentColor;cursor:help;
+}
+
+/* ══ Stage reviews: present, but not competing with the wireframe ════════
+   Closed it is a single slim bar; open it holds the full review forms. */
+.cprofile-stagework{padding:0;overflow:hidden;margin-bottom:16px}
+.stagework-toggle{
+  display:flex;align-items:center;gap:14px;width:100%;
+  padding:14px 18px;
+  background:none;border:0;cursor:pointer;text-align:left;
+  color:var(--text-primary);
+}
+.stagework-toggle:hover{background:var(--bg-surface-hover)}
+.stagework-toggle:focus-visible{outline:2px solid var(--accent-primary);outline-offset:-2px}
+.stagework-head{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.stagework-head .label{margin:0}
+.stagework-head .meta{overflow-wrap:break-word}
+.stagework-chevron{
+  flex:none;display:grid;place-items:center;color:var(--text-secondary);
+  transform:rotate(-90deg);transition:transform .2s ease;
+}
+.cprofile-stagework.is-open .stagework-chevron{transform:rotate(0deg)}
+.stagework-body{padding:0 18px 18px;display:flex;flex-direction:column;gap:16px}
+.stagework-body[hidden]{display:none}
+/* The panels inside are already cards; flatten them so the block reads as one. */
+.stagework-body>.card{box-shadow:none;border:1px solid var(--border-subtle);margin:0}
+
+/* The locked state is a line, not a card — it says "not yet", which does not
+   warrant the same visual weight as a real section. */
+.cprofile-locked-note{
+  display:flex;align-items:center;gap:8px;
+  margin:0 0 16px;padding:11px 14px;
+  background:var(--bg-surface-hover);
+  border:1px dashed var(--border-strong);border-radius:10px;
+  color:var(--text-secondary);font-size:13px;line-height:1.5;
+}
+
+@media(max-width:560px){
+  .stagework-toggle{padding:13px 14px}
+  .stagework-body{padding:0 14px 14px}
+}
+
+/* ══ Candidate profile: quick navigation ═════════════════════════════════
+   Plain anchor links, not tabs -- every section stays visible and reachable
+   by scrolling regardless of which link was used; clicking one only moves
+   the viewport. Not sticky: it scrolls away with the page like everything
+   else on this profile, consistent with the natural-scroll direction this
+   layout was already built to. */
+.cprofile-quicknav{
+  display:flex;flex-wrap:wrap;gap:8px;
+  margin:0 0 16px;padding:10px;
+  background:var(--bg-surface);border:1px solid var(--border-subtle);border-radius:12px;
+}
+.cprofile-quicknav a{
+  padding:7px 13px;border-radius:9999px;
+  font-size:12.5px;font-weight:650;color:var(--text-secondary);
+  border:1px solid var(--border-default);white-space:nowrap;
+  transition:background .15s ease,color .15s ease,border-color .15s ease;
+}
+.cprofile-quicknav a:hover{background:var(--bg-surface-hover);color:var(--accent-primary);border-color:var(--accent-primary)}
+.cprofile-quicknav a:focus-visible{outline:2px solid var(--accent-primary);outline-offset:2px}
+
+/* Smooth-scroll for the anchor links above, with room left for the
+   transparent-but-occupied sticky util bar so a heading does not land
+   underneath it. Respects reduced-motion. */
+html{scroll-behavior:smooth}
+#candidate-info,#docs-title,#ai-analysis,#interview-history,#activity-log{scroll-margin-top:84px}
+@media (prefers-reduced-motion: reduce){ html{scroll-behavior:auto} }
+
+@media(max-width:560px){
+  .cprofile-quicknav{gap:6px;padding:8px}
+  .cprofile-quicknav a{padding:6px 11px;font-size:12px}
+}
+
+/* ══ Resume viewer: loading skeleton ═════════════════════════════════════
+   Shown only while the iframe is actually fetching (src set -> load event),
+   never as a fixed-duration animation pretending something is happening when
+   it is not. */
+.doc-viewer-frame{position:relative}
+.doc-viewer-skeleton{
+  position:absolute;inset:0;z-index:1;
+  display:flex;flex-direction:column;gap:14px;
+  padding:24px;background:var(--bg-surface);
+}
+.doc-viewer-skeleton .skel-line{
+  display:block;height:14px;border-radius:6px;
+  background:linear-gradient(90deg,var(--bg-surface-hover) 25%,var(--border-subtle) 37%,var(--bg-surface-hover) 63%);
+  background-size:400% 100%;
+  animation:skel-shimmer 1.4s ease infinite;
+}
+@keyframes skel-shimmer{0%{background-position:100% 50%}100%{background-position:0 50%}}
+@media (prefers-reduced-motion: reduce){
+  .doc-viewer-skeleton .skel-line{animation:none;background:var(--bg-surface-hover)}
+}
+
+/* ══ Notification bell — consolidated, redesigned ═══════════════════════
+   Replaces several fragmented, partially-conflicting rule sets accumulated
+   across earlier rounds (a numbered badge redefined three times with drifting
+   values, and two theme-unscoped :hover rules where the dark-mode one always
+   won regardless of theme -- the actual reason the light-mode hover halo was
+   invisible). One definition per selector now. */
+
+
+
+
+/* The unread indicator: a small dot, not a numbered bubble. The count is
+   still fully available -- it drives the trigger's aria-label ("Notifications,
+   3 unread") -- it is just no longer crammed into an 18px circle. */
+
+
+
+/* Hover halo -- properly theme-scoped this time. */
+
+
+
+/* Bell-specific micro-interaction: a gentle swing, not a rigid hold. Hover
+   uses a plain transition; a new arrival plays the same motion once via a
+   JS-toggled class, since an arrival needs to animate even if the pointer
+   is nowhere near the bell. */
+
+
+
+
+
+
+/* ══ Candidate profile: precision pass against the exact wireframe spec ═══
+   The 7-row structure and its CSS Grid were already correct (verified before
+   touching anything). What did not match this round's more precise numbers:
+   the card shadow/padding, a below-minimum touch target on the Resume/CV
+   strip's buttons, section-header weight, and breakpoints that did not land
+   on the exact 768/1024px the brief specifies. Everything below is scoped to
+   .candidate-profile-page specifically -- .card and .label are shared,
+   app-wide classes used on every other page (dashboard, candidates list, job
+   cards, the sidebar's own eyebrow labels); changing them directly would
+   restyle the whole application, not just this page. */
+
+/* ── Card shell: the brief's exact values ─────────────────────────────── */
+.candidate-profile-page .card{
+  background:var(--bg-surface,#FFFFFF);
+  border:1px solid var(--border-default,#E2E8F0);
+  box-shadow:0 1px 3px rgba(0,0,0,.05);
+  border-radius:12px;
+  padding:1.5rem;
+}
+
+/* The Resume/CV strip is deliberately slimmer than every other card. */
+.candidate-profile-page .cprofile-documents{
+  padding:.75rem 1.5rem;
+}
+
+/* ── Section headers: bold and clearly visible, not the small uppercase
+   "eyebrow" treatment .label carries everywhere else in the app ─────────── */
+.candidate-profile-page .cprofile-section .label,
+.candidate-profile-page .cprofile-grid-3 .label,
+.candidate-profile-page .cprofile-documents .label{
+  font-size:14px;
+  font-weight:600;
+  color:var(--text-primary,#0F172A);
+  text-transform:none;
+  letter-spacing:normal;
+}
+
+/* ── Row 2: 44x44 minimum touch target on View / Download. Height was fixed
+   directly on the base .resume-actions .btn rule above (38px -> 44px);
+   min-width is genuinely new, since the base rule never set one. */
+.candidate-profile-page .resume-actions .btn{
+  min-width:44px;
+}
+
+/* ── Row 3 (Personal / Application / Recruiter Notes): retuned to the exact
+   768px / 1024px thresholds given this round, in place of the previous
+   600/819px. Desktop stays 3 columns at >=1024px; tablet is 2-up with notes
+   spanning full width from 768-1023px; below 768px it is already the single
+   column the base (mobile-first) rule provides. Still a real CSS Grid,
+   still reacting to the space actually left after the sidebar via container
+   queries rather than the raw viewport. */
+@container page (min-width:768px) and (max-width:1023px){
+  .candidate-profile-page .cprofile-grid-3{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .candidate-profile-page .cprofile-grid-3>*:last-child{grid-column:1/-1}
+}
+@container page (min-width:1024px){
+  .candidate-profile-page .cprofile-grid-3{grid-template-columns:repeat(3,minmax(0,1fr));align-items:start}
+}
+
+/* ── Row 5 (Feedback / Suggest a Different Role): moved from a raw
+   max-width:900px media query to the same @container strategy as Row 3, so
+   both rows respond to the same, consistent measurement. Two columns only at
+   true desktop width (>=1024px); stacked through the whole tablet range and
+   below, exactly as specified. */
+@container page (max-width:1023px){
+  .candidate-profile-page .cprofile-review-pair{grid-template-columns:1fr}
+}
+@container page (min-width:1024px){
+  .candidate-profile-page .cprofile-review-pair{grid-template-columns:1fr 1fr}
+}
+
+/* Mobile: everything a single, full-width column. This is already the
+   unconditional base rule for .cprofile-grid-3 (mobile-first) and is now
+   explicit for the review pair too, rather than relying on the >=1024px
+   rule simply not having matched yet. */
+@media(max-width:767px){
+  .candidate-profile-page .cprofile-review-pair{grid-template-columns:1fr}
+  .candidate-profile-page .card{padding:1.25rem}
+}

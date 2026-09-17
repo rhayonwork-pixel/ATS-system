@@ -1,0 +1,683 @@
+/* ============================================================================
+   ACME ATS — LIGHT THEME v3
+   Principal UI/UX redesign
+
+   IMPORTANT:
+   - This file is intentionally LIGHT-THEME ONLY.
+   - It must load after the legacy stylesheets so old light declarations cannot
+     flatten the design.
+   - No [data-theme="dark"] selectors are defined here.
+   - Dark mode therefore continues to be owned by the existing theme system.
+   ============================================================================ */
+
+/* --------------------------------------------------------------------------
+   1. DESIGN TOKENS
+   Warm, low-glare neutrals + restrained teal brand accent.
+   -------------------------------------------------------------------------- */
+html[data-theme="light"] {
+  --lt-canvas: #F7F7F9;
+  --lt-canvas-soft: #FAFAFA;
+  --lt-surface: #FFFEFC;
+  --lt-surface-raised: #FFFFFF;
+  --lt-surface-tint: #F1F4F2;
+  --lt-surface-hover: #EEF3F1;
+  --lt-surface-active: #E6EEEA;
+
+  --lt-text: #17211C;
+  --lt-text-strong: #101814;
+  --lt-text-secondary: #34423A;
+  --lt-text-muted: #526159;
+  --lt-text-placeholder: #5C6962;
+
+  --lt-border: #D2DAD5;
+  --lt-border-strong: #7C8B83;
+  --lt-border-focus: #0F766E;
+
+  --lt-primary: #0F766E;
+  --lt-primary-hover: #0B5F59;
+  --lt-primary-active: #084C47;
+  --lt-primary-soft: #DDEDEA;
+  --lt-primary-soft-hover: #CDE3DF;
+  --lt-primary-contrast: #FFFFFF;
+
+  --lt-success: #166534;
+  --lt-success-bg: #E5F4E9;
+  --lt-success-border: #72B98A;
+  --lt-warning: #8A4B08;
+  --lt-warning-bg: #FFF1D6;
+  --lt-warning-border: #D79A3B;
+  --lt-danger: #9B2C24;
+  --lt-danger-bg: #FBE8E5;
+  --lt-danger-border: #D9877E;
+  --lt-info: #155E75;
+  --lt-info-bg: #E2F2F6;
+  --lt-info-border: #6FAFC0;
+
+  --lt-shadow-card:
+    0 1px 3px rgba(23, 33, 28, .06),
+    0 8px 22px rgba(23, 33, 28, .045);
+  --lt-shadow-hover:
+    0 4px 10px rgba(23, 33, 28, .08),
+    0 14px 30px rgba(23, 33, 28, .06);
+  --lt-shadow-float:
+    0 12px 30px rgba(23, 33, 28, .12),
+    0 3px 8px rgba(23, 33, 28, .07);
+  --lt-shadow-focus: 0 0 0 3px rgba(15, 118, 110, .20);
+
+  /* Compatibility aliases: existing components follow the new system. */
+  --bg-canvas: var(--lt-canvas);
+  --bg-surface: var(--lt-surface-raised);
+  --bg-surface-elevated: var(--lt-surface-raised);
+  --bg-surface-hover: var(--lt-surface-hover);
+  --bg-app: var(--lt-canvas);
+  --bg-input: var(--lt-surface);
+  --paper: var(--lt-canvas);
+  --surface: var(--lt-surface-raised);
+  --elevated: var(--lt-surface-raised);
+  --ink: var(--lt-text);
+  --text-primary: var(--lt-text);
+  --text-secondary: var(--lt-text-secondary);
+  --text-muted: var(--lt-text-muted);
+  --text-placeholder: var(--lt-text-placeholder);
+  --border-subtle: #E2E7E4;
+  --border-default: var(--lt-border);
+  --border-strong: var(--lt-border-strong);
+  --border-input: var(--lt-border-strong);
+  --border-focus: var(--lt-border-focus);
+  --line: var(--lt-border);
+  --border-color: var(--lt-border);
+  --green: var(--lt-primary);
+  --accent-primary: var(--lt-primary);
+  --accent-hover: var(--lt-primary-hover);
+  --accent-contrast: var(--lt-primary-contrast);
+  --accent-glow: rgba(15,118,110,.20);
+  --shadow: var(--lt-shadow-card);
+  --shadow-sm: var(--lt-shadow-card);
+  --shadow-md: var(--lt-shadow-hover);
+  --elevation-card: var(--lt-shadow-card);
+  --elevation-flyout: var(--lt-shadow-float);
+  --overlay-scrim: rgba(23,33,28,.42);
+}
+
+/* --------------------------------------------------------------------------
+   2. BASE / TYPOGRAPHY
+   -------------------------------------------------------------------------- */
+html[data-theme="light"] body {
+  background: var(--lt-canvas) !important;
+  color: var(--lt-text) !important;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+    "Segoe UI", sans-serif;
+}
+
+html[data-theme="light"] body,
+html[data-theme="light"] p,
+html[data-theme="light"] li,
+html[data-theme="light"] td,
+html[data-theme="light"] dd {
+  color: var(--lt-text);
+}
+
+html[data-theme="light"] h1,
+html[data-theme="light"] h2,
+html[data-theme="light"] h3,
+html[data-theme="light"] h4,
+html[data-theme="light"] h5,
+html[data-theme="light"] h6,
+html[data-theme="light"] .page-title,
+html[data-theme="light"] .section-title {
+  color: var(--lt-text-strong) !important;
+  letter-spacing: -.018em;
+}
+
+html[data-theme="light"] h1,
+html[data-theme="light"] .page-title { font-weight: 750; }
+html[data-theme="light"] h2,
+html[data-theme="light"] h3,
+html[data-theme="light"] .section-title { font-weight: 700; }
+
+html[data-theme="light"] small,
+html[data-theme="light"] .muted,
+html[data-theme="light"] .meta,
+html[data-theme="light"] .caption,
+html[data-theme="light"] .activity-time,
+html[data-theme="light"] .cell-date,
+html[data-theme="light"] .analytics-card-hint,
+html[data-theme="light"] .allowance-note {
+  color: var(--lt-text-muted) !important;
+}
+
+html[data-theme="light"] label,
+html[data-theme="light"] .field-label,
+html[data-theme="light"] .form-label,
+html[data-theme="light"] th,
+html[data-theme="light"] .table-head,
+html[data-theme="light"] .nav-label,
+html[data-theme="light"] .sidebar-label {
+  color: var(--lt-text-secondary) !important;
+  font-weight: 600;
+}
+
+html[data-theme="light"] a {
+  color: var(--lt-primary);
+}
+html[data-theme="light"] a:hover {
+  color: var(--lt-primary-hover);
+}
+
+/* --------------------------------------------------------------------------
+   3. APP SHELL / LAYOUT
+   -------------------------------------------------------------------------- */
+html[data-theme="light"] .app-shell {
+  background: var(--lt-canvas) !important;
+}
+
+html[data-theme="light"] .app-main {
+  background:
+    radial-gradient(circle at 90% 0%, rgba(15,118,110,.035), transparent 28rem),
+    var(--lt-canvas) !important;
+}
+
+html[data-theme="light"] .sidebar {
+  background: var(--lt-surface) !important;
+  border-right: 1px solid var(--lt-border) !important;
+  box-shadow: 2px 0 14px rgba(23,33,28,.035) !important;
+}
+
+html[data-theme="light"] .sidebar a {
+  color: var(--lt-text-secondary) !important;
+  border-radius: 10px;
+}
+
+html[data-theme="light"] .sidebar a:hover {
+  background: var(--lt-surface-tint) !important;
+  color: var(--lt-text-strong) !important;
+}
+
+html[data-theme="light"] .sidebar a.active,
+html[data-theme="light"] .sidebar .active {
+  background: var(--lt-primary-soft) !important;
+  color: var(--lt-primary-active) !important;
+  font-weight: 700;
+}
+
+html[data-theme="light"] .util-bar {
+  background: rgba(247,247,249,.88) !important;
+  border-bottom: 1px solid rgba(210,218,213,.82) !important;
+  backdrop-filter: blur(14px);
+}
+
+html[data-theme="light"] .util-btn {
+  color: var(--lt-text-secondary) !important;
+}
+
+html[data-theme="light"] .util-btn:hover {
+  background: var(--lt-surface-tint) !important;
+  color: var(--lt-text-strong) !important;
+}
+
+/* --------------------------------------------------------------------------
+   4. CARDS / CONTAINERS / ELEVATION
+   -------------------------------------------------------------------------- */
+html[data-theme="light"] .card,
+html[data-theme="light"] .candidate-list-card,
+html[data-theme="light"] .candidate-panel,
+html[data-theme="light"] .analytics-card,
+html[data-theme="light"] .attendance-card,
+html[data-theme="light"] .approval-card,
+html[data-theme="light"] .admit-card,
+html[data-theme="light"] .allowance-card,
+html[data-theme="light"] .auth-card,
+html[data-theme="light"] .apply-section,
+html[data-theme="light"] .candidate-card,
+html[data-theme="light"] .audit-table,
+html[data-theme="light"] .candidate-table,
+html[data-theme="light"] .table-wrap {
+  background: var(--lt-surface) !important;
+  border: 1px solid var(--lt-border) !important;
+  box-shadow: var(--lt-shadow-card) !important;
+}
+
+html[data-theme="light"] .card:hover,
+html[data-theme="light"] .candidate-list-card:hover,
+html[data-theme="light"] .analytics-card:hover,
+html[data-theme="light"] .candidate-card:hover {
+  box-shadow: var(--lt-shadow-hover) !important;
+}
+
+html[data-theme="light"] .modal-box,
+html[data-theme="light"] .preview-panel,
+html[data-theme="light"] .candidate-preview-modal,
+html[data-theme="light"] .notif-flyout,
+html[data-theme="light"] .control-more-menu,
+html[data-theme="light"] .dropdown-menu,
+html[data-theme="light"] [role="menu"] {
+  background: var(--lt-surface-raised) !important;
+  border: 1px solid var(--lt-border) !important;
+  box-shadow: var(--lt-shadow-float) !important;
+}
+
+html[data-theme="light"] .candidate-preview-overlay {
+  background: var(--lt-overlay-scrim) !important;
+}
+
+html[data-theme="light"] .apply-section-title,
+html[data-theme="light"] .analytics-card-label,
+html[data-theme="light"] .approval-card-head,
+html[data-theme="light"] .collapse-head {
+  color: var(--lt-text-strong) !important;
+}
+
+/* --------------------------------------------------------------------------
+   5. BUTTONS / LINKS / INPUTS
+   -------------------------------------------------------------------------- */
+html[data-theme="light"] .btn,
+html[data-theme="light"] button,
+html[data-theme="light"] .button {
+  transition: background-color 150ms ease, border-color 150ms ease,
+    color 150ms ease, box-shadow 150ms ease, transform 100ms ease;
+}
+
+html[data-theme="light"] .btn.primary,
+html[data-theme="light"] .btn:not(.ghost):not(.secondary),
+html[data-theme="light"] .button.primary,
+html[data-theme="light"] button.primary,
+html[data-theme="light"] .auth-submit,
+html[data-theme="light"] .apply-submit {
+  background: var(--lt-primary) !important;
+  border-color: var(--lt-primary) !important;
+  color: var(--lt-primary-contrast) !important;
+  font-weight: 700;
+}
+
+html[data-theme="light"] .btn.primary:hover,
+html[data-theme="light"] .btn:not(.ghost):not(.secondary):hover,
+html[data-theme="light"] .button.primary:hover,
+html[data-theme="light"] button.primary:hover,
+html[data-theme="light"] .auth-submit:hover,
+html[data-theme="light"] .apply-submit:hover {
+  background: var(--lt-primary-hover) !important;
+  border-color: var(--lt-primary-hover) !important;
+}
+
+html[data-theme="light"] .btn.secondary,
+html[data-theme="light"] .button.secondary,
+html[data-theme="light"] .btn.ghost,
+html[data-theme="light"] button.ghost {
+  background: var(--lt-surface-raised) !important;
+  border: 1px solid var(--lt-border-strong) !important;
+  color: var(--lt-text-secondary) !important;
+  font-weight: 600;
+}
+
+html[data-theme="light"] .btn.secondary:hover,
+html[data-theme="light"] .button.secondary:hover,
+html[data-theme="light"] .btn.ghost:hover,
+html[data-theme="light"] button.ghost:hover {
+  background: var(--lt-surface-tint) !important;
+  border-color: var(--lt-primary) !important;
+  color: var(--lt-primary-active) !important;
+}
+
+html[data-theme="light"] input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="file"]),
+html[data-theme="light"] select,
+html[data-theme="light"] textarea,
+html[data-theme="light"] .form-control {
+  background: var(--lt-surface) !important;
+  color: var(--lt-text-strong) !important;
+  border: 1px solid var(--lt-border-strong) !important;
+  border-radius: 10px;
+  min-height: 42px;
+  padding: 10px 12px;
+  transition: border-color 150ms ease, box-shadow 150ms ease, background-color 150ms ease;
+}
+
+html[data-theme="light"] input:hover,
+html[data-theme="light"] select:hover,
+html[data-theme="light"] textarea:hover {
+  border-color: #596A61 !important;
+}
+
+html[data-theme="light"] input:focus,
+html[data-theme="light"] select:focus,
+html[data-theme="light"] textarea:focus,
+html[data-theme="light"] button:focus-visible,
+html[data-theme="light"] a:focus-visible,
+html[data-theme="light"] [tabindex]:focus-visible {
+  outline: 2px solid #2D8C84 !important;
+  outline-offset: 2px;
+  border-color: var(--lt-border-focus) !important;
+  box-shadow: var(--lt-shadow-focus) !important;
+}
+
+html[data-theme="light"] input::placeholder,
+html[data-theme="light"] textarea::placeholder,
+html[data-theme="light"] select:invalid {
+  color: var(--lt-text-placeholder) !important;
+  opacity: 1;
+}
+
+html[data-theme="light"] input:disabled,
+html[data-theme="light"] select:disabled,
+html[data-theme="light"] textarea:disabled,
+html[data-theme="light"] button:disabled,
+html[data-theme="light"] .disabled {
+  opacity: .5 !important;
+  background: #E8ECEA !important;
+  color: #526159 !important;
+  cursor: not-allowed !important;
+}
+
+html[data-theme="light"] .btn:active,
+html[data-theme="light"] button:active,
+html[data-theme="light"] .button:active {
+  transform: scale(.98);
+}
+
+/* --------------------------------------------------------------------------
+   6. TABLES / LISTS
+   -------------------------------------------------------------------------- */
+html[data-theme="light"] table {
+  color: var(--lt-text);
+}
+
+html[data-theme="light"] thead,
+html[data-theme="light"] .table-head,
+html[data-theme="light"] .candidate-table thead,
+html[data-theme="light"] .audit-table thead {
+  background: var(--lt-surface-tint) !important;
+}
+
+html[data-theme="light"] th {
+  color: var(--lt-text-strong) !important;
+  font-weight: 700 !important;
+  border-bottom: 1px solid var(--lt-border-strong) !important;
+}
+
+html[data-theme="light"] td {
+  color: var(--lt-text-secondary) !important;
+  border-bottom: 1px solid #DDE3E0 !important;
+}
+
+html[data-theme="light"] tbody tr:nth-child(even) {
+  background: rgba(241,244,242,.42);
+}
+
+html[data-theme="light"] tbody tr:hover {
+  background: var(--lt-surface-hover) !important;
+}
+
+html[data-theme="light"] .cell-name,
+html[data-theme="light"] .candidate-name,
+html[data-theme="light"] .cell-owner {
+  color: var(--lt-text-strong) !important;
+  font-weight: 650;
+}
+
+html[data-theme="light"] .list-item,
+html[data-theme="light"] .activity-row,
+html[data-theme="light"] .metric-row {
+  border-bottom: 1px solid #DDE3E0 !important;
+}
+
+html[data-theme="light"] .list-item:hover,
+html[data-theme="light"] .activity-row:hover {
+  background: var(--lt-surface-hover) !important;
+}
+
+/* --------------------------------------------------------------------------
+   7. PIPELINE / KANBAN
+   -------------------------------------------------------------------------- */
+html[data-theme="light"] .kanban-col,
+html[data-theme="light"] .pipeline-column {
+  background: #F0F3F1 !important;
+  border: 1px solid var(--lt-border) !important;
+  border-radius: 14px;
+}
+
+html[data-theme="light"] .kanban-col-header,
+html[data-theme="light"] .pipeline-stage-header {
+  color: var(--lt-text-strong) !important;
+  font-weight: 700;
+}
+
+html[data-theme="light"] .candidate-card {
+  border-color: #CBD5D0 !important;
+}
+
+html[data-theme="light"] .candidate-card-avatar {
+  background: var(--lt-primary) !important;
+  color: #fff !important;
+}
+
+html[data-theme="light"] .candidate-card-score {
+  background: var(--lt-primary-soft) !important;
+  color: var(--lt-primary-active) !important;
+  border: 1px solid #9CC8C2;
+}
+
+html[data-theme="light"] .candidate-card-actions {
+  border-top-color: #DDE3E0 !important;
+}
+
+html[data-theme="light"] .candidate-card-actions a {
+  color: var(--lt-text-secondary) !important;
+}
+
+html[data-theme="light"] .candidate-card-actions a:hover {
+  color: var(--lt-primary-active) !important;
+}
+
+html[data-theme="light"] .drop-target,
+html[data-theme="light"] .drag-over {
+  background: var(--lt-primary-soft) !important;
+  border-color: var(--lt-primary) !important;
+}
+
+/* --------------------------------------------------------------------------
+   8. STATUS BADGES — hue + lightness + icon/text, never color alone
+   -------------------------------------------------------------------------- */
+html[data-theme="light"] .pill,
+html[data-theme="light"] .badge,
+html[data-theme="light"] .jstate-published,
+html[data-theme="light"] .jstate-approved,
+html[data-theme="light"] .jstate-pending,
+html[data-theme="light"] .jstate-rejected,
+html[data-theme="light"] .istate-reviewed,
+html[data-theme="light"] .istate-review_pending,
+html[data-theme="light"] .istate-cancelled,
+html[data-theme="light"] .istate-ready {
+  border-width: 1px !important;
+  border-style: solid !important;
+  font-weight: 700 !important;
+  box-shadow: none !important;
+}
+
+html[data-theme="light"] .pill.status-active,
+html[data-theme="light"] .jstate-published,
+html[data-theme="light"] .jstate-approved,
+html[data-theme="light"] .istate-reviewed,
+html[data-theme="light"] .badge.success {
+  background: var(--lt-success-bg) !important;
+  color: var(--lt-success) !important;
+  border-color: var(--lt-success-border) !important;
+}
+
+html[data-theme="light"] .pill.status-pending,
+html[data-theme="light"] .jstate-pending,
+html[data-theme="light"] .istate-review_pending,
+html[data-theme="light"] .badge.urgent,
+html[data-theme="light"] .badge.low {
+  background: var(--lt-warning-bg) !important;
+  color: var(--lt-warning) !important;
+  border-color: var(--lt-warning-border) !important;
+}
+
+html[data-theme="light"] .pill.status-rejected,
+html[data-theme="light"] .pill.status-disabled,
+html[data-theme="light"] .pill.status-suspended,
+html[data-theme="light"] .jstate-rejected,
+html[data-theme="light"] .istate-cancelled,
+html[data-theme="light"] .badge.full {
+  background: var(--lt-danger-bg) !important;
+  color: var(--lt-danger) !important;
+  border-color: var(--lt-danger-border) !important;
+}
+
+html[data-theme="light"] .jstate-changes_requested,
+html[data-theme="light"] .istate-ready,
+html[data-theme="light"] .pill.status-pending_reactivation {
+  background: var(--lt-info-bg) !important;
+  color: var(--lt-info) !important;
+  border-color: var(--lt-info-border) !important;
+}
+
+/* Existing status icons remain meaningful even for color-blind users. */
+html[data-theme="light"] .status-success::before,
+html[data-theme="light"] .status-hired::before,
+html[data-theme="light"] .badge.success::before { content: "✓"; margin-right: 5px; }
+html[data-theme="light"] .status-warning::before,
+html[data-theme="light"] .status-reviewing::before { content: "!"; margin-right: 5px; }
+html[data-theme="light"] .status-danger::before,
+html[data-theme="light"] .status-rejected::before { content: "×"; margin-right: 5px; }
+html[data-theme="light"] .status-info::before,
+html[data-theme="light"] .status-new::before { content: "i"; margin-right: 5px; }
+
+/* --------------------------------------------------------------------------
+   9. PROGRESS / CHARTS
+   -------------------------------------------------------------------------- */
+html[data-theme="light"] .bar-track,
+html[data-theme="light"] .metric-row .bar-track,
+html[data-theme="light"] .progress-track,
+html[data-theme="light"] .applicant-meter {
+  background: #DCE4E0 !important;
+}
+
+html[data-theme="light"] .bar-fill,
+html[data-theme="light"] .progress-fill,
+html[data-theme="light"] .applicant-meter > * {
+  background: var(--lt-primary) !important;
+}
+
+html[data-theme="light"] .bar-label,
+html[data-theme="light"] .bar-value,
+html[data-theme="light"] .metric-row {
+  color: var(--lt-text-secondary) !important;
+}
+
+/* --------------------------------------------------------------------------
+   10. CHECKBOXES / TOGGLES
+   -------------------------------------------------------------------------- */
+html[data-theme="light"] input[type="checkbox"],
+html[data-theme="light"] input[type="radio"] {
+  accent-color: var(--lt-primary);
+}
+
+html[data-theme="light"] input[type="checkbox"]:not(:checked),
+html[data-theme="light"] input[type="radio"]:not(:checked) {
+  border-color: var(--lt-border-strong) !important;
+}
+
+html[data-theme="light"] .switch,
+html[data-theme="light"] .toggle,
+html[data-theme="light"] [role="switch"] {
+  border: 1px solid var(--lt-border-strong) !important;
+  background: #E3E9E6 !important;
+}
+
+html[data-theme="light"] .switch.active,
+html[data-theme="light"] .toggle.active,
+html[data-theme="light"] [role="switch"][aria-checked="true"] {
+  background: var(--lt-primary) !important;
+  border-color: var(--lt-primary) !important;
+}
+
+/* --------------------------------------------------------------------------
+   11. ALERTS / NOTIFICATIONS / FLOATING UI
+   -------------------------------------------------------------------------- */
+html[data-theme="light"] .notice,
+html[data-theme="light"] .alert,
+html[data-theme="light"] .auth-alert {
+  border: 1px solid var(--lt-border) !important;
+  box-shadow: var(--lt-shadow-card) !important;
+  background: var(--lt-surface) !important;
+  color: var(--lt-text) !important;
+}
+
+html[data-theme="light"] .notice.success,
+html[data-theme="light"] .alert.success {
+  background: var(--lt-success-bg) !important;
+  color: var(--lt-success) !important;
+  border-color: var(--lt-success-border) !important;
+}
+
+html[data-theme="light"] .notice.error,
+html[data-theme="light"] .alert.error {
+  background: var(--lt-danger-bg) !important;
+  color: var(--lt-danger) !important;
+  border-color: var(--lt-danger-border) !important;
+}
+
+html[data-theme="light"] .notif-trigger:hover {
+  background: rgba(15,118,110,.09) !important;
+}
+
+html[data-theme="light"] .notif-flyout {
+  border-radius: 14px !important;
+}
+
+html[data-theme="light"] .notif-badge {
+  background: #C24135 !important;
+  border-color: var(--lt-surface-raised) !important;
+}
+
+/* --------------------------------------------------------------------------
+   12. FOCUS / CONTRAST SAFETY NET
+   -------------------------------------------------------------------------- */
+html[data-theme="light"] :where(button, a, input, select, textarea, summary, [role="button"], [tabindex]):focus-visible {
+  outline: 2px solid #2D8C84 !important;
+  outline-offset: 2px;
+}
+
+@media (prefers-contrast: more) {
+  html[data-theme="light"] {
+    --lt-border: #AEBAB3;
+    --lt-border-strong: #526159;
+  }
+
+  html[data-theme="light"] .card,
+  html[data-theme="light"] .table-wrap,
+  html[data-theme="light"] input,
+  html[data-theme="light"] select,
+  html[data-theme="light"] textarea {
+    border-width: 1.5px !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html[data-theme="light"] *,
+  html[data-theme="light"] *::before,
+  html[data-theme="light"] *::after {
+    scroll-behavior: auto !important;
+    transition-duration: .01ms !important;
+    animation-duration: .01ms !important;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   13. MOBILE BREATHING ROOM
+   -------------------------------------------------------------------------- */
+@media (max-width: 760px) {
+  html[data-theme="light"] .card,
+  html[data-theme="light"] .candidate-list-card,
+  html[data-theme="light"] .analytics-card,
+  html[data-theme="light"] .candidate-card {
+    border-radius: 12px;
+  }
+
+  html[data-theme="light"] .btn,
+  html[data-theme="light"] button,
+  html[data-theme="light"] input,
+  html[data-theme="light"] select {
+    min-height: 42px;
+  }
+}

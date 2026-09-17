@@ -1,0 +1,4 @@
+# Uploaded job description PDFs are static files only — never executed.
+<FilesMatch "\.(php|phtml|phar|cgi|pl)$">
+  Require all denied
+</FilesMatch>

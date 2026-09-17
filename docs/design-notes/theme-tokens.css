@@ -1,0 +1,36 @@
+/* ACME ATS — Light Theme Token Deliverable */
+:root {
+  /* Canvas & Surfaces */
+  --bg-canvas: #F8FAFC;
+  --bg-surface: #FFFFFF;
+  --bg-surface-hover: #F1F5F9;
+
+  /* Typography */
+  --text-primary: #0F172A;
+  --text-secondary: #475569;
+  --text-muted: #64748B;
+
+  /* Borders & Shadows */
+  --border-default: #E2E8F0;
+  --border-focus: #94A3B8;
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+
+  /* Vibrant Accents */
+  --accent-primary: #2563EB;
+  --accent-hover: #1D4ED8;
+
+  /* Supporting light-theme tokens used by the existing ATS */
+  --accent-contrast: #FFFFFF;
+  --accent-glow: rgba(37, 99, 235, 0.15);
+  --status-success-bg: #DCFCE7;
+  --status-success-text: #166534;
+  --status-warning-bg: #FEF3C7;
+  --status-warning-text: #92400E;
+  --status-info-bg: #DBEAFE;
+  --status-info-text: #1E40AF;
+  --status-danger-strong: #EF4444;
+}
+
+/* Dark theme remains unchanged */
+/* Existing [data-theme="dark"] and prefers-color-scheme dark rules remain in the production token file exactly as supplied. */

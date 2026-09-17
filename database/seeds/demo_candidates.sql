@@ -1,0 +1,3 @@
+-- One demo job posting. (The prototype ships no fake candidates against
+-- real emails; add candidates via the Apply flow or add_candidate.php.)
+INSERT INTO jobs(department_id,title,slug,location,tags,applicant_limit,description,requirements,status,published_at) SELECT d.id,'Senior Product Engineer','senior-product-engineer','Remote / New York','React,TypeScript,Remote',30,'Build the future of work with a thoughtful engineering team.','5+ years building production web applications\nStrong experience with React and TypeScript\nComfortable owning features end-to-end, from design to deploy\nClear written and verbal communication in an async, remote-first team','open',NOW() FROM departments d WHERE d.name='Engineering' ON DUPLICATE KEY UPDATE title=title;

@@ -1,0 +1,297 @@
+/* ==========================================================================\n   ACME ATS — Light Theme Accessibility + Elevation Overhaul\n   IMPORTANT: This stylesheet is LIGHT THEME ONLY.\n   It intentionally contains no [data-theme="dark"] rules and must never\n   redefine dark-theme tokens or components.\n   ========================================================================== */\n\nhtml[data-theme="light"] {\n  color-scheme: light;\n}\n\n/* --------------------------------------------------------------------------\n   1. DESIGN SYSTEM / LIGHT TOKENS\n   -------------------------------------------------------------------------- */\nhtml[data-theme="light"] {\n  --bg-canvas: #F8FAFC;\n  --bg-surface: #FFFFFF;\n  --bg-surface-elevated: #FFFFFF;\n  --bg-surface-hover: #F1F5F9;\n  --bg-subtle: #F1F5F9;\n  --bg-input: #FFFFFF;\n\n  --text-primary: #0F172A;\n  --text-secondary: #334155;\n  --text-muted: #475569;\n  --text-placeholder: #475569;\n\n  --border-subtle: #E2E8F0;\n  --border-default: #CBD5E1;\n  --border-strong: #64748B;\n  --border-control: #64748B;\n  --border-focus: #2563EB;\n\n  --accent-primary: #2563EB;\n  --accent-hover: #1D4ED8;\n  --accent-active: #1E40AF;\n  --accent-contrast: #FFFFFF;\n  --accent-glow: rgba(37, 99, 235, .18);\n\n  --status-success: #16A34A;\n  --status-success-bg: #DCFCE7;\n  --status-success-text: #166534;\n  --status-success-border: #86EFAC;\n  --status-warning: #D97706;\n  --status-warning-bg: #FEF3C7;\n  --status-warning-text: #92400E;\n  --status-warning-border: #F59E0B;\n  --status-danger: #DC2626;\n  --status-danger-bg: #FEE2E2;\n  --status-danger-text: #991B1B;\n  --status-danger-border: #EF4444;\n  --status-info: #2563EB;\n  --status-info-bg: #DBEAFE;\n  --status-info-text: #1E40AF;\n  --status-info-border: #60A5FA;\n\n  --shadow-sm: 0 1px 3px rgba(0, 0, 0, .05);\n  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, .07), 0 2px 4px -2px rgba(0, 0, 0, .05);\n  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, .10), 0 4px 6px -2px rgba(0, 0, 0, .05);\n  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, .12), 0 8px 10px -6px rgba(0, 0, 0, .06);\n  --focus-ring: 0 0 0 3px rgba(37, 99, 235, .18);\n}\n\n/* Legacy names used throughout the prototype. */\nhtml[data-theme="light"] {\n  --ink: var(--text-primary);\n  --muted: var(--text-muted);\n  --paper: var(--bg-canvas);\n  --surface: var(--bg-surface);\n  --elevated: var(--bg-surface-elevated);\n  --line: var(--border-default);\n  --green: var(--accent-primary);\n  --shadow: var(--shadow-md);\n}\n\n/* --------------------------------------------------------------------------\n   2. GLOBAL VISIBILITY / TYPOGRAPHY\n   -------------------------------------------------------------------------- */\nhtml[data-theme="light"] body {\n  background: var(--bg-canvas);\n  color: var(--text-primary);\n}\n\nhtml[data-theme="light"] :where(p, li, td, th, label, small, .meta, .hint, .field-hint, .activity-time, .file-sub) {\n  color: var(--text-secondary);\n}\n\nhtml[data-theme="light"] :where(.muted, .text-muted, .label, .eyebrow, .sidebar-label, .activity-time, .trust-stat span, .analytics-card-hint) {\n  color: var(--text-muted) !important;\n}\n\nhtml[data-theme="light"] :where(h1, h2, h3, h4, h5, h6, strong, th, .section-head h2, .candidate-name, .job-title, .card-title) {\n  color: var(--text-primary);\n}\n\nhtml[data-theme="light"] :where(button, input, select, textarea) {\n  font-weight: 500;\n}\n\nhtml[data-theme="light"] :where(th, .nav-link, .sidebar a, .btn, .nav-cta, .tab, .side-tab, .notif-chip, .notif-markall) {\n  font-weight: 600;\n}\n\n/* Do not allow old utility colors to create low-contrast text. */\nhtml[data-theme="light"] :where(.text-light, .light-text, .placeholder) {\n  color: var(--text-secondary) !important;\n}\n\nhtml[data-theme="light"] ::placeholder {\n  color: var(--text-placeholder);\n  opacity: 1;\n}\n\n/* --------------------------------------------------------------------------\n   3. ELEVATION / SURFACES\n   -------------------------------------------------------------------------- */\nhtml[data-theme="light"] :where(.card, .box, .analytics-card, .admit-card, .approval-card, .step-card, .trust-strip, .perm-card, .allowance-card, .empty-panel, .empty-state, .filter-bar, .meeting-mode-toggle, .room-controls, .room-side, .job-card, .candidate-card, .candidate-container, .cprofile-main, .cprofile-ai, .doc-list, .file-row) {\n  background: var(--bg-surface);\n  border: 1px solid var(--border-default);\n  box-shadow: var(--shadow-sm);\n}\n\nhtml[data-theme="light"] :where(.card, .analytics-card, .job-card, .candidate-card, .step-card, .admit-card, .approval-card, .perm-card) {\n  transition: box-shadow 160ms ease, transform 160ms ease, border-color 160ms ease;\n}\n\nhtml[data-theme="light"] :where(.card, .analytics-card, .job-card, .candidate-card, .step-card, .admit-card, .approval-card, .perm-card):hover {\n  border-color: #94A3B8;\n  box-shadow: var(--shadow-md);\n}\n\nhtml[data-theme="light"] :where(.modal-box, .preview-panel, .candidate-preview-modal, .notif-flyout, .nav-menu, .control-more-menu, .profile-menu, .dropdown-menu, .tooltip, [role="tooltip"], .popover) {\n  background: var(--bg-surface-elevated);\n  color: var(--text-primary);\n  border: 1px solid var(--border-default);\n  box-shadow: var(--shadow-lg);\n}\n\nhtml[data-theme="light"] :where(.candidate-preview-modal, .modal-box, .preview-panel) {\n  border-color: #94A3B8;\n}\n\n/* Secondary grouping surfaces. */\nhtml[data-theme="light"] :where(.table thead, .table th, .filter-bar, .secondary-sidebar, .subnav, .list-header, .toolbar, .confirm-checkbox-row, .preview-latest-note) {\n  background: var(--bg-subtle);\n}\n\n/* --------------------------------------------------------------------------\n   4. FORMS / INPUTS\n   -------------------------------------------------------------------------- */\nhtml[data-theme="light"] :where(\n  input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="file"]),\n  select, textarea, .mini-input, .chat-form input, .audit-filters input, .audit-filters select\n) {\n  background: #FFFFFF;\n  color: var(--text-primary);\n  border: 1px solid var(--border-control);\n  border-radius: 8px;\n}\n\nhtml[data-theme="light"] :where(\n  input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="file"]),\n  select, textarea, .mini-input, .chat-form input, .audit-filters input, .audit-filters select\n):hover {\n  border-color: #475569;\n}\n\nhtml[data-theme="light"] :where(\n  input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="file"]),\n  select, textarea, .mini-input, .chat-form input, .audit-filters input, .audit-filters select\n):focus {\n  border-color: var(--accent-primary);\n  box-shadow: var(--focus-ring);\n  outline: none;\n}\n\nhtml[data-theme="light"] :where(input[type="checkbox"], input[type="radio"]) {\n  accent-color: var(--accent-primary);\n}\n\nhtml[data-theme="light"] :where(input[type="checkbox"], input[type="radio"]) {\n  border: 2px solid #64748B;\n}\n\nhtml[data-theme="light"] :where(.perm-switch, .toggle, .switch) {\n  border-color: #64748B;\n}\n\n/* --------------------------------------------------------------------------\n   5. BUTTONS / LINKS / FOCUS\n   -------------------------------------------------------------------------- */\nhtml[data-theme="light"] :where(.btn, .nav-cta, .auth-submit, .chat-form button) {\n  background: var(--accent-primary);\n  border-color: var(--accent-primary);\n  color: #FFFFFF;\n  box-shadow: 0 3px 8px rgba(37, 99, 235, .18);\n}\n\nhtml[data-theme="light"] :where(.btn, .nav-cta, .auth-submit, .chat-form button):hover {\n  background: var(--accent-hover);\n  border-color: var(--accent-hover);\n  color: #FFFFFF;\n}\n\nhtml[data-theme="light"] :where(.btn, .nav-cta, .auth-submit, .chat-form button):active {\n  transform: scale(.98);\n}\n\nhtml[data-theme="light"] :where(.btn.secondary, .btn.ghost) {\n  background: #FFFFFF;\n  color: var(--accent-primary);\n  border-color: var(--accent-primary);\n  box-shadow: none;\n}\n\nhtml[data-theme="light"] :where(.btn.secondary, .btn.ghost):hover {\n  background: #EFF6FF;\n  color: var(--accent-hover);\n  border-color: var(--accent-hover);\n}\n\nhtml[data-theme="light"] a {\n  color: var(--accent-primary);\n}\n\nhtml[data-theme="light"] :where(.brand, .sidebar a, .nav-link, .util-btn, .theme-toggle, .menu-toggle) {\n  color: var(--text-primary);\n}\n\nhtml[data-theme="light"] :where(.nav-link:hover, .sidebar a:hover) {\n  color: var(--accent-hover);\n  background: var(--bg-surface-hover);\n}\n\nhtml[data-theme="light"] :where(button, a, input, select, textarea, [tabindex]:not([tabindex="-1"])):focus-visible {\n  outline: 2px solid #3B82F6;\n  outline-offset: 2px;\n}\n\nhtml[data-theme="light"] :where(button:disabled, input:disabled, select:disabled, textarea:disabled, .disabled, [aria-disabled="true"]) {\n  opacity: .5;\n  background: #E2E8F0;\n  border-color: #94A3B8;\n  color: #475569;\n  cursor: not-allowed;\n  box-shadow: none;\n}\n\n/* --------------------------------------------------------------------------\n   6. TABLES / DATA DENSITY\n   -------------------------------------------------------------------------- */\nhtml[data-theme="light"] :where(.table, table) {\n  background: #FFFFFF;\n  color: var(--text-primary);\n  border: 1px solid var(--border-default);\n  border-collapse: separate;\n  border-spacing: 0;\n  box-shadow: var(--shadow-sm);\n}\n\nhtml[data-theme="light"] :where(.table thead th, table thead th) {\n  background: #F1F5F9;\n  color: var(--text-primary);\n  font-weight: 600;\n  border-bottom: 1px solid #CBD5E1;\n}\n\nhtml[data-theme="light"] :where(.table tbody td, table tbody td) {\n  border-bottom: 1px solid #E2E8F0;\n  color: var(--text-secondary);\n}\n\nhtml[data-theme="light"] :where(.table tbody tr:nth-child(even), table tbody tr:nth-child(even)) {\n  background: #FAFCFE;\n}\n\nhtml[data-theme="light"] :where(.table tbody tr:hover, table tbody tr:hover) {\n  background: #F1F5F9;\n}\n\n/* --------------------------------------------------------------------------\n   7. SEMANTIC STATUS / PIPELINE\n   -------------------------------------------------------------------------- */\nhtml[data-theme="light"] :where(.status-success, .status-hired, .pill.status-active, .badge.success, .jstate-published, .jstate-approved, .istate-reviewed, .countdown-chip.live) {\n  background: var(--status-success-bg);\n  color: var(--status-success-text);\n  border-color: var(--status-success-border);\n}\n\nhtml[data-theme="light"] :where(.status-warning, .status-reviewing, .pill.status-pending, .badge.low, .badge.urgent, .jstate-pending, .istate-review_pending, .countdown-chip) {\n  background: var(--status-warning-bg);\n  color: var(--status-warning-text);\n  border-color: var(--status-warning-border);\n}\n\nhtml[data-theme="light"] :where(.status-error, .status-rejected, .pill.status-rejected, .pill.status-disabled, .pill.status-suspended, .badge.full, .jstate-rejected, .istate-cancelled) {\n  background: var(--status-danger-bg);\n  color: var(--status-danger-text);\n  border-color: var(--status-danger-border);\n}\n\nhtml[data-theme="light"] :where(.status-info, .status-new, .jstate-changes_requested, .istate-ready) {\n  background: var(--status-info-bg);\n  color: var(--status-info-text);\n  border-color: var(--status-info-border);\n}\n\n/* Statuses are not color-only: existing labels remain visible and these\n   compact markers add a second visual channel where the component supports it. */\nhtml[data-theme="light"] :where(.status-success, .status-hired, .badge.success)::before { content: "✓"; margin-right: 5px; font-weight: 800; }\nhtml[data-theme="light"] :where(.status-warning, .status-reviewing, .badge.low)::before { content: "!"; margin-right: 5px; font-weight: 900; }\nhtml[data-theme="light"] :where(.status-error, .status-rejected, .badge.full)::before { content: "×"; margin-right: 5px; font-weight: 900; }\nhtml[data-theme="light"] :where(.status-info, .status-new)::before { content: "i"; margin-right: 5px; font-weight: 900; }\n\nhtml[data-theme="light"] :where(.candidate-card, .kanban-col) {\n  border-color: var(--border-default);\n}\n\nhtml[data-theme="light"] .kanban-col {\n  background: #F1F5F9;\n}\n\nhtml[data-theme="light"] .kanban-col.drag-over {\n  background: #DBEAFE;\n  border-color: var(--accent-primary);\n  box-shadow: inset 0 0 0 2px rgba(37, 99, 235, .20);\n}\n\nhtml[data-theme="light"] .candidate-card:hover {\n  box-shadow: var(--shadow-md);\n  transform: translateY(-2px);\n}\n\n/* --------------------------------------------------------------------------\n   8. DROPDOWNS / TOOLTIPS / MODALS\n   -------------------------------------------------------------------------- */\nhtml[data-theme="light"] :where(.nav-menu, .control-more-menu, .notif-flyout, .dropdown-menu, .tooltip, [role="tooltip"], .popover) {\n  border: 1px solid #CBD5E1;\n  box-shadow: var(--shadow-lg);\n}\n\nhtml[data-theme="light"] :where(.nav-menu a, .control-more-menu button, .notif-chip) {\n  color: var(--text-secondary);\n}\n\nhtml[data-theme="light"] :where(.nav-menu a:hover, .control-more-menu button:hover, .notif-chip:hover) {\n  background: #F1F5F9;\n  color: var(--text-primary);\n}\n\n/* --------------------------------------------------------------------------\n   9. PROGRESS / CHARTS\n   -------------------------------------------------------------------------- */\nhtml[data-theme="light"] :where(.bar-track, .funnel-track, .cap-bar, .cprofile-ai-bar) {\n  background: #CBD5E1;\n}\n\nhtml[data-theme="light"] :where(.bar-fill, .funnel-fill, .cprofile-ai-bar span) {\n  background: var(--accent-primary);\n}\n\nhtml[data-theme="light"] .funnel-fill {\n  background: var(--accent-primary);\n}\n\nhtml[data-theme="light"] :where(.score-pill, .cprofile-ai-score-num, .status-id-big) {\n  color: var(--accent-hover);\n}\n\n/* --------------------------------------------------------------------------\n   10. TOGGLES / CHECKBOXES / RADIO\n   -------------------------------------------------------------------------- */\nhtml[data-theme="light"] :where(.perm-switch, .toggle, .switch) {\n  background: #E2E8F0;\n  border: 1px solid #64748B;\n}\n\nhtml[data-theme="light"] :where(.perm-toggle input:checked ~ .perm-switch, .toggle input:checked ~ .switch, .switch.is-on) {\n  background: var(--accent-primary);\n  border-color: var(--accent-primary);\n}\n\nhtml[data-theme="light"] :where(.perm-toggle input:focus-visible ~ .perm-switch, .toggle input:focus-visible ~ .switch) {\n  outline: 2px solid #3B82F6;\n  outline-offset: 2px;\n}\n\n/* --------------------------------------------------------------------------\n   11. EXISTING LIGHT-ONLY HARD-CODED GREEN/GRAY HOTSPOTS\n   -------------------------------------------------------------------------- */\nhtml[data-theme="light"] :where(\n  .step-num, .empty-icon, .profile-photo-drop:hover, .chat-msg.me, .icon-toggle.on,\n  .status-new-banner, .status-stage-badge, .jstate-draft, .jstate-paused, .jstate-closed,\n  .jstate-changes_requested, .pill.status-open, .pill.status-draft\n) {\n  background: #F1F5F9;\n  color: var(--text-secondary);\n}\n\nhtml[data-theme="light"] :where(.step-num, .empty-icon, .profile-photo-drop:hover) {\n  color: var(--accent-primary);\n  border-color: #CBD5E1;\n}\n\nhtml[data-theme="light"] .profile-photo-drop {\n  background: #FFFFFF;\n  border-color: #64748B;\n}\n\nhtml[data-theme="light"] .profile-photo-drop:hover {\n  background: #EFF6FF;\n  border-color: var(--accent-primary);\n}\n\nhtml[data-theme="light"] .icon-toggle {\n  background: #FFFFFF;\n  border-color: #64748B;\n  color: var(--text-primary);\n}\n\nhtml[data-theme="light"] .icon-toggle.on {\n  background: #DBEAFE;\n  border-color: var(--accent-primary);\n  color: var(--accent-hover);\n}\n\nhtml[data-theme="light"] .icon-toggle:not(.on) {\n  background: #FEF2F2;\n  border-color: #DC2626;\n  color: #991B1B;\n}\n\nhtml[data-theme="light"] .mini-job:hover {\n  background: #F1F5F9;\n}\n\nhtml[data-theme="light"] .room-code-chip {\n  background: #F1F5F9;\n  border-color: #CBD5E1;\n  color: var(--text-primary);\n}\n\n/* --------------------------------------------------------------------------\n   12. NOTIFICATION BELL\n   -------------------------------------------------------------------------- */\nhtml[data-theme="light"] .notif-trigger {\n  position: relative;\n  color: var(--text-primary);\n  border-radius: 10px;\n}\n\nhtml[data-theme="light"] .notif-trigger:hover {\n  background: rgba(15, 23, 42, .05);\n}\n\nhtml[data-theme="light"] .notif-trigger .icon-bell {\n  color: currentColor;\n  stroke: currentColor;\n}\n\nhtml[data-theme="light"] .notif-badge {\n  width: 10px;\n  height: 10px;\n  padding: 0;\n  top: 3px;\n  right: 3px;\n  background: #EF4444;\n  border: 2px solid #FFFFFF;\n  border-radius: 50%;\n}\n\n/* --------------------------------------------------------------------------\n   13. GLARE / HIGH-BRIGHTNESS SAFETY NET\n   -------------------------------------------------------------------------- */\n@media (prefers-contrast: more) {\n  html[data-theme="light"] :where(.card, .box, .table, .table-wrap, input, select, textarea, .candidate-card, .modal-box, .notif-flyout) {\n    border-color: #475569;\n  }\n\n  html[data-theme="light"] :where(.muted, .text-muted, .label, .eyebrow, .hint, .field-hint) {\n    color: #334155 !important;\n  }\n}\n\n@media (prefers-reduced-motion: reduce) {\n  html[data-theme="light"] :where(.card, .analytics-card, .job-card, .candidate-card, .step-card, .btn) {\n    transition: none;\n  }\n}\nEOF
+
+# Insert stylesheet after the main styles so the audit overrides legacy hard-coded light colors.
+python3 - <<'PY'
+from pathlib import Path
+p=Path('/tmp/ats/acme-ats/includes/header.php')
+s=p.read_text()
+needle='<link rel="stylesheet" href="assets/styles.css?v=<?= @filemtime(__DIR__\'/../assets/styles.css\') ?: time() ?>">'
+insert=needle+'\n<link rel="stylesheet" href="assets/light-theme-overhaul.css?v=<?= @filemtime(__DIR__\'/../assets/light-theme-overhaul.css\') ?: time() ?>">'
+if 'light-theme-overhaul.css' not in s:
+    s=s.replace(needle,insert)
+p.write_text(s)
+PY
+
+# Update the root light tokens in the existing token file, leaving the dark block untouched.
+python3 - <<'PY'
+from pathlib import Path
+p=Path('/tmp/ats/acme-ats/assets/theme-tokens.css')
+s=p.read_text()
+start=s.index(':root{')
+end=s.index('\n\n/* ─── Dark', start)
+root='''/* ─── Light ─────────────────────────────────────────────────────────────── */
+:root{
+  /* Canvas & surfaces */
+  --bg-canvas:#F8FAFC;
+  --bg-surface:#FFFFFF;
+  --bg-surface-elevated:#FFFFFF;
+  --bg-surface-hover:#F1F5F9;
+  --bg-subtle:#F1F5F9;
+  --bg-input:#FFFFFF;
+
+  /* Typography */
+  --text-primary:#0F172A;
+  --text-secondary:#334155;
+  --text-muted:#475569;
+  --text-placeholder:#475569;
+
+  /* Borders — control borders use a darker token because #CBD5E1 alone is
+     intentionally reserved for subtle separators, not critical controls. */
+  --border-subtle:#E2E8F0;
+  --border-default:#CBD5E1;
+  --border-strong:#64748B;
+  --border-input:#64748B;
+  --border-control:#64748B;
+  --border-focus:#2563EB;
+
+  /* Vibrant action system */
+  --accent-primary:#2563EB;
+  --accent-hover:#1D4ED8;
+  --accent-active:#1E40AF;
+  --accent-contrast:#FFFFFF;
+  --accent-glow:rgba(37,99,235,.18);
+
+  /* Semantic states */
+  --status-success:#16A34A;
+  --status-success-bg:#DCFCE7;
+  --status-success-text:#166534;
+  --status-success-border:#86EFAC;
+  --status-warning:#D97706;
+  --status-warning-bg:#FEF3C7;
+  --status-warning-text:#92400E;
+  --status-warning-border:#F59E0B;
+  --status-danger:#DC2626;
+  --status-danger-bg:#FEE2E2;
+  --status-danger-text:#991B1B;
+  --status-danger-border:#EF4444;
+  --status-danger-strong:#EF4444;
+  --status-info:#2563EB;
+  --status-info-bg:#DBEAFE;
+  --status-info-text:#1E40AF;
+  --status-info-border:#60A5FA;
+  --status-teal-bg:#CCFBF1;
+  --status-teal-text:#115E59;
+  --status-teal-border:#2DD4BF;
+  --autofill-tint:rgba(37,99,235,.06);
+
+  /* Elevation */
+  --shadow-sm:0 1px 3px rgba(0,0,0,.05);
+  --shadow-md:0 4px 6px -1px rgba(0,0,0,.07),0 2px 4px -2px rgba(0,0,0,.05);
+  --shadow-lg:0 10px 15px -3px rgba(0,0,0,.10),0 4px 6px -2px rgba(0,0,0,.05);
+  --shadow-xl:0 20px 25px -5px rgba(0,0,0,.12),0 8px 10px -6px rgba(0,0,0,.06);
+  --elevation-card:var(--shadow-sm);
+  --elevation-flyout:var(--shadow-lg);
+  --overlay-scrim:rgba(15,23,42,.45);
+
+  /* File accents */
+  --file-pdf:#B91C1C;
+  --file-doc:#1D4ED8;
+  --file-sheet:#15803D;
+  --file-image:#6D28D9;
+
+  /* Avatar fallback */
+  --avatar-fallback-bg:#E2E8F0;
+  --avatar-fallback-text:#0F172A;
+
+  /* Legacy aliases used by the existing ATS CSS */
+  --ink:var(--text-primary);
+  --muted:var(--text-muted);
+  --paper:var(--bg-canvas);
+  --surface:var(--bg-surface);
+  --elevated:var(--bg-surface-elevated);
+  --line:var(--border-default);
+  --green:var(--accent-primary);
+  --lime:#DBEAFE;
+  --orange:#D97706;
+  --shadow:var(--shadow-sm);
+
+  --bg-app:var(--bg-canvas);
+  --border-color:var(--border-default);
+  --status-success:var(--status-success-text);
+  --status-warning:var(--status-warning-text);
+  --status-danger:var(--status-danger-text);
+  --sidebar-width-expanded:250px;
+  --sidebar-width-compact:72px;
+
+  font-family:Inter,ui-sans-serif,system-ui,sans-serif;
+}'''
+p.write_text(s[:start]+root+s[end:])
+PY
+
+# Add a documentation note to the project.
+cat > /tmp/ats/acme-ats/database/README-light-theme-overhaul.txt <<'EOF'
+ACME ATS — LIGHT THEME OVERHAUL
+
+The light theme is now governed by:
+- assets/theme-tokens.css (semantic token definitions)
+- assets/light-theme-overhaul.css (component audit/overrides)
+
+Dark-theme rules in assets/theme-tokens.css and existing body.dark / data-theme=dark
+component rules were not modified by the overhaul stylesheet.
+
+The new light theme enforces:
+- #F8FAFC canvas and #FFFFFF surfaces
+- #0F172A primary text / #334155 secondary text / #475569 muted text
+- darker control borders (#64748B) for 3:1+ UI-component contrast
+- blue primary actions (#2563EB / #1D4ED8)
+- tinted semantic states with text and symbol cues
+- Level 1/2/3 elevation
+- visible keyboard focus rings
+- disabled-state treatment
+- table row separation and hover/striping
+- stronger dropdown/modal shadows
+- saturated progress/chart fills
+- visible checkbox/toggle boundaries
+- high-contrast preference safety net
+
+/* --------------------------------------------------------------------------
+   14. ADDITIONAL LEGACY COMPONENT SAFETY OVERRIDES
+   These selectors neutralize the older green/cream palette where it would
+   otherwise survive through hard-coded declarations in styles.css.
+   -------------------------------------------------------------------------- */
+html[data-theme="light"] .notice,
+html[data-theme="light"] .auth-note,
+html[data-theme="light"] .tag-pill,
+html[data-theme="light"] .reason-note,
+html[data-theme="light"] .confirm-row,
+html[data-theme="light"] .confirm-diff-row,
+html[data-theme="light"] .file-row,
+html[data-theme="light"] .activity-row,
+html[data-theme="light"] .people-row {
+  border-color: var(--border-default);
+}
+
+html[data-theme="light"] .notice {
+  background: #F1F5F9;
+  color: var(--text-primary);
+}
+html[data-theme="light"] .notice.success {
+  background: var(--status-success-bg);
+  border-color: var(--status-success-border);
+  color: var(--status-success-text);
+}
+html[data-theme="light"] .notice.error {
+  background: var(--status-danger-bg);
+  border-color: var(--status-danger-border);
+  color: var(--status-danger-text);
+}
+html[data-theme="light"] .notice.warning {
+  background: var(--status-warning-bg);
+  border-color: var(--status-warning-border);
+  color: var(--status-warning-text);
+}
+
+html[data-theme="light"] .tag-pill {
+  background: #F1F5F9;
+  color: var(--text-secondary);
+  border: 1px solid var(--border-default);
+}
+
+html[data-theme="light"] .reason-note {
+  background: #FFFBEB;
+  border-left-color: var(--status-warning);
+  color: var(--text-secondary);
+}
+
+html[data-theme="light"] .jstate,
+html[data-theme="light"] .pill {
+  border: 1px solid var(--border-default);
+}
+html[data-theme="light"] .jstate-draft,
+html[data-theme="light"] .jstate-closed,
+html[data-theme="light"] .pill.status-draft {
+  background: #F1F5F9;
+  color: var(--text-secondary);
+}
+html[data-theme="light"] .jstate-paused,
+html[data-theme="light"] .pill.status-paused {
+  background: var(--status-warning-bg);
+  color: var(--status-warning-text);
+  border-color: var(--status-warning-border);
+}
+html[data-theme="light"] .jstate-rejected,
+html[data-theme="light"] .pill.status-closed {
+  background: var(--status-danger-bg);
+  color: var(--status-danger-text);
+  border-color: var(--status-danger-border);
+}
+
+html[data-theme="light"] .status-stage-badge,
+html[data-theme="light"] .status-new-banner {
+  background: var(--status-info-bg);
+  color: var(--status-info-text);
+  border-color: var(--status-info-border);
+}
+
+html[data-theme="light"] .status-step .dot {
+  background: #FFFFFF;
+  border-color: #64748B;
+  color: var(--text-secondary);
+}
+html[data-theme="light"] .status-step.done .dot {
+  background: var(--status-success);
+  border-color: var(--status-success);
+  color: #FFFFFF;
+}
+html[data-theme="light"] .status-step.current .dot {
+  background: var(--status-warning);
+  border-color: var(--status-warning);
+  color: #FFFFFF;
+  box-shadow: 0 0 0 4px rgba(217,119,6,.16);
+}
+html[data-theme="light"] .status-step.done .step-state { color: var(--status-success-text); }
+html[data-theme="light"] .status-step.current .step-state { color: var(--status-warning-text); }
+
+html[data-theme="light"] .file-row:hover,
+html[data-theme="light"] .activity-row:hover,
+html[data-theme="light"] .people-row:hover {
+  background: #F1F5F9;
+}
+
+html[data-theme="light"] .file-name,
+html[data-theme="light"] .cell-name,
+html[data-theme="light"] .candidate-name {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+html[data-theme="light"] .file-meta,
+html[data-theme="light"] .cell-role,
+html[data-theme="light"] .cell-date,
+html[data-theme="light"] .activity-time {
+  color: var(--text-muted);
+}
+
+/* Navigation and utility surfaces need boundaries in bright environments. */
+html[data-theme="light"] .sidebar,
+html[data-theme="light"] .sidebar-bottom,
+html[data-theme="light"] .util-bar,
+html[data-theme="light"] .topbar,
+html[data-theme="light"] .minimalbar {
+  border-color: var(--border-default);
+  background: #FFFFFF;
+}
+html[data-theme="light"] .sidebar a.active {
+  background: #DBEAFE;
+  color: #1E40AF;
+  font-weight: 600;
+}
+html[data-theme="light"] .nav-count {
+  background: var(--accent-primary);
+  color: #FFFFFF;
+}
+
+/* Image/AI areas can remain dark by design, but their surrounding containers
+   still receive the light-theme surface/elevation treatment. */
+html[data-theme="light"] .ai-panel,
+html[data-theme="light"] .room-side,
+html[data-theme="light"] .room-controls {
+  border-color: var(--border-default);
+  box-shadow: var(--shadow-md);
+}
+
+/* Visible separators for every common horizontal rule in the light UI. */
+html[data-theme="light"] hr,
+html[data-theme="light"] .divider {
+  border-color: var(--border-default);
+  background-color: var(--border-default);
+}
