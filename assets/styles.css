@@ -437,6 +437,7 @@ body.dark .stage-offer{background:rgba(167,139,250,.15);color:#a78bfa}
    the time, regardless of any JS or PHP logic toggling it. */
 .room-active-overlay{display:flex;position:absolute;inset:0;background:#0d150fd9;backdrop-filter:blur(3px);z-index:25;align-items:center;justify-content:center;padding:24px}
 .room-active-overlay[hidden]{display:none}
+.room-active-overlay.is-arming{pointer-events:none}
 .room-active-card{position:relative;width:min(360px,100%);background:#101a14;color:#fff;border-radius:18px;padding:30px 26px 26px;text-align:center;box-shadow:0 30px 80px #0008;border:1px solid #2b3d31}
 .room-active-card .live-dot{margin-bottom:10px}
 .room-active-card h3{margin:4px 0 8px;font-size:20px;letter-spacing:-.02em}

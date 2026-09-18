@@ -15,17 +15,24 @@ $user = function_exists('current_user') ? current_user() : null;
 // database (interviews.room_status / room_last_ping) — a room can only be
 // "live" here if a room actually pinged it recently, so a page load can
 // never show this for an interview that was never created or already ended.
+// Scoped to rooms this session opened (room-presence.php records them), so a
+// colleague's interview never covers this user's page.
 $activeRoom = null;
 if ($private && $user) {
     $pdo = db();
     $pdo->exec('UPDATE interviews SET room_status="idle" WHERE room_status="live" AND (room_last_ping IS NULL OR room_last_ping < NOW() - INTERVAL 12 SECOND)');
-    $stmt = $pdo->prepare("SELECT i.room_code, j.title FROM interviews i
-        JOIN applications a ON a.id=i.application_id JOIN jobs j ON j.id=a.job_id
-        WHERE i.room_status='live' AND i.room_last_ping IS NOT NULL
-          AND i.room_last_ping >= NOW() - INTERVAL 12 SECOND
-        ORDER BY i.room_last_ping DESC LIMIT 1");
-    $stmt->execute();
-    $activeRoom = $stmt->fetch() ?: null;
+    $myRooms = array_values(array_filter((array)($_SESSION['open_room_codes'] ?? []), 'is_string'));
+    if ($myRooms) {
+        $in = implode(',', array_fill(0, count($myRooms), '?'));
+        $stmt = $pdo->prepare("SELECT i.room_code, j.title FROM interviews i
+            JOIN applications a ON a.id=i.application_id JOIN jobs j ON j.id=a.job_id
+            WHERE i.room_status='live' AND i.room_last_ping IS NOT NULL
+              AND i.room_last_ping >= NOW() - INTERVAL 12 SECOND
+              AND i.room_code IN ($in)
+            ORDER BY i.room_last_ping DESC LIMIT 1");
+        $stmt->execute($myRooms);
+        $activeRoom = $stmt->fetch() ?: null;
+    }
 }
 ?><!doctype html>
 <html lang="en">

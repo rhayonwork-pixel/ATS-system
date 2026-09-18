@@ -11,15 +11,26 @@ const assistantReplies=['I can help with open roles, interview stages, leave req
   // can never re-appear (e.g. via a stale cached copy of an older app.js).
   try{ localStorage.removeItem('acme_active_room'); }catch(e){}
 
-  let dismissed=false;
+  // The dismissed room code, kept across hide(): a room whose heartbeat
+  // briefly lapses (throttled background tab) must not pop back up after the
+  // user closed the prompt. Only a *different* room re-announces itself.
+  let dismissedCode='';
   let currentCode = overlay.dataset.roomCode || '';
+  let armTimer=null;
 
   function show(code, title){
     currentCode = code;
     overlay.dataset.roomCode = code;
-    overlay.hidden = dismissed ? true : false;
     const t=overlay.querySelector('[data-room-overlay-title]');
     if(t) t.textContent=(title?title+' — ':'')+'this interview room is open in another tab.';
+    if(code===dismissedCode || !overlay.hidden) return;
+    // The overlay appears asynchronously, possibly under a cursor that is
+    // mid-click on the page. Let clicks pass through briefly so a click aimed
+    // at "Open profile" can never land on "Back to meeting" instead.
+    overlay.classList.add('is-arming');
+    overlay.hidden=false;
+    clearTimeout(armTimer);
+    armTimer=setTimeout(()=>overlay.classList.remove('is-arming'), 700);
   }
   function hide(){ currentCode=''; overlay.dataset.roomCode=''; overlay.hidden=true; }
 
@@ -28,21 +39,22 @@ const assistantReplies=['I can help with open roles, interview stages, leave req
       .then(r=>r.json())
       .then(data=>{
         const active = data && data.active;
-        if(active && active.code){
-          if(active.code !== currentCode) dismissed=false; // a *new* live room should re-announce itself
-          if(!dismissed) show(active.code, active.title);
-        } else {
-          hide();
-        }
+        if(active && active.code) show(active.code, active.title);
+        else hide();
       })
       .catch(()=>{});
   }
 
   overlay.querySelector('[data-room-overlay-back]')?.addEventListener('click',()=>{
-    if(!currentCode) return;
+    if(!currentCode || overlay.classList.contains('is-arming')) return;
     window.open('interview-room.php?code='+encodeURIComponent(currentCode),'acme-room-'+currentCode,'noopener');
   });
-  overlay.querySelector('[data-room-overlay-dismiss]')?.addEventListener('click',()=>{ dismissed=true; overlay.hidden=true; });
+  overlay.querySelector('[data-room-overlay-dismiss]')?.addEventListener('click',()=>{ dismissedCode=currentCode; overlay.hidden=true; });
+
+  // Back/forward restores this page from the bfcache with whatever overlay
+  // state it had when the user left. Re-check at once instead of showing a
+  // stale overlay over the page for up to five seconds.
+  window.addEventListener('pageshow', e=>{ if(e.persisted) poll(); });
 
   poll();
   setInterval(poll, 5000);
@@ -557,10 +569,19 @@ const assistantReplies=['I can help with open roles, interview stages, leave req
 
   // Dismiss a single item without leaving the page.
   // Clicking a card routes to its target; Enter does the same for keyboard use.
+  // action_url is stored data: follow it only when it stays on this site, so a
+  // bad row can never become an off-site or javascript: redirect.
+  function go(href) {
+    try {
+      const u = new URL(href, window.location.href);
+      if (u.origin === window.location.origin) window.location.href = u.href;
+    } catch (e) {}
+  }
+
   list?.addEventListener('keydown', function (ev) {
     if (ev.key !== 'Enter') return;
     const card = ev.target.closest('[data-notif-href]');
-    if (card) window.location.href = card.dataset.notifHref;
+    if (card) go(card.dataset.notifHref);
   });
 
   list?.addEventListener('click', function (ev) {
@@ -569,7 +590,7 @@ const assistantReplies=['I can help with open roles, interview stages, leave req
       // Anywhere else on the card follows its link, unless a real link was hit.
       if (ev.target.closest('a')) return;
       const card = ev.target.closest('[data-notif-href]');
-      if (card) { window.location.href = card.dataset.notifHref; return; }
+      if (card) { go(card.dataset.notifHref); return; }
       return;
     }
     ev.stopPropagation();

@@ -121,6 +121,15 @@ function save_resume_upload(array $file, string $candidateNameForFile, ?string &
     return 'assets/uploads/resumes/' . $filename;
 }
 
+/** A legacy candidates.resume_path is only ever the relative path returned by
+ * save_resume_upload(). Anything else in that column (an absolute URL, a
+ * javascript: URI, a ../ path) is refused rather than written into an href,
+ * so a bad row can never turn a "View" button into an off-site redirect. */
+function legacy_resume_url(?string $path): ?string {
+    $path = trim((string)$path);
+    return preg_match('#^assets/uploads/resumes/[A-Za-z0-9._-]+$#', $path) && strpos($path, '..') === false ? $path : null;
+}
+
 /** Lists every application under a given email — used when a candidate
  * checks their status without (or with the wrong) application ID. */
 function applications_for_email(PDO $pdo, string $email): array {

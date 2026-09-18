@@ -31,14 +31,20 @@ if ($method === 'GET' && ($_GET['action'] ?? '') === 'check') {
         $stmt->execute([(int)$_SESSION['user_id']]);
         $user = $stmt->fetch() ?: null;
     }
-    if (!$user) { echo json_encode(['active' => null]); exit; }
+    // Only rooms this session opened itself. The prompt says "open in another
+    // tab"; showing it for a colleague's live interview dropped a full-page
+    // overlay over whatever this user was about to click.
+    $myRooms = array_values(array_filter((array)($_SESSION['open_room_codes'] ?? []), 'is_string'));
+    if (!$user || !$myRooms) { echo json_encode(['active' => null]); exit; }
 
+    $in = implode(',', array_fill(0, count($myRooms), '?'));
     $stmt = $pdo->prepare("SELECT i.room_code, j.title FROM interviews i
         JOIN applications a ON a.id=i.application_id JOIN jobs j ON j.id=a.job_id
         WHERE i.room_status='live' AND i.room_last_ping IS NOT NULL
           AND i.room_last_ping >= NOW() - INTERVAL ".((int)ROOM_LIVE_WINDOW_SECONDS)." SECOND
+          AND i.room_code IN ($in)
         ORDER BY i.room_last_ping DESC LIMIT 1");
-    $stmt->execute();
+    $stmt->execute($myRooms);
     $row = $stmt->fetch();
     echo json_encode(['active' => $row ? ['code' => $row['room_code'], 'title' => $row['title']] : null]);
     exit;
@@ -58,6 +64,15 @@ if ($method === 'POST') {
     $stmt->execute([$code]);
     $interview = $stmt->fetch();
     if (!$interview) { http_response_code(404); echo json_encode(['ok' => false]); exit; }
+
+    // Remember which rooms a signed-in staff member has open in this browser,
+    // so the "meeting is ongoing" prompt is scoped to them. Candidates have no
+    // session user and are unaffected.
+    if (!empty($_SESSION['user_id'])) {
+        $mine = array_values(array_diff((array)($_SESSION['open_room_codes'] ?? []), [$code]));
+        if ($action !== 'leave') $mine[] = $code;
+        $_SESSION['open_room_codes'] = array_slice($mine, -10);
+    }
 
     if ($action === 'leave') {
         $upd = $pdo->prepare("UPDATE interviews SET room_status='idle' WHERE id=?");

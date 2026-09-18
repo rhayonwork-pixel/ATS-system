@@ -110,7 +110,7 @@ $pageTitle='Hiring pipeline'; include 'includes/header.php';
         'title' => $r['title'],
         'stage' => $stages[$r['stage']],
         'aiScore' => $r['overall_score'],
-        'resume' => !empty($r['primary_doc_id']) ? ('download.php?file_id='.(int)$r['primary_doc_id'].'&disposition=inline') : ($r['resume_path'] ?: null),
+        'resume' => !empty($r['primary_doc_id']) ? ('download.php?file_id='.(int)$r['primary_doc_id'].'&disposition=inline') : legacy_resume_url($r['resume_path']),
         'profileImage' => $r['profile_image'],
         'noteCount' => (int)$r['note_count'],
         'latestNote' => $r['latest_note'],

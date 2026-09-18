@@ -107,7 +107,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         }
     }
-    header('Location: candidate.php?id='.$postedApp.(isset($_POST['anchor'])?'#'.$_POST['anchor']:'')); exit;
+    // The anchor is posted by the form, so it is untrusted: only a plain
+    // fragment id is ever echoed back into the Location header.
+    $anchor = (string)($_POST['anchor'] ?? '');
+    header('Location: candidate.php?id='.$postedApp.(preg_match('/^[A-Za-z0-9_-]{1,64}$/', $anchor) ? '#'.$anchor : '')); exit;
 }
 
 // ============================================================================
@@ -261,7 +264,7 @@ include __DIR__.'/includes/header.php';
     <?php endif; ?>
   </div>
 
-  <?php if (!$primaryDoc && $candidate['resume_path']): ?>
+  <?php if (!$primaryDoc && legacy_resume_url($candidate['resume_path'])): ?>
     <!-- A candidate from before candidate_documents existed. This is the one
          place resume_path is ever read or displayed — the record is not
          duplicated into a second UI component, only surfaced here as a
@@ -270,7 +273,7 @@ include __DIR__.'/includes/header.php';
       <span class="doc-empty-icon" aria-hidden="true"><?=icon('doc',24)?></span>
       <strong>Legacy upload</strong>
       <span class="meta small">This resume predates document versioning and has not been migrated yet.</span>
-      <a class="btn small" href="<?=e($candidate['resume_path'])?>" target="_blank" rel="noopener"><?=icon('link',14)?> Open file</a>
+      <a class="btn small" href="<?=e(legacy_resume_url($candidate['resume_path']))?>" target="_blank" rel="noopener"><?=icon('link',14)?> Open file</a>
     </div>
   <?php elseif (!$primaryDoc): ?>
     <div class="doc-empty">

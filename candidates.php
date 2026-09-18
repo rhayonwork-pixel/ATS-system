@@ -174,9 +174,9 @@ $pageTitle='Candidates'; include __DIR__.'/includes/header.php';
   <td data-label="Resume" class="cell-resume">
     <?php if(!empty($c['primary_doc_id'])): ?>
       <a class="btn small secondary" href="download.php?file_id=<?=(int)$c['primary_doc_id']?>&disposition=inline" target="_blank" rel="noopener">View</a>
-    <?php elseif($c['resume_path']): ?>
+    <?php elseif(legacy_resume_url($c['resume_path'])): ?>
       <!-- Legacy: a resume stored before candidate_documents existed. -->
-      <a class="btn small secondary" href="<?=e($c['resume_path'])?>" target="_blank" rel="noopener">View</a>
+      <a class="btn small secondary" href="<?=e(legacy_resume_url($c['resume_path']))?>" target="_blank" rel="noopener">View</a>
     <?php else: ?><span class="meta small">None</span><?php endif; ?>
   </td>
   <td data-label="" class="cell-action"><a class="btn small" href="candidate.php?id=<?=$c['application_id']?>">Open profile</a></td>
@@ -206,6 +206,12 @@ $pageTitle='Candidates'; include __DIR__.'/includes/header.php';
     var visible = 0;
     rows.forEach(function (r) { if (r.style.display !== 'none') visible++; });
     note.hidden = visible > 0 || rows.length === 0;
+  });
+  // Coming back via the Back button, the browser restores the typed search
+  // text but not which rows were hidden. Re-run the filter so the list matches
+  // the search box instead of showing every row under a filled-in query.
+  window.addEventListener('pageshow', function () {
+    if (input.value) input.dispatchEvent(new Event('input'));
   });
 })();
 </script>
