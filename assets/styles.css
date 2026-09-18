@@ -967,17 +967,7 @@ body.dark .badge.urgent{background:#3a281a;color:#e8b483;border-color:#5c412a}
 
 /* ── Staff profile ─────────────────────────────────────────────────────── */
 .user-avatar{display:inline-grid;place-items:center;border-radius:50%;background:var(--paper);border:1px solid var(--line);font-weight:800;color:var(--ink);object-fit:cover;flex:none}
-.profile-layout{display:grid;grid-template-columns:minmax(0,320px) minmax(0,1fr);gap:20px;align-items:start}
-.profile-summary{text-align:center}
-.profile-summary .user-avatar{margin:0 auto 14px;display:block}
-.profile-summary h2{margin:0;font-size:22px;letter-spacing:-.03em;overflow-wrap:break-word}
-.profile-title{margin:2px 0 16px}
-.profile-kv{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:10px 0;border-top:1px solid var(--line);text-align:left;font-size:13.5px}
-.profile-kv span{color:var(--muted);flex:none}
-.profile-kv strong{text-align:right;overflow-wrap:break-word}
-.profile-perms{margin-top:16px;padding-top:14px;border-top:1px solid var(--line);text-align:left}
-.profile-perms .tag-row{margin:8px 0}
-.profile-forms{display:flex;flex-direction:column;gap:18px;min-width:0}
+/* The profile.php layout itself lives in "My profile: sticky summary" at the end of this file. */
 .photo-row{display:flex;align-items:center;gap:14px;margin-bottom:16px}
 .readonly-field input[disabled]{opacity:.65;cursor:not-allowed;background:var(--paper)}
 
@@ -1066,11 +1056,8 @@ body.dark .ui-join-status.state-interviewer_ready{background:#1d3327}
   .room-stage[data-pinned]:not([data-pinned=""]) .video-tile.is-pinned{grid-column:1/-1}
   .icon-toggle.notes-control .control-text{display:none}
   .icon-toggle.notes-control{width:44px;padding:0}
-  .profile-layout{grid-template-columns:1fr}
 }
 @media(max-width:560px){
-  .profile-kv{flex-direction:column;gap:2px}
-  .profile-kv strong{text-align:left}
   .reset-link-row .btn{flex:1 1 100%}
 }
 
@@ -1164,8 +1151,6 @@ body.dark .audit-badge.cat-job{background:#3a2f16;color:#e6c483}
 
 /* ── Profile page ──────────────────────────────────────────────────────── */
 @media(max-width:760px){
-  .profile-summary{text-align:left}
-  .profile-summary .user-avatar{margin:0 0 12px}
   .profile-forms .btn{width:100%}
   .photo-row{flex-direction:column;align-items:flex-start}
 }
@@ -1922,6 +1907,16 @@ body.dark .nav-group.flyout-open>.nav-group-btn{background:#1d3327}
     display:grid;grid-template-columns:112px minmax(0,1fr);gap:10px;
     width:auto;border:0;padding:4px 0;align-items:start;
   }
+  /* The desktop column widths (.cell-name{width:24%} etc., ~line 1370) are
+     class selectors and outrank the plain ".candidate-table td" rule above by
+     specificity, so without this they still applied here -- squeezing a cell
+     to e.g. 24% of the card's width and forcing its value into a column far
+     narrower than its 112px label, which wrapped every value one letter per
+     line. These match the same specificity and come later in the file, so
+     they win the cascade and restore the full-width stacked layout. */
+  .candidate-table .cell-avatar,.candidate-table .cell-name,.candidate-table .cell-role,
+  .candidate-table .cell-stage,.candidate-table .cell-rating,.candidate-table .cell-owner,
+  .candidate-table .cell-date,.candidate-table .cell-resume,.candidate-table .cell-action{width:auto}
   .candidate-table td::before{
     content:attr(data-label);
     color:var(--muted);font-size:11.5px;font-weight:700;
@@ -3098,4 +3093,311 @@ html{scroll-behavior:smooth}
 @media(max-width:767px){
   .candidate-profile-page .cprofile-review-pair{grid-template-columns:1fr}
   .candidate-profile-page .card{padding:1.25rem}
+}
+
+/* ══ My profile: sticky summary + scrollable form panels ══════════════════
+   profile.php. Spec: docs/PROFILE_REDESIGN_SPEC.html.
+   Mobile-first: stacked, nothing sticky, nothing scrolling inside a panel.
+   The container query at the bottom turns on sticky and panel scrolling
+   only when the page has the width AND the height for them. Surface colors
+   come from .card (and light-theme-v3.css); only layout is set here.
+   Never add overflow:hidden to .app-main/.content -- it would silently
+   switch off every position:sticky in the app, this one included. */
+.profile-page{
+  --pf-top:calc(var(--util-bar-h, 76px) + 12px);   /* clears the sticky util bar */
+  --pf-avail:calc(100vh - var(--pf-top) - 16px);     /* space below the bar */
+  --pf-edge:color-mix(in srgb, var(--text-primary) 16%, transparent);
+}
+@supports (height:100dvh){
+  .profile-page{--pf-avail:calc(100dvh - var(--pf-top) - 16px)}
+}
+
+.profile-layout{display:grid;grid-template-columns:minmax(0,1fr);gap:20px;align-items:start}
+.profile-forms{display:flex;flex-direction:column;gap:20px;min-width:0}
+.profile-stick-sentinel{display:block;height:1px;margin-bottom:-1px}
+
+/* Summary card */
+.profile-summary{display:flex;flex-direction:column;gap:16px;min-width:0}
+.profile-id{display:grid;grid-template-columns:auto minmax(0,1fr);align-items:center;gap:14px}
+.profile-id .user-avatar{display:grid;margin:0}
+.profile-id-text{min-width:0}
+.profile-id h2{margin:0;font-size:20px;letter-spacing:-.02em;overflow-wrap:anywhere;text-wrap:balance}
+.profile-id .profile-title{margin:2px 0 0}
+.profile-badges{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+/* Role and count pills: neutral and theme-aware (base .pill is light-only), so
+   the colored account-status pill stays the one that signals state. */
+.profile-summary .pill:not([class*="status-"]){background:var(--bg-surface-hover, var(--paper));color:var(--text-primary, var(--ink));box-shadow:inset 0 0 0 1px var(--border-default, var(--line))}
+.profile-facts{margin:0}
+.profile-kv{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:10px 0;border-top:1px solid var(--border-subtle, var(--line));font-size:13.5px}
+.profile-kv dt{color:var(--text-muted, var(--muted));flex:none}
+.profile-kv dd{margin:0;font-weight:600;text-align:right;min-width:0;overflow-wrap:anywhere}
+.profile-perms{border-top:1px solid var(--border-subtle, var(--line));padding-top:12px}
+.profile-perms>summary{display:flex;align-items:center;gap:8px;min-height:32px;cursor:pointer;font-weight:600;font-size:13.5px;list-style:none}
+.profile-perms>summary::-webkit-details-marker{display:none}
+.profile-perms>summary .pill{margin-left:auto}
+.profile-perms>summary::after{content:"";flex:none;width:7px;height:7px;margin:0 4px 3px 2px;border-right:2px solid currentColor;border-bottom:2px solid currentColor;transform:rotate(45deg);transition:transform .15s ease;opacity:.6}
+.profile-perms:not([open])>summary::after{transform:rotate(-45deg);margin-bottom:0}
+.profile-perms .tag-row{margin:10px 0 8px}
+.profile-jump{display:flex;gap:8px}
+.profile-jump .btn{flex:1;justify-content:center}
+
+/* Form panels: head / body / foot. Only the body ever scrolls. */
+.profile-page .profile-panel{display:flex;flex-direction:column;padding:0;min-width:0;scroll-margin-top:var(--pf-top)}
+.profile-panel-head,.profile-panel-foot{position:relative;z-index:1}   /* edge shadows paint over the body */
+.profile-panel-head{padding:20px 22px 12px;border-bottom:1px solid transparent;transition:border-color .15s ease,box-shadow .15s ease}
+.profile-panel-head h2{margin:0}
+.profile-panel-head .meta{margin:4px 0 0}
+.profile-panel-head .notice{margin:12px 0 0}
+.profile-panel-body{padding:8px 22px 12px;min-height:0}   /* >= 6px everywhere: room for the 2px+2px focus ring */
+.profile-panel-body:focus-visible{outline:2px solid var(--accent-primary, var(--green));outline-offset:-2px;border-radius:4px}
+.profile-panel-foot{display:flex;justify-content:flex-end;align-items:center;gap:12px;padding:14px 22px 18px;border-top:1px solid var(--border-subtle, var(--line));transition:box-shadow .15s ease}
+.panel-edge{display:block;height:1px}
+.photo-field{margin:0;flex:1;min-width:0}
+
+/* Scroll-edge indicators -- attributes set by the observer in app.js */
+.profile-panel[data-more-above] .profile-panel-head{border-bottom-color:var(--border-default, var(--line));box-shadow:0 8px 10px -10px var(--pf-edge)}
+.profile-panel[data-more-below] .profile-panel-foot{box-shadow:0 -8px 10px -10px var(--pf-edge)}
+
+@media(max-width:560px){
+  .profile-id .user-avatar{width:64px !important;height:64px !important;font-size:22px !important}
+  .profile-kv{flex-direction:column;gap:2px}
+  .profile-kv dd{text-align:left}
+}
+
+/* Desktop: two columns, sticky summary, panels capped to the viewport.
+   Measured on .page-container, so collapsing the sidebar can switch it on. */
+@container page (min-width:820px){       /* ~1280px window with the sidebar open */
+  .profile-layout{grid-template-columns:minmax(260px,320px) minmax(0,1fr);gap:24px}
+  .profile-id{grid-template-columns:1fr;justify-items:center;text-align:center}
+  .profile-badges{justify-content:center}
+
+  @media (min-height:560px){
+    .profile-summary{position:sticky;top:var(--pf-top);z-index:1}
+    /* light-theme-v3.css forces .card box-shadow with !important, hence the specificity + !important */
+    .profile-page .profile-summary[data-stuck]:not(.is-too-tall){box-shadow:0 14px 32px -14px color-mix(in srgb, var(--text-primary) 30%, transparent) !important}
+    .profile-summary.is-too-tall{position:static}
+    .profile-page .profile-panel{max-height:max(var(--pf-avail), 420px)}
+    .profile-panel-body{flex:1 1 auto;overflow-y:auto;overscroll-behavior-y:auto;scrollbar-gutter:stable;scroll-padding-block:12px}
+  }
+}
+@supports not (position:sticky){ .profile-summary{position:static} }
+
+/* ══ Candidate profile (candidate.php): the 7-row wireframe ═══════════════
+   Supersedes the earlier .cprofile-grid-* / .cprofile-layout rules, which
+   no longer match any markup. Those never took effect on desktop: an extra
+   </div> had pushed rows 3-7 outside .candidate-profile-page, so the
+   ".candidate-profile-page .cprofile-grid-3" 3-column rule could not match
+   and Row 3 rendered as one stacked column at every width.
+
+   Rows are the seven direct children of .cp-rows, in wireframe order:
+     1 Candidate Profile · 2 Resume/CV strip · 3 Personal | Application | Notes
+     4 AI Application Analysis · 5 Feedback | Suggest a role
+     6 Interview History · 7 History / Activity
+   Breakpoints are @container queries on .page-container, so they measure
+   the width left after the sidebar, not the raw viewport:
+     < 560px   one column everywhere          (phones: 375 / 414)
+     560-899   Row 3 two-up + notes full width; Row 5 stacked   (tablet: 768)
+     >= 900    Row 3 three columns; Row 5 two columns   (desktop: 1366+)
+   Card surfaces come from tokens; light-theme-v3.css still wins on .card
+   surface colors in the light theme, as it does on every page. */
+
+.candidate-profile-page{--cp-gap:1.5rem}
+.cp-back{display:inline-flex;align-items:center;min-height:44px;margin-bottom:.25rem;text-decoration:none}
+.cp-back:hover{color:var(--text-primary)}
+.candidate-profile-page>.notice{margin:0 0 var(--cp-gap)}
+
+.cp-rows{display:grid;grid-template-columns:minmax(0,1fr);gap:var(--cp-gap)}
+.cp-rows>*,.cp-row>*{min-width:0}
+/* Jump links and post-save anchors land below the sticky top bar, not under it. */
+.cp-rows [id]{scroll-margin-top:calc(var(--util-bar-h, 76px) + 12px)}
+.cp-row{display:grid;grid-template-columns:minmax(0,1fr);gap:var(--cp-gap);align-items:stretch}
+
+/* ── Card shell ─────────────────────────────────────────────────────────── */
+.candidate-profile-page .cp-card{
+  margin:0;padding:1.5rem;border-radius:12px;
+  background:var(--bg-surface);
+  border:1px solid var(--border-default);
+  box-shadow:0 1px 2px rgba(15,23,42,.04),0 4px 14px rgba(15,23,42,.05);
+}
+.cp-card-title{
+  margin:0 0 .875rem;font-size:1.125rem;font-weight:600;line-height:1.3;
+  letter-spacing:-.01em;color:var(--text-primary);text-wrap:balance;
+}
+.cp-card-title .hint{font-size:.75rem;font-weight:500;margin-left:.35rem;color:var(--text-muted)}
+.cp-card-head{display:flex;align-items:center;justify-content:space-between;gap:.75rem;flex-wrap:wrap;margin-bottom:.875rem}
+.cp-card-head .cp-card-title{margin:0}
+.cp-mini-label{margin:1rem 0 .35rem;font-size:.75rem;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--text-secondary)}
+.cp-subcard{border:1px solid var(--border-subtle);border-radius:10px;padding:1rem;background:var(--bg-canvas)}
+.cp-subcard h3{margin:0 0 .5rem;font-size:1rem;font-weight:600;color:var(--text-primary)}
+.cp-subcard p{margin:.25rem 0}
+
+/* ── Row 1 · Candidate Profile ─────────────────────────────────────────── */
+.cp-profile-main{display:grid;grid-template-columns:auto minmax(0,1fr);gap:1rem 1.25rem;align-items:start}
+.cp-avatar{width:64px;height:64px;font-size:1.35rem;flex:none}
+.cp-profile-id h1{
+  margin:.15rem 0 .2rem;font-size:clamp(1.5rem,1.15rem + 1.1vw,1.875rem);
+  font-weight:600;line-height:1.2;letter-spacing:-.02em;color:var(--text-primary);overflow-wrap:anywhere;
+}
+.cp-subline{margin:0;font-weight:500;color:var(--text-secondary)}
+.cp-contact{margin:.2rem 0 0;color:var(--text-secondary);overflow-wrap:anywhere}
+.cp-contact a{color:inherit;text-decoration:underline;text-underline-offset:2px;text-decoration-thickness:1px}
+.cp-contact a:hover{color:var(--text-primary)}
+.cp-badges{display:flex;flex-wrap:wrap;align-items:center;gap:.5rem .75rem;margin-top:.75rem}
+.cp-badges .rating-inline{margin:0}
+.cp-decide{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:.5rem}
+.cp-decide form{margin:0;flex:1 1 160px}
+.cp-decide .btn{width:100%}
+.cp-reject{color:var(--status-danger-text);border-color:var(--status-danger-border)}
+.cp-reject:hover{background:var(--status-danger-bg)}
+.cp-profile .stage-stepper{list-style:none;margin:1.25rem 0 0;padding:0;row-gap:.5rem}
+.cp-profile .stage-step{color:var(--text-secondary)}
+.cp-quicknav{display:flex;flex-wrap:wrap;gap:.25rem;margin-top:1rem;padding-top:.75rem;border-top:1px solid var(--border-subtle)}
+.cp-quicknav a{
+  display:inline-flex;align-items:center;min-height:44px;padding:0 .75rem;border-radius:8px;
+  font-size:.875rem;font-weight:500;color:var(--text-secondary);text-decoration:none;
+}
+.cp-quicknav a:hover{background:var(--bg-surface-hover);color:var(--text-primary)}
+
+.cp-stagework{margin-top:1rem;border:1px solid var(--border-default);border-radius:10px}
+.cp-stagework>summary{
+  display:flex;align-items:center;gap:.75rem;min-height:48px;padding:.5rem 1rem;
+  cursor:pointer;list-style:none;font-weight:600;color:var(--text-primary);
+}
+.cp-stagework>summary::-webkit-details-marker{display:none}
+.cp-stagework>summary::after{
+  content:"";margin-left:auto;width:8px;height:8px;flex:none;
+  border-right:2px solid currentColor;border-bottom:2px solid currentColor;
+  transform:rotate(45deg);opacity:.6;transition:transform .15s ease;
+}
+.cp-stagework[open]>summary::after{transform:rotate(-135deg)}
+.cp-stagework-title{min-width:0}
+.cp-stagework-body{display:grid;gap:1rem;padding:0 1rem 1rem}
+.cp-inline-edit{margin-top:.5rem}
+.cp-inline-edit>summary{display:inline-flex;align-items:center;min-height:44px;cursor:pointer;font-weight:500;color:var(--accent-primary)}
+.cp-form-2{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr));gap:0 1rem}
+
+/* ── Row 2 · Resume / CV strip + viewer ───────────────────────────────── */
+.candidate-profile-page .cp-resume{padding:.75rem 1.5rem}
+.cp-strip{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.75rem 1.5rem;min-height:56px}
+.cp-strip-label{display:flex;align-items:center;flex-wrap:wrap;gap:.35rem 1rem;min-width:0}
+.cp-strip-label h2{margin:0;font-size:1.125rem;font-weight:600;color:var(--text-primary)}
+.cp-strip-meta{display:inline-flex;align-items:center;flex-wrap:wrap;gap:.5rem;min-width:0}
+.cp-strip-meta .file-icon{width:32px;height:32px}
+.cp-filename{font-weight:500;color:var(--text-primary);overflow-wrap:anywhere}
+.cp-strip-actions{display:flex;align-items:center;gap:.5rem}
+.cp-strip-sep{color:var(--text-muted)}
+.cp-strip-note{margin:.25rem 0 .5rem}
+
+.cp-viewer{margin:.75rem 0;padding-top:.75rem;border-top:1px solid var(--border-subtle)}
+.cp-viewer[hidden]{display:none}
+.cp-viewer-status{margin:0 0 .5rem;min-height:1.25em}
+.cp-viewer-pages{
+  display:flex;flex-direction:column;align-items:center;gap:1rem;
+  max-height:min(82vh,1100px);overflow:auto;overscroll-behavior:contain;scrollbar-gutter:stable;
+  padding:1rem;border-radius:10px;background:var(--bg-canvas);
+}
+.cp-viewer-pages:empty{display:none}
+/* A page: real paper colours, whatever the theme. aspect-ratio reserves the
+   height before the canvas exists, so nothing jumps as pages arrive. */
+.cp-page{width:100%;max-width:880px;background:#fff;border-radius:2px;box-shadow:0 1px 3px rgba(0,0,0,.14),0 6px 18px rgba(0,0,0,.06);overflow:hidden}
+.cp-page canvas{display:block;width:100%;height:auto}
+.cp-viewer-iframe{display:block;width:100%;height:min(82vh,1000px);border:0;background:#fff}
+.cp-docx{width:100%;max-width:72ch;padding:1.5rem clamp(1rem,3vw,2rem);border-radius:8px;background:var(--bg-surface);color:var(--text-primary);line-height:1.65}
+.cp-docx h3{margin:1.25rem 0 .35rem;font-size:1.05rem;font-weight:600}
+.cp-docx h3:first-child{margin-top:0}
+.cp-docx p{margin:.4rem 0;white-space:pre-line}
+.cp-docx ul{margin:.4rem 0;padding-left:1.25rem}
+.cp-viewer-error{
+  width:100%;display:flex;flex-wrap:wrap;align-items:center;gap:.75rem;padding:1rem 1.25rem;border-radius:8px;
+  background:var(--status-danger-bg);color:var(--status-danger-text);border:1px solid var(--status-danger-border);
+}
+
+/* Skeleton + spinner: shown the instant View is pressed, removed when the
+   first real content is painted (see assets/doc-viewer.js). */
+.cp-viewer-skeleton{display:flex;flex-direction:column;gap:14px;padding:1.5rem;border-radius:10px;background:var(--bg-canvas);min-height:260px}
+.cp-viewer-skeleton[hidden]{display:none}
+.cp-viewer-skeleton .skel-line{
+  display:block;height:14px;border-radius:6px;
+  background:linear-gradient(90deg,var(--bg-surface-hover) 25%,var(--border-subtle) 37%,var(--bg-surface-hover) 63%);
+  background-size:400% 100%;animation:skel-shimmer 1.4s ease infinite;
+}
+.cp-spinner{
+  width:28px;height:28px;margin-bottom:4px;border-radius:50%;
+  border:3px solid var(--border-default);border-top-color:var(--accent-primary);
+  animation:cp-spin .8s linear infinite;
+}
+@keyframes cp-spin{to{transform:rotate(360deg)}}
+
+.cp-versions{margin:.25rem 0 .5rem}
+.cp-versions>summary{display:inline-flex;align-items:center;min-height:44px;cursor:pointer;font-weight:500;color:var(--accent-primary)}
+.cp-versions .doc-list{list-style:none;padding:0;margin:.25rem 0 .5rem}
+
+/* ── Row 3 · details lists, stage form, notes ──────────────────────────── */
+.cp-kv{margin:0}
+.cp-kv>div{display:flex;justify-content:space-between;align-items:baseline;gap:1rem;padding:.55rem 0;border-bottom:1px solid var(--border-subtle);font-size:.875rem}
+.cp-kv>div:last-child{border-bottom:0}
+.cp-kv dt{flex:none;color:var(--text-secondary)}
+.cp-kv dd{margin:0;min-width:0;text-align:right;font-weight:500;color:var(--text-primary);overflow-wrap:anywhere}
+.cp-stage-form{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:1rem}
+.cp-stage-form select{flex:1 1 140px}
+.cp-notes{list-style:none;margin:0 0 1rem;padding:0;display:grid;gap:.5rem}
+.cp-notes li{padding:.75rem;border:1px solid var(--border-subtle);border-radius:8px;background:var(--bg-canvas);overflow-wrap:anywhere}
+.cp-notes p{margin:.25rem 0}
+.cp-locked{display:flex;align-items:center;gap:.5rem;color:var(--text-secondary)}
+
+/* ── Rows 4, 6, 7 ─────────────────────────────────────────────────────── */
+.cp-ai-reco{margin-top:12px}
+.cp-ai-cats{margin-top:18px}
+.cp-ai-cats .cap-bar{margin-bottom:10px}
+.cp-ai-notes{margin:1rem 0 .75rem}
+.cp-ai-notes p:last-child{white-space:pre-line}
+.candidate-profile-page .ih-head h3{margin:0;font-size:1rem;font-weight:600;color:var(--text-primary)}
+.cp-activity{list-style:none;margin:0;padding:0}
+.cp-activity li{display:flex;justify-content:space-between;flex-wrap:wrap;gap:.25rem 1rem;padding:.65rem 0;border-bottom:1px solid var(--border-subtle);font-size:.875rem}
+.cp-activity li:last-child{border-bottom:0}
+
+/* ── Touch targets (44 x 44) and focus ─────────────────────────────────── */
+.candidate-profile-page .btn,
+.candidate-profile-page .btn.small{min-height:44px;min-width:44px;display:inline-flex;align-items:center;justify-content:center;gap:.4rem}
+.candidate-profile-page .file-act,
+.candidate-profile-page .collapse-btn{min-width:44px;min-height:44px;display:inline-flex;align-items:center;justify-content:center}
+.candidate-profile-page :is(select,input:not([type=hidden]):not([type=checkbox]):not([type=radio])){min-height:44px}
+.candidate-profile-page .star-btn{min-width:32px;min-height:32px;display:inline-grid;place-items:center}
+@media (pointer:coarse){ .candidate-profile-page .star-btn{min-width:44px;min-height:44px} }
+.candidate-profile-page :is(a,button,summary,select,input,textarea,[tabindex]):focus-visible{
+  outline:3px solid var(--accent-primary);outline-offset:2px;border-radius:6px;
+}
+.cp-viewer-pages:focus-visible{outline-offset:-3px}
+
+/* ── Breakpoints (content width, not viewport) ─────────────────────────── */
+@container page (min-width:560px){
+  .cp-row-3{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .cp-row-3>:last-child{grid-column:1/-1}          /* notes span under the pair */
+  .cp-avatar{width:80px;height:80px;font-size:1.6rem}
+}
+@container page (min-width:720px){
+  .cp-profile-main{grid-template-columns:auto minmax(0,1fr) auto}
+  .cp-decide{grid-column:auto;flex-direction:column;width:max-content;min-width:180px}
+  .cp-decide form{flex:none}
+}
+@container page (min-width:900px){
+  .cp-row-3{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .cp-row-3>:last-child{grid-column:auto}
+  .cp-row-2:not(.is-locked){grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@container page (max-width:559px){
+  .candidate-profile-page{--cp-gap:1rem}
+  .candidate-profile-page .cp-card{padding:1.125rem}
+  .candidate-profile-page .cp-resume{padding:.75rem 1.125rem}
+  .cp-strip-actions{width:100%}
+  .cp-strip-actions .btn{flex:1}
+  .cp-strip-sep{display:none}
+  .cp-viewer-pages{padding:.5rem;max-height:75vh}
+  .cp-kv>div{flex-direction:column;gap:.1rem}
+  .cp-kv dd{text-align:left}
+}
+@media (prefers-reduced-motion:reduce){
+  .cp-viewer-skeleton .skel-line{animation:none;background:var(--bg-surface-hover)}
+  .cp-spinner{animation-duration:2.4s}
+  .cp-stagework>summary::after{transition:none}
 }

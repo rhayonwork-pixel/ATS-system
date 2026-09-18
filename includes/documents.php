@@ -143,6 +143,49 @@ function attach_document_to_candidate(string $token, int $candidateId): ?int {
     }
 }
 
+/**
+ * Look up a stored document and the verified path to its file, or null.
+ * Shared by download.php and document-preview.php so both apply the same
+ * checks: the stored name is re-validated and the resolved path must stay
+ * inside ACME_STORAGE_PATH, so a tampered row cannot escape the folder.
+ */
+function document_resolve(int $id): ?array {
+    if ($id < 1) return null;
+    $stmt = db()->prepare('SELECT * FROM candidate_documents WHERE id = ? LIMIT 1');
+    $stmt->execute([$id]);
+    $doc = $stmt->fetch();
+    if (!$doc || !preg_match('/^[a-f0-9]{16}_\d+_resume\.(pdf|doc|docx)$/', (string)$doc['stored_name'])) return null;
+    $path = realpath(ACME_STORAGE_PATH . '/' . $doc['stored_name']);
+    $root = realpath(ACME_STORAGE_PATH);
+    if ($path === false || $root === false || strncmp($path, $root, strlen($root)) !== 0 || !is_file($path)) return null;
+    return ['doc' => $doc, 'path' => $path];
+}
+
+/**
+ * Validator for conditional requests. A stored file is never rewritten -- a
+ * new upload is a new row with a new generated name -- so name, size and
+ * mtime identify its bytes exactly.
+ */
+function document_etag(array $doc, string $path, string $variant = ''): string {
+    return '"' . substr(sha1($doc['stored_name'] . '|' . filesize($path) . '|' . filemtime($path) . '|' . $variant), 0, 20) . '"';
+}
+
+/**
+ * Answer a conditional GET with 304 when the client's copy is still current.
+ * Sends the validators either way. Returns true when a 304 was sent.
+ */
+function document_not_modified(string $etag, int $mtime): bool {
+    header('ETag: ' . $etag);
+    header('Last-Modified: ' . gmdate('D, d M Y H:i:s', $mtime) . ' GMT');
+    $inm = trim((string)($_SERVER['HTTP_IF_NONE_MATCH'] ?? ''));
+    $ims = (string)($_SERVER['HTTP_IF_MODIFIED_SINCE'] ?? '');
+    $fresh = $inm !== ''
+        ? in_array($etag, array_map('trim', explode(',', $inm)), true) || $inm === '*'
+        : ($ims !== '' && ($t = strtotime($ims)) !== false && $t >= $mtime);
+    if ($fresh) http_response_code(304);
+    return $fresh;
+}
+
 /** Documents for a candidate, primary first. */
 function candidate_documents(int $candidateId): array {
     try {

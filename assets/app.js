@@ -719,3 +719,92 @@ const assistantReplies=['I can help with open roles, interview stages, leave req
     showName();
   });
 })();
+
+/* ==========================================================================
+   My profile — sticky summary guard, stuck state, panel scroll edges
+   Enhancement only: without this the CSS layout still works; this adds the
+   edge shadows, the "stuck" elevation and the too-tall guard.
+   ========================================================================== */
+(function () {
+  const page = document.querySelector('[data-profile-page]');
+  if (!page) return;
+  const root = document.documentElement;
+  const bar = document.querySelector('[data-util-bar]');
+  const summary = page.querySelector('[data-profile-summary]');
+  const sentinel = page.querySelector('[data-stick-sentinel]');
+  const canObserve = 'IntersectionObserver' in window;
+
+  // The sticky offset and the page's scroll padding follow the util bar's
+  // real height, which differs between breakpoints.
+  function syncBar() {
+    const h = bar ? bar.offsetHeight : 0;
+    root.style.setProperty('--util-bar-h', h + 'px');
+    root.style.scrollPaddingTop = (h + 12) + 'px';   // focused fields never land under the bar
+  }
+
+  // A sticky card taller than the space under the bar would hide its own
+  // lower half until the page ends, so it only sticks when it fits.
+  function fitSummary() {
+    if (!summary) return;
+    summary.classList.remove('is-too-tall');
+    const cs = getComputedStyle(summary);
+    if (cs.position !== 'sticky') return;
+    const room = window.innerHeight - (parseFloat(cs.top) || 0) - 16;
+    summary.classList.toggle('is-too-tall', summary.offsetHeight > room);
+  }
+
+  // Stuck state: once the sentinel above the layout passes the sticky line,
+  // the card is pinned and gets a raised shadow.
+  let stuckObserver = null;
+  function watchStuck() {
+    if (!summary || !sentinel || !canObserve) return;
+    if (stuckObserver) stuckObserver.disconnect();
+    const top = parseFloat(getComputedStyle(summary).top) || 0;
+    stuckObserver = new IntersectionObserver(function (entries) {
+      const e = entries[0];
+      const sticky = getComputedStyle(summary).position === 'sticky';
+      summary.toggleAttribute('data-stuck', sticky && !e.isIntersecting && e.boundingClientRect.top < top);
+    }, { rootMargin: (-Math.ceil(top)) + 'px 0px 0px 0px' });
+    stuckObserver.observe(sentinel);
+  }
+
+  // Scroll edges: a 1px marker at each end of a panel body. A marker out of
+  // view means more content that way, so show that edge's shadow. When both
+  // are in view nothing scrolls, and the body leaves the tab order.
+  if (canObserve) {
+    page.querySelectorAll('[data-profile-panel]').forEach(function (panel) {
+      const body = panel.querySelector('[data-panel-body]');
+      const edges = body ? body.querySelectorAll('[data-edge]') : [];
+      if (edges.length !== 2) return;
+      const seen = { top: true, bottom: true };
+      const io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) { seen[e.target.dataset.edge] = e.isIntersecting; });
+        panel.toggleAttribute('data-more-above', !seen.top);
+        panel.toggleAttribute('data-more-below', !seen.bottom);
+        if (seen.top && seen.bottom) body.removeAttribute('tabindex');
+        else body.setAttribute('tabindex', '0');
+      }, { root: body });
+      edges.forEach(function (el) { io.observe(el); });
+    });
+  }
+
+  // One batched refresh per frame for resizes, bar changes and <details> toggles.
+  let queued = false;
+  function refresh() {
+    if (queued) return;
+    queued = true;
+    requestAnimationFrame(function () { queued = false; syncBar(); fitSummary(); watchStuck(); });
+  }
+  refresh();
+  window.addEventListener('resize', refresh);
+  if ('ResizeObserver' in window) {
+    const ro = new ResizeObserver(refresh);
+    if (bar) ro.observe(bar);
+    if (summary) ro.observe(summary);
+  }
+
+  // After a save, the redirect lands on the submitted panel (#pf-edit or
+  // #pf-password). Move focus to its message so screen readers announce it.
+  const note = page.querySelector('.profile-panel .notice');
+  if (note) { note.tabIndex = -1; note.focus({ preventScroll: true }); }
+})();

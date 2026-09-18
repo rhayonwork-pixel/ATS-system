@@ -1,0 +1,802 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>My Profile Redesign</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap">
+<style>
+:root{
+  --ground:#F5F7FA;
+  --surface:#FFFFFF;
+  --ink:#0F172A;
+  --ink-2:#334155;
+  --muted:#5B6B82;
+  --rule:#E2E8F0;
+  --rule-strong:#CBD5E1;
+  --accent:#2563EB;
+  --accent-ink:#1D4ED8;
+  --accent-tint:#EAF1FE;
+  --code-bg:#0F1712;
+  --code-ink:#D9E8DD;
+  --code-dim:#7F9A88;
+  --code-key:#8FD9AE;
+  --ok:#157F4A;
+  --ok-bg:#E6F4EC;
+  --warn:#9A5B00;
+  --warn-bg:#FDF3E1;
+  --wf-shell:#EEF2F7;
+  --wf-line:#D5DDE8;
+  --sans:"IBM Plex Sans",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --ground:#0D1410;--surface:#141D18;--ink:#EEF4EF;--ink-2:#C3D1C7;--muted:#8FA096;
+    --rule:#26352C;--rule-strong:#3A4E41;--accent:#6FD39B;--accent-ink:#8FE0B3;--accent-tint:#173024;
+    --code-bg:#08100B;--code-ink:#D9E8DD;--code-dim:#6F8A78;--code-key:#8FD9AE;
+    --ok:#7FD8A6;--ok-bg:#13301F;--warn:#F2C271;--warn-bg:#33270F;--wf-shell:#1A2620;--wf-line:#2F4237;
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#0D1410;--surface:#141D18;--ink:#EEF4EF;--ink-2:#C3D1C7;--muted:#8FA096;
+  --rule:#26352C;--rule-strong:#3A4E41;--accent:#6FD39B;--accent-ink:#8FE0B3;--accent-tint:#173024;
+  --code-bg:#08100B;--code-ink:#D9E8DD;--code-dim:#6F8A78;--code-key:#8FD9AE;
+  --ok:#7FD8A6;--ok-bg:#13301F;--warn:#F2C271;--warn-bg:#33270F;--wf-shell:#1A2620;--wf-line:#2F4237;
+}
+
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{background:var(--ground);color:var(--ink);font:400 15.5px/1.62 var(--sans);-webkit-font-smoothing:antialiased}
+.wrap{max-width:1180px;margin:0 auto;padding-inline:20px;padding-block:40px 96px;display:grid;grid-template-columns:minmax(0,1fr);gap:32px}
+@media (min-width:1080px){.wrap{grid-template-columns:220px minmax(0,1fr);gap:56px}}
+
+/* Table of contents — itself sticky, which is the pattern this spec describes */
+.toc{font-size:13.5px}
+.toc h2{font:600 11px/1 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:0 0 12px}
+.toc ol{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:6px 14px}
+.toc a{color:var(--ink-2);text-decoration:none;border-bottom:1px solid transparent}
+.toc a:hover{color:var(--accent-ink);border-bottom-color:currentColor}
+@media (min-width:1080px){
+  .toc{position:sticky;top:24px;align-self:start;max-height:calc(100vh - 48px);overflow-y:auto;padding-right:4px}
+  .toc ol{flex-direction:column;gap:9px}
+}
+
+main{min-width:0;max-width:800px}
+header.doc-head{border-bottom:1px solid var(--rule);padding-bottom:28px;margin-bottom:8px}
+.eyebrow{font:500 12px/1.4 var(--mono);color:var(--muted);letter-spacing:.02em;display:flex;flex-wrap:wrap;gap:6px 14px}
+.eyebrow .file{color:var(--accent-ink)}
+h1{font-size:clamp(30px,4.4vw,42px);line-height:1.1;letter-spacing:-.025em;margin:14px 0 14px;font-weight:700;text-wrap:balance}
+.lede{font-size:17.5px;color:var(--ink-2);margin:0;max-width:64ch}
+.status-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
+.chip{font:500 12px/1 var(--mono);padding:6px 9px;border-radius:5px;border:1px solid var(--rule-strong);color:var(--ink-2);background:var(--surface)}
+.chip.ok{border-color:transparent;background:var(--ok-bg);color:var(--ok)}
+.chip.warn{border-color:transparent;background:var(--warn-bg);color:var(--warn)}
+
+section{padding-top:40px;scroll-margin-top:16px}
+h2{font-size:24px;line-height:1.25;letter-spacing:-.015em;margin:0 0 6px;font-weight:700;text-wrap:balance}
+h2 .sec{font:500 13px/1 var(--mono);color:var(--muted);margin-right:10px;letter-spacing:0;vertical-align:3px}
+h3{font-size:17px;margin:28px 0 8px;font-weight:600;letter-spacing:-.005em}
+p,li{max-width:68ch}
+p{margin:10px 0}
+ul,ol{padding-left:22px}
+li{margin:5px 0}
+strong{font-weight:600}
+a{color:var(--accent-ink)}
+code{font:500 .86em/1 var(--mono);background:var(--accent-tint);color:var(--ink);padding:2px 5px;border-radius:4px;overflow-wrap:anywhere}
+.muted{color:var(--muted)}
+.small{font-size:13.5px}
+
+pre{margin:14px 0 6px;background:var(--code-bg);color:var(--code-ink);border-radius:8px;padding:16px 18px;overflow-x:auto;font:400 12.8px/1.62 var(--mono);tab-size:2}
+pre code{background:none;color:inherit;padding:0;font:inherit;overflow-wrap:normal}
+pre .c{color:var(--code-dim);font-style:italic}
+pre .k{color:var(--code-key)}
+.codecap{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;font:500 12px/1.4 var(--mono);color:var(--muted);margin-top:22px}
+.codecap b{color:var(--ink);font-weight:500}
+
+.table-wrap{overflow-x:auto;margin:14px 0;border:1px solid var(--rule);border-radius:8px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:14px;min-width:560px}
+th,td{text-align:left;vertical-align:top;padding:10px 14px;border-bottom:1px solid var(--rule)}
+tr:last-child td{border-bottom:0}
+th{font:600 11.5px/1.3 var(--mono);text-transform:uppercase;letter-spacing:.06em;color:var(--muted);background:var(--ground)}
+td.num,td .num{font-variant-numeric:tabular-nums}
+td code{font-size:.84em}
+
+.decision{border-left:3px solid var(--accent);padding:4px 0 4px 18px;margin:22px 0}
+.decision h3{margin:0 0 4px}
+.decision p{margin:6px 0}
+.callout{background:var(--warn-bg);color:var(--ink);border-radius:8px;padding:14px 16px;margin:18px 0;font-size:14.5px}
+.callout b{color:var(--warn)}
+
+figure{margin:22px 0 8px}
+.figs{display:grid;grid-template-columns:minmax(0,1fr);gap:18px}
+@media (min-width:760px){.figs{grid-template-columns:minmax(0,3.4fr) minmax(0,1fr);align-items:end}}
+.fig-box{background:var(--surface);border:1px solid var(--rule);border-radius:10px;padding:14px;overflow-x:auto}
+.fig-box svg{display:block;width:100%;height:auto}
+.fig-box.desk svg{min-width:520px}
+figcaption{font-size:13px;color:var(--muted);margin-top:8px}
+
+.wf-frame{fill:var(--ground);stroke:var(--rule-strong)}
+.wf-shell{fill:var(--wf-shell)}
+.wf-bar{fill:none;stroke:var(--muted);stroke-dasharray:4 3}
+.wf-card{fill:var(--surface);stroke:var(--rule-strong)}
+.wf-sticky{fill:var(--accent-tint);stroke:var(--accent);stroke-width:1.6}
+.wf-band{fill:var(--wf-shell)}
+.wf-line{fill:var(--wf-line)}
+.wf-input{fill:var(--surface);stroke:var(--wf-line)}
+.wf-btn{fill:var(--accent)}
+.wf-thumb{fill:var(--muted)}
+.wf-track{fill:var(--wf-shell)}
+.wf-shadow{fill:var(--muted);opacity:.28}
+.wf-guide{stroke:var(--accent);stroke-width:1.2;stroke-dasharray:3 3;fill:none}
+.wf-t{fill:var(--ink-2);font:500 10.5px var(--mono)}
+.wf-t.a{fill:var(--accent-ink)}
+.wf-t.m{fill:var(--muted)}
+
+.checks{list-style:none;padding:0}
+.checks li{position:relative;padding-left:28px;margin:9px 0}
+.checks li::before{content:"";position:absolute;left:0;top:4px;width:15px;height:15px;border:1.5px solid var(--rule-strong);border-radius:3px;background:var(--surface)}
+
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:3px}
+footer.doc-foot{margin-top:56px;padding-top:18px;border-top:1px solid var(--rule);font-size:13px;color:var(--muted)}
+</style>
+
+<div class="wrap">
+<nav class="toc" aria-label="Contents">
+  <h2>Contents</h2>
+  <ol>
+    <li><a href="#scope">Scope and requirements</a></li>
+    <li><a href="#current">Current page</a></li>
+    <li><a href="#decisions">Design decisions</a></li>
+    <li><a href="#layout">Target layout</a></li>
+    <li><a href="#markup">Markup: profile.php</a></li>
+    <li><a href="#css">CSS: styles.css</a></li>
+    <li><a href="#js">JavaScript: app.js</a></li>
+    <li><a href="#layers">Layering and z-index</a></li>
+    <li><a href="#responsive">Responsive behavior</a></li>
+    <li><a href="#a11y">Accessibility</a></li>
+    <li><a href="#browsers">Browser support</a></li>
+    <li><a href="#testing">Test plan</a></li>
+    <li><a href="#acceptance">Acceptance criteria</a></li>
+    <li><a href="#out">Out of scope and risks</a></li>
+  </ol>
+</nav>
+
+<main>
+<header class="doc-head">
+  <div class="eyebrow"><span>Acme ATS</span><span class="file">profile.php</span><span>Technical specification</span><span>19 Sep 2026</span></div>
+  <h1>My Profile redesign: sticky summary, scrollable form panels</h1>
+  <p class="lede">A cleaner layout for <code>profile.php</code>. The profile summary card stays visible while the page scrolls. The Edit profile and Change password forms become separate panels whose content scrolls on its own while each panel's heading and Save button stay in place. On phones and short screens the page falls back to a plain stacked layout.</p>
+  <div class="status-row">
+    <span class="chip">Draft for implementation</span>
+    <span class="chip ok">No migration</span>
+    <span class="chip ok">No new dependencies</span>
+    <span class="chip warn">One small POST change</span>
+  </div>
+</header>
+
+<section id="scope">
+  <h2><span class="sec">01</span>Scope and requirements</h2>
+  <p>Every change stays inside the existing root-page pattern: <code>profile.php</code> keeps its own POST handling, SQL and markup. Nothing moves into <code>app/</code>. The work touches four files: <code>profile.php</code>, <code>assets/styles.css</code>, <code>assets/app.js</code>, and nothing else. No schema change, no library and no build step. Verification is <code>php -l profile.php</code> and <code>node --check assets/app.js</code>, followed by the manual test plan in section 12.</p>
+  <p>The brief refers to a “Change Profile” section. The page has no section with that name. The second form on the page is <strong>Change password</strong>, and this spec reads the requirement as referring to it.</p>
+
+  <div class="table-wrap"><table>
+    <thead><tr><th>ID</th><th>Requirement</th><th>Covered in</th></tr></thead>
+    <tbody>
+      <tr><td class="num">R1</td><td>Cleaner visual design and clearer hierarchy</td><td>§4 Layout, §5 Markup, §6 CSS</td></tr>
+      <tr><td class="num">R2</td><td>Profile summary card stays visible while scrolling</td><td>§3 D1, §6, §7</td></tr>
+      <tr><td class="num">R3</td><td>Edit profile scrolls within its container</td><td>§3 D2–D3, §6</td></tr>
+      <tr><td class="num">R4</td><td>Change password scrolls on its own too, with easy movement between the two</td><td>§3 D3, §5 jump links, §6</td></tr>
+      <tr><td class="num">R5</td><td>Sticky card holds at every screen size and height without overlapping</td><td>§7 fit guard, §9</td></tr>
+      <tr><td class="num">R6</td><td>Scroll shadows and borders separate the fixed card from scrolling areas</td><td>§6 edge indicators, §7</td></tr>
+      <tr><td class="num">R7</td><td>Sticky behavior degrades gracefully on mobile</td><td>§9</td></tr>
+      <tr><td class="num">R8</td><td>CSS approach (sticky vs fixed), z-index, any JS or polyfills</td><td>§3 D1, §6, §7, §8</td></tr>
+      <tr><td class="num">R9</td><td>Keyboard access in every scrolling region, visible focus</td><td>§10</td></tr>
+      <tr><td class="num">R10</td><td>Browser support and test criteria for Chrome, Firefox, Safari and Edge</td><td>§11, §12, §13</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section id="current">
+  <h2><span class="sec">02</span>Current page</h2>
+  <p>What the code does today, and the details the new layout must work with:</p>
+  <ul>
+    <li><strong>Structure.</strong> <code>.profile-layout</code> is a two-column grid (<code>minmax(0,320px) minmax(0,1fr)</code>, <code>align-items:start</code>). On the left is <code>section.card.profile-summary</code>: avatar, name, title, six label/value rows and the permission tags. On the right, <code>.profile-forms</code> stacks two <code>form.card.form</code> elements. The columns stack at a viewport width of 999px or less (<code>styles.css</code> ≈ line 1069).</li>
+    <li><strong>Top bar.</strong> <code>.util-bar</code> is <code>position:sticky; top:0; z-index:1000</code>. It is transparent with <code>pointer-events:none</code>, but its 44px buttons still cover roughly the top 76px of the viewport on desktop. Anything that sticks has to sit below it.</li>
+    <li><strong>Entry animation.</strong> Each child of <code>.content.fade-in</code> runs <code>fadeInUp</code> with <code>animation-fill-mode: both</code> on <code>transform</code>. Because the animation stays in effect, browsers can treat that ancestor as a stacking context and as the containing block for <code>position:fixed</code> descendants. See D1.</li>
+    <li><strong>Page scrolling.</strong> <code>body{overflow-x:hidden}</code> passes through to the viewport because <code>html</code> sets no overflow, so the viewport stays the scroll container and <code>position:sticky</code> works. <span class="muted">Keep it that way: an <code>overflow</code> value other than <code>visible</code> on <code>.app-shell</code>, <code>.app-main</code> or <code>.content</code> would silently break every sticky element in the app. Use <code>overflow-x:clip</code> if clipping is ever needed.</span></li>
+    <li><strong>Accessibility gaps.</strong> The Full name, Email, Job title and all three password fields have <code>&lt;label&gt;</code> elements without a <code>for</code>/<code>id</code> pairing, so screen readers don't announce their labels. Only the photo input is paired correctly.</li>
+    <li><strong>Theme override.</strong> <code>light-theme-v3.css</code> loads last and styles <code>html[data-theme="light"] .card</code> (specificity 0,2,1). New panel rules must leave card surface colors to that file and scope their layout rules as <code>.profile-page .profile-panel</code>.</li>
+    <li><strong>Existing pattern to reuse.</strong> The candidate profile's <code>.cprofile-snapshot</code> already uses sticky with a <code>@supports not (position:sticky)</code> fallback and turns sticky off at 767px and below. It also uses <code>@container page</code> queries on <code>.page-container</code>, so its layout responds to the sidebar collapsing, not just to the viewport width. This spec follows the same approach.</li>
+  </ul>
+</section>
+
+<section id="decisions">
+  <h2><span class="sec">03</span>Design decisions</h2>
+
+  <div class="decision">
+    <h3>D1 · Use <code>position: sticky</code>, not <code>position: fixed</code></h3>
+    <p>A fixed card is taken out of the grid. That means it needs a placeholder and JavaScript to keep its width in step with the column every time the sidebar opens or collapses. It would also be positioned against the <code>fade-in</code> ancestor rather than the viewport (see §2), so it could drift with the content. A sticky card stays in its grid column, keeps its width with no script, and stops at the bottom edge of <code>.profile-layout</code>, so it can never overlap the footer.</p>
+  </div>
+  <div class="decision">
+    <h3>D2 · Only the panel body scrolls. The heading and Save button stay put.</h3>
+    <p>Each form panel is a three-part flex column: a heading, a body and a footer. Only the body scrolls. The Save button is always on screen, and because the heading and footer sit outside the scrolling area, a focused field can never end up hidden underneath them (WCAG 2.4.11). A sticky heading inside the scrolling area would need <code>scroll-padding</code> tuning to avoid exactly that problem.</p>
+  </div>
+  <div class="decision">
+    <h3>D3 · Panels cap at the viewport height and scroll only when they overflow</h3>
+    <p>A panel's maximum height is the space below the top bar. The body uses <code>overflow-y:auto</code>, so a scrollbar appears only when the content is taller than that. On a 900px-tall screen, Change password fits and doesn't scroll at all. On a 720px laptop, Edit profile scrolls. Forcing a fixed-height scroll area onto a three-field form would add a scrollbar with no purpose. On phones, and on screens under 560px tall, the cap is removed entirely (§9).</p>
+  </div>
+  <div class="decision">
+    <h3>D4 · Let scrolling continue from a panel to the page</h3>
+    <p><code>overscroll-behavior-y</code> is deliberately left at <code>auto</code>. Once a panel reaches its end, further mouse-wheel or trackpad scrolling moves the page. <code>contain</code> is right for modals, but here it would trap people scrolling down the right-hand column, and that stuck feeling is what this redesign is meant to remove.</p>
+  </div>
+  <div class="decision">
+    <h3>D5 · No polyfills</h3>
+    <p>Every feature used is supported at the browser floor in §11. Sticky has an <code>@supports</code> fallback to static positioning. The JavaScript is an optional enhancement: without it the page keeps the sticky card and scrolling panels but loses the edge shadows, the “stuck” elevation and the fit guard. Old sticky polyfills such as Stickyfill are unmaintained and aren't needed.</p>
+  </div>
+</section>
+
+<section id="layout">
+  <h2><span class="sec">04</span>Target layout</h2>
+  <p>Desktop, shown when the page container is at least 820px wide and the viewport is at least 560px tall. The container width is what counts, which is about a 1280px window with the sidebar open. Collapsing the sidebar can switch a smaller window into this layout.</p>
+
+  <figure>
+    <div class="figs">
+      <div class="fig-box desk">
+        <svg viewBox="0 0 760 476" role="img" aria-labelledby="wf1t wf1d">
+          <title id="wf1t">Desktop wireframe</title>
+          <desc id="wf1d">A sticky summary card on the left sits below the top bar. On the right are two form panels, each with a fixed heading, a scrolling body and a fixed footer holding its button.</desc>
+          <rect class="wf-frame" x="0.5" y="0.5" width="759" height="475" rx="8"/>
+          <rect class="wf-shell" x="1" y="1" width="68" height="474" rx="7"/>
+          <text class="wf-t m" x="14" y="24">sidebar</text>
+          <rect class="wf-bar" x="80" y="8" width="670" height="38" rx="5"/>
+          <text class="wf-t m" x="92" y="31">util bar · sticky top:0 · z 1000 · ≈76px</text>
+          <!-- sticky offset guide -->
+          <line class="wf-guide" x1="88" y1="46" x2="88" y2="62"/>
+          <text class="wf-t a" x="94" y="58">+12px</text>
+          <!-- summary card -->
+          <rect class="wf-sticky" x="88" y="64" width="196" height="276" rx="8"/>
+          <circle class="wf-line" cx="186" cy="102" r="22"/>
+          <rect class="wf-line" x="136" y="134" width="100" height="9" rx="3"/>
+          <rect class="wf-line" x="156" y="150" width="60" height="7" rx="3"/>
+          <rect class="wf-btn" x="140" y="164" width="44" height="12" rx="6" opacity=".55"/>
+          <rect class="wf-btn" x="190" y="164" width="44" height="12" rx="6" opacity=".3"/>
+          <g class="wf-line">
+            <rect x="102" y="192" width="168" height="1"/>
+            <rect x="102" y="200" width="40" height="6" rx="2"/><rect x="200" y="200" width="70" height="6" rx="2"/>
+            <rect x="102" y="216" width="168" height="1"/>
+            <rect x="102" y="224" width="54" height="6" rx="2"/><rect x="224" y="224" width="46" height="6" rx="2"/>
+            <rect x="102" y="240" width="168" height="1"/>
+            <rect x="102" y="248" width="46" height="6" rx="2"/><rect x="238" y="248" width="32" height="6" rx="2"/>
+            <rect x="102" y="264" width="168" height="1"/>
+            <rect x="102" y="274" width="110" height="7" rx="2"/><rect x="252" y="273" width="18" height="9" rx="4"/>
+          </g>
+          <rect class="wf-input" x="102" y="302" width="80" height="22" rx="5"/>
+          <rect class="wf-input" x="190" y="302" width="80" height="22" rx="5"/>
+          <text class="wf-t" x="110" y="317">Edit</text>
+          <text class="wf-t" x="198" y="317">Password</text>
+          <text class="wf-t a" x="88" y="364">.profile-summary</text>
+          <text class="wf-t m" x="88" y="380">sticky · top: bar + 12px</text>
+          <text class="wf-t m" x="88" y="396">z-index 1 · static if too tall</text>
+          <text class="wf-t m" x="88" y="412">[data-stuck] → raised shadow</text>
+          <!-- edit panel -->
+          <rect class="wf-card" x="300" y="64" width="450" height="236" rx="8"/>
+          <rect class="wf-band" x="301" y="65" width="448" height="38" rx="7"/>
+          <rect class="wf-line" x="316" y="78" width="96" height="10" rx="3"/>
+          <text class="wf-t m" x="560" y="88">head · fixed</text>
+          <rect class="wf-shadow" x="301" y="103" width="448" height="5"/>
+          <g>
+            <rect class="wf-input" x="316" y="116" width="44" height="44" rx="22"/>
+            <rect class="wf-input" x="370" y="116" width="344" height="44" rx="6"/>
+            <rect class="wf-line" x="316" y="172" width="60" height="6" rx="2"/>
+            <rect class="wf-input" x="316" y="182" width="398" height="22" rx="5"/>
+            <rect class="wf-line" x="316" y="214" width="40" height="6" rx="2"/>
+            <rect class="wf-input" x="316" y="224" width="194" height="22" rx="5"/>
+            <rect class="wf-input" x="520" y="224" width="194" height="22" rx="5"/>
+          </g>
+          <rect class="wf-track" x="730" y="110" width="6" height="140" rx="3"/>
+          <rect class="wf-thumb" x="730" y="118" width="6" height="58" rx="3"/>
+          <rect class="wf-shadow" x="301" y="251" width="448" height="5"/>
+          <rect class="wf-line" x="301" y="256" width="448" height="1"/>
+          <rect class="wf-btn" x="636" y="266" width="100" height="24" rx="6"/>
+          <text class="wf-t m" x="316" y="282">foot · Save always visible</text>
+          <text class="wf-t a" x="300" y="318">body · overflow-y:auto · max-height = space under bar</text>
+          <!-- password panel -->
+          <rect class="wf-card" x="300" y="332" width="450" height="134" rx="8"/>
+          <rect class="wf-band" x="301" y="333" width="448" height="38" rx="7"/>
+          <rect class="wf-line" x="316" y="346" width="120" height="10" rx="3"/>
+          <rect class="wf-input" x="316" y="382" width="398" height="20" rx="5"/>
+          <rect class="wf-input" x="316" y="408" width="194" height="20" rx="5"/>
+          <rect class="wf-input" x="520" y="408" width="194" height="20" rx="5"/>
+          <rect class="wf-line" x="301" y="434" width="448" height="1"/>
+          <rect class="wf-btn" x="620" y="438" width="116" height="22" rx="6"/>
+          <text class="wf-t m" x="316" y="453">fits → no scrollbar, no tab stop</text>
+        </svg>
+      </div>
+      <div class="fig-box">
+        <svg viewBox="0 0 200 476" role="img" aria-labelledby="wf2t wf2d">
+          <title id="wf2t">Mobile wireframe</title>
+          <desc id="wf2d">One column: a compact summary with jump links, then the two form panels at full height with no inner scrolling.</desc>
+          <rect class="wf-frame" x="0.5" y="0.5" width="199" height="475" rx="16"/>
+          <rect class="wf-card" x="12" y="20" width="176" height="104" rx="8"/>
+          <circle class="wf-line" cx="36" cy="46" r="15"/>
+          <rect class="wf-line" x="58" y="38" width="90" height="8" rx="3"/>
+          <rect class="wf-btn" x="58" y="52" width="36" height="9" rx="4" opacity=".55"/>
+          <rect class="wf-line" x="22" y="74" width="156" height="1"/>
+          <rect class="wf-input" x="22" y="94" width="74" height="20" rx="5"/>
+          <rect class="wf-input" x="104" y="94" width="74" height="20" rx="5"/>
+          <rect class="wf-card" x="12" y="134" width="176" height="200" rx="8"/>
+          <rect class="wf-band" x="13" y="135" width="174" height="30" rx="7"/>
+          <rect class="wf-input" x="22" y="176" width="156" height="36" rx="6"/>
+          <rect class="wf-input" x="22" y="222" width="156" height="18" rx="5"/>
+          <rect class="wf-input" x="22" y="248" width="156" height="18" rx="5"/>
+          <rect class="wf-input" x="22" y="274" width="156" height="18" rx="5"/>
+          <rect class="wf-btn" x="22" y="302" width="156" height="22" rx="6"/>
+          <rect class="wf-card" x="12" y="344" width="176" height="120" rx="8"/>
+          <rect class="wf-band" x="13" y="345" width="174" height="30" rx="7"/>
+          <rect class="wf-input" x="22" y="384" width="156" height="18" rx="5"/>
+          <rect class="wf-input" x="22" y="408" width="156" height="18" rx="5"/>
+          <rect class="wf-btn" x="22" y="434" width="156" height="20" rx="6"/>
+        </svg>
+      </div>
+    </div>
+    <figcaption>Left: desktop. The blue card is sticky; the scroll thumb marks the one area that scrolls independently. Right: phone. Nothing is sticky and nothing scrolls inside a panel.</figcaption>
+  </figure>
+
+  <h3>Visual hierarchy changes (R1)</h3>
+  <ul>
+    <li><strong>Identity block first.</strong> Avatar, name and job title, followed by role and account status as two pills instead of two label/value rows. Those two facts are what someone checks at a glance.</li>
+    <li><strong>Facts as a description list.</strong> Email, Member since, Password changed and Seats become a <code>&lt;dl&gt;</code> with hairline dividers, labels in muted text and values in semibold. Long emails wrap instead of pushing the column wider.</li>
+    <li><strong>Collapsible permissions.</strong> “What your account can do” becomes a <code>&lt;details&gt;</code> with a count pill. It starts open when there are four permissions or fewer and closed when there are more. This is also the main way the sticky card is kept short enough to fit (R5).</li>
+    <li><strong>Jump links.</strong> Two small secondary buttons at the bottom of the card, <em>Edit profile</em> and <em>Change password</em>, link to the two panels. These are ordinary anchors, so they work without JavaScript (R4).</li>
+    <li><strong>Panel headings with a one-line description</strong> of what each form changes, and a footer bar that keeps the button right-aligned. On phones the button is full width, as it is today.</li>
+    <li><strong>Save messages in the panel.</strong> The success or error message after saving appears inside the panel that was submitted, not above the page (§5.3).</li>
+  </ul>
+</section>
+
+<section id="markup">
+  <h2><span class="sec">05</span>Markup: profile.php</h2>
+  <p>This replaces everything from <code>&lt;div class="dashboard-head"&gt;</code> to the closing <code>&lt;/div&gt;</code> of <code>.profile-layout</code> (currently lines 95–184). The POST handler and the data reads above it stay the same, apart from the redirect in §5.3. Parts marked <em>unchanged</em> are carried over exactly as they are now.</p>
+
+  <h3>5.1 Summary card</h3>
+  <div class="codecap"><b>profile.php</b><span>view · summary</span></div>
+<pre><code><span class="c">&lt;?php
+// Only permissions the catalog can name are shown, so the count matches the tags.
+$shownPerms = array_values(array_filter($myPermissions, fn($p) =&gt; isset($catalog[$p])));
+$flash = take_flash();
+$done  = in_array($_GET['done'] ?? '', ['profile','password'], true) ? $_GET['done'] : '';
+$panelNotice = function (string $panel) use ($flash, $done): string {
+    if (!$flash || $done !== $panel) return '';
+    return '&lt;div class="notice '.e($flash[0]).'" role="'.($flash[0] === 'error' ? 'alert' : 'status').'"&gt;'
+         . e($flash[1]).'&lt;/div&gt;';
+};
+?&gt;</span>
+&lt;div class="page-container profile-page" data-profile-page&gt;
+&lt;div class="dashboard-head"&gt; <span class="c">&lt;!-- unchanged --&gt;</span> &lt;/div&gt;
+
+&lt;?php if ($flash &amp;&amp; $done === ''): ?&gt;
+  &lt;div class="notice &lt;?=e($flash[0])?&gt;"&gt;&lt;?=e($flash[1])?&gt;&lt;/div&gt;
+&lt;?php endif; ?&gt;
+
+&lt;span class="profile-stick-sentinel" data-stick-sentinel aria-hidden="true"&gt;&lt;/span&gt;
+&lt;div class="profile-layout"&gt;
+  &lt;aside class="card profile-summary" data-profile-summary aria-labelledby="pf-name"&gt;
+    &lt;div class="profile-id"&gt;
+      &lt;?= user_avatar($user, 96) ?&gt;
+      &lt;div&gt;
+        &lt;h2 id="pf-name"&gt;&lt;?=e($user['name'])?&gt;&lt;/h2&gt;
+        &lt;?php if (!empty($user['job_title'])): ?&gt;
+          &lt;p class="meta profile-title"&gt;&lt;?=e($user['job_title'])?&gt;&lt;/p&gt;
+        &lt;?php endif; ?&gt;
+        &lt;div class="profile-badges"&gt;
+          &lt;span class="pill"&gt;&lt;?=e(role_label($user['role']))?&gt;&lt;/span&gt;
+          &lt;span class="pill status-&lt;?=e($user['account_status'] ?? 'active')?&gt;"&gt;&lt;?=e(account_status_label($user['account_status'] ?? 'active'))?&gt;&lt;/span&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+
+    &lt;dl class="profile-facts"&gt;
+      &lt;div class="profile-kv"&gt;&lt;dt&gt;Email&lt;/dt&gt;&lt;dd&gt;&lt;?=e($user['email'])?&gt;&lt;/dd&gt;&lt;/div&gt;
+      &lt;div class="profile-kv"&gt;&lt;dt&gt;Member since&lt;/dt&gt;&lt;dd&gt;&lt;?=e(date('M j, Y', strtotime($user['created_at'])))?&gt;&lt;/dd&gt;&lt;/div&gt;
+      <span class="c">&lt;!-- Password changed and HR / Recruiter seats rows: same conditions as today, as dt/dd --&gt;</span>
+    &lt;/dl&gt;
+
+    &lt;details class="profile-perms" &lt;?= (is_super_admin($user) || count($shownPerms) &lt;= 4) ? 'open' : '' ?&gt;&gt;
+      &lt;summary&gt;What your account can do
+        &lt;span class="pill"&gt;&lt;?= is_super_admin($user) ? 'All' : count($shownPerms) ?&gt;&lt;/span&gt;
+      &lt;/summary&gt;
+      <span class="c">&lt;!-- unchanged body: super-admin note / tag-row over $shownPerms / "no permissions" / "Granted by…" --&gt;</span>
+    &lt;/details&gt;
+
+    &lt;nav class="profile-jump" aria-label="Jump to a section"&gt;
+      &lt;a class="btn small secondary" href="#pf-edit"&gt;Edit profile&lt;/a&gt;
+      &lt;a class="btn small secondary" href="#pf-password"&gt;Change password&lt;/a&gt;
+    &lt;/nav&gt;
+  &lt;/aside&gt;</code></pre>
+
+  <h3>5.2 Form panels</h3>
+  <p>The heading, body and footer are plain <code>&lt;div&gt;</code> elements, not <code>&lt;header&gt;</code> and <code>&lt;footer&gt;</code>. A <code>&lt;header&gt;</code> inside a <code>&lt;form&gt;</code> is not inside a sectioning element, so screen readers would announce it as an extra banner landmark. The 1px <code>.panel-edge</code> markers are what the IntersectionObserver in §7 watches.</p>
+  <div class="codecap"><b>profile.php</b><span>view · panels</span></div>
+<pre><code>  &lt;div class="profile-forms"&gt;
+    &lt;form class="card form profile-panel" id="pf-edit" method="post" enctype="multipart/form-data"
+          aria-labelledby="pf-edit-title" data-profile-panel&gt;
+      &lt;div class="profile-panel-head"&gt;
+        &lt;h2 id="pf-edit-title"&gt;&lt;?=icon('candidates',18)?&gt; Edit profile&lt;/h2&gt;
+        &lt;p class="meta small"&gt;Your name, sign-in email, job title and photo.&lt;/p&gt;
+        &lt;?= $panelNotice('profile') ?&gt;
+      &lt;/div&gt;
+      &lt;div class="profile-panel-body" data-panel-body role="group" aria-labelledby="pf-edit-title"&gt;
+        &lt;span class="panel-edge" data-edge="top" aria-hidden="true"&gt;&lt;/span&gt;
+        &lt;input type="hidden" name="csrf" value="&lt;?=e(csrf_token())?&gt;"&gt;
+        &lt;input type="hidden" name="action" value="profile"&gt;
+        <span class="c">&lt;!-- photo-row unchanged, except: drop the inline style and add class="field photo-field" --&gt;</span>
+        &lt;div class="field"&gt;&lt;label for="pf-fullname"&gt;Full name&lt;/label&gt;
+          &lt;input id="pf-fullname" name="name" required maxlength="120" autocomplete="name" value="&lt;?=e($user['name'])?&gt;"&gt;&lt;/div&gt;
+        &lt;div class="form-grid"&gt;
+          &lt;div class="field"&gt;&lt;label for="pf-email"&gt;Email&lt;/label&gt;
+            &lt;input id="pf-email" type="email" name="email" required autocomplete="email"
+                   aria-describedby="pf-email-hint" value="&lt;?=e($user['email'])?&gt;"&gt;
+            &lt;span class="hint" id="pf-email-hint"&gt;You sign in with this address.&lt;/span&gt;&lt;/div&gt;
+          &lt;div class="field"&gt;&lt;label for="pf-jobtitle"&gt;Job title &lt;span class="hint"&gt;optional&lt;/span&gt;&lt;/label&gt;
+            &lt;input id="pf-jobtitle" name="job_title" maxlength="120" autocomplete="organization-title"
+                   value="&lt;?=e($user['job_title'] ?? '')?&gt;" placeholder="Talent Partner"&gt;&lt;/div&gt;
+        &lt;/div&gt;
+        &lt;div class="field readonly-field"&gt;&lt;label for="pf-role"&gt;Role&lt;/label&gt;
+          &lt;input id="pf-role" value="&lt;?=e(role_label($user['role']))?&gt;" disabled aria-describedby="pf-role-hint"&gt;
+          &lt;span class="hint" id="pf-role-hint"&gt;Only your administrator can change your role, permissions or account status.&lt;/span&gt;&lt;/div&gt;
+        &lt;span class="panel-edge" data-edge="bottom" aria-hidden="true"&gt;&lt;/span&gt;
+      &lt;/div&gt;
+      &lt;div class="profile-panel-foot"&gt;
+        &lt;button class="btn" type="submit"&gt;&lt;?=icon('check',16)?&gt; Save profile&lt;/button&gt;
+      &lt;/div&gt;
+    &lt;/form&gt;
+
+    &lt;form class="card form profile-panel" id="pf-password" method="post" autocomplete="off"
+          aria-labelledby="pf-password-title" data-profile-panel&gt;
+      &lt;div class="profile-panel-head"&gt;
+        &lt;h2 id="pf-password-title"&gt;&lt;?=icon('admin',18)?&gt; Change password&lt;/h2&gt;
+        &lt;p class="meta small"&gt;You will stay signed in on this device.&lt;/p&gt;
+        &lt;?= $panelNotice('password') ?&gt;
+      &lt;/div&gt;
+      &lt;div class="profile-panel-body" data-panel-body role="group" aria-labelledby="pf-password-title"&gt;
+        &lt;span class="panel-edge" data-edge="top" aria-hidden="true"&gt;&lt;/span&gt;
+        &lt;input type="hidden" name="csrf" value="&lt;?=e(csrf_token())?&gt;"&gt;
+        &lt;input type="hidden" name="action" value="password"&gt;
+        <span class="c">&lt;!-- Lets password managers link the new password to this account. The handler never reads it. --&gt;</span>
+        &lt;input type="text" name="username" autocomplete="username" value="&lt;?=e($user['email'])?&gt;" hidden&gt;
+        &lt;div class="field"&gt;&lt;label for="pf-current"&gt;Current password&lt;/label&gt;
+          &lt;input id="pf-current" type="password" name="current_password" required autocomplete="current-password"&gt;&lt;/div&gt;
+        &lt;div class="form-grid"&gt;
+          &lt;div class="field"&gt;&lt;label for="pf-new"&gt;New password&lt;/label&gt;
+            &lt;input id="pf-new" type="password" name="new_password" required minlength="8"
+                   autocomplete="new-password" aria-describedby="pf-rules"&gt;&lt;/div&gt;
+          &lt;div class="field"&gt;&lt;label for="pf-confirm"&gt;Confirm new password&lt;/label&gt;
+            &lt;input id="pf-confirm" type="password" name="confirm_password" required minlength="8" autocomplete="new-password"&gt;&lt;/div&gt;
+        &lt;/div&gt;
+        &lt;p class="meta small" id="pf-rules"&gt;At least 8 characters, including a letter and a number.&lt;/p&gt;
+        &lt;span class="panel-edge" data-edge="bottom" aria-hidden="true"&gt;&lt;/span&gt;
+      &lt;/div&gt;
+      &lt;div class="profile-panel-foot"&gt;
+        &lt;button class="btn" type="submit"&gt;&lt;?=icon('check',16)?&gt; Change password&lt;/button&gt;
+      &lt;/div&gt;
+    &lt;/form&gt;
+  &lt;/div&gt;
+&lt;/div&gt;&lt;!-- /.profile-layout --&gt;
+&lt;/div&gt;&lt;!-- /.profile-page --&gt;</code></pre>
+
+  <h3>5.3 POST redirect</h3>
+  <p>This is the only change to the POST handler. Replace the final <code>header('Location: profile.php')</code> so the page reloads scrolled to the panel that was submitted, with that panel's message showing. <code>$done</code> is checked against an allowlist in the view (§5.1), so the query string can only ever select one of two known panels.</p>
+  <div class="codecap"><b>profile.php</b><span>line 81</span></div>
+<pre><code>    $panel = ['profile' =&gt; 'edit', 'password' =&gt; 'password'][$action] ?? null;
+    header('Location: profile.php' . ($panel ? '?done='.$action.'#pf-'.$panel : '')); exit;</code></pre>
+</section>
+
+<section id="css">
+  <h2><span class="sec">06</span>CSS: styles.css</h2>
+  <p>Delete the existing profile rules: <code>.profile-layout</code> through <code>.photo-row</code> (≈ lines 970–981), the <code>.profile-*</code> lines in the 999px and 760px media blocks (≈ 1069–1073 and 1167–1170), and keep <code>.profile-forms .btn{width:100%}</code> in the 760px block. Then add this block to the end of <code>styles.css</code>. The rules are written mobile-first: the stacked layout is the default, and sticky positioning and panel scrolling apply only inside the desktop container query.</p>
+  <div class="codecap"><b>assets/styles.css</b><span>append</span></div>
+<pre><code><span class="c">/* ══ My profile: sticky summary + scrollable form panels ════════════════
+   Mobile-first. Stacked with nothing sticky by default; the container
+   query at the bottom turns on sticky and panel scrolling. Surface colors
+   come from .card (and light-theme-v3.css) — only layout is set here. */</span>
+
+.profile-page{
+  --pf-top:calc(var(--util-bar-h, 76px) + 12px);   <span class="c">/* clears the sticky util bar  */</span>
+  --pf-avail:calc(100vh - var(--pf-top) - 16px);     <span class="c">/* space below the bar         */</span>
+  --pf-edge:color-mix(in srgb, var(--text-primary) 16%, transparent);
+}
+@supports (height:100dvh){
+  .profile-page{ --pf-avail:calc(100dvh - var(--pf-top) - 16px); }
+}
+
+.profile-layout{display:grid;grid-template-columns:minmax(0,1fr);gap:20px;align-items:start}
+.profile-forms{display:flex;flex-direction:column;gap:20px;min-width:0}
+.profile-stick-sentinel{display:block;height:1px;margin-bottom:-1px}
+
+<span class="c">/* Summary card */</span>
+.profile-summary{display:flex;flex-direction:column;gap:16px;min-width:0}
+.profile-id{display:grid;grid-template-columns:auto minmax(0,1fr);align-items:center;gap:14px}
+.profile-id h2{margin:0;font-size:20px;letter-spacing:-.02em;overflow-wrap:anywhere;text-wrap:balance}
+.profile-id .profile-title{margin:2px 0 0}
+.profile-badges{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.profile-summary .pill:not([class*="status-"]){background:var(--bg-surface-hover);color:var(--text-primary);
+  box-shadow:inset 0 0 0 1px var(--border-default)}   <span class="c">/* base .pill is light-only */</span>
+.profile-facts{margin:0}
+.profile-kv{display:flex;justify-content:space-between;align-items:baseline;gap:12px;
+  padding:10px 0;border-top:1px solid var(--border-subtle);font-size:13.5px}
+.profile-kv dt{color:var(--text-muted);flex:none}
+.profile-kv dd{margin:0;font-weight:600;text-align:right;min-width:0;overflow-wrap:anywhere}
+.profile-perms{border-top:1px solid var(--border-subtle);padding-top:12px}
+.profile-perms&gt;summary{display:flex;justify-content:space-between;align-items:center;gap:8px;
+  min-height:32px;cursor:pointer;font-weight:600;font-size:13.5px}
+.profile-perms .tag-row{margin:10px 0 8px}
+.profile-jump{display:flex;gap:8px}
+.profile-jump .btn{flex:1;justify-content:center}
+
+<span class="c">/* Form panels: head / body / foot. Only the body ever scrolls. */</span>
+.profile-page .profile-panel{display:flex;flex-direction:column;padding:0;min-width:0;
+  scroll-margin-top:var(--pf-top)}
+.profile-panel-head,.profile-panel-foot{position:relative;z-index:1}  <span class="c">/* shadows paint over the body */</span>
+.profile-panel-head{padding:20px 22px 12px;border-bottom:1px solid transparent;
+  transition:border-color .15s ease, box-shadow .15s ease}
+.profile-panel-head h2{margin:0}
+.profile-panel-head .meta{margin:4px 0 0}
+.profile-panel-head .notice{margin:12px 0 0}
+.profile-panel-body{padding:8px 22px 12px;min-height:0}  <span class="c">/* ≥ 6px on every side: room for a 2px+2px focus ring */</span>
+.profile-panel-body:focus-visible{outline:2px solid var(--accent-primary);outline-offset:-2px;border-radius:4px}
+.profile-panel-foot{display:flex;justify-content:flex-end;align-items:center;gap:12px;
+  padding:14px 22px 18px;border-top:1px solid var(--border-subtle);transition:box-shadow .15s ease}
+.panel-edge{display:block;height:1px}
+.photo-field{margin:0;flex:1;min-width:0}   <span class="c">/* replaces the old inline style */</span>
+
+<span class="c">/* Scroll-edge indicators — attributes set by the observer in app.js */</span>
+.profile-panel[data-more-above] .profile-panel-head{border-bottom-color:var(--border-default);
+  box-shadow:0 8px 10px -10px var(--pf-edge)}
+.profile-panel[data-more-below] .profile-panel-foot{box-shadow:0 -8px 10px -10px var(--pf-edge)}
+
+<span class="c">/* Desktop: two columns, sticky summary, panels capped to the viewport.
+   Measured on .page-container, so collapsing the sidebar can switch it on. */</span>
+@container page (min-width:820px){
+  .profile-layout{grid-template-columns:minmax(260px,320px) minmax(0,1fr);gap:24px}
+  .profile-id{grid-template-columns:1fr;justify-items:center;text-align:center}
+  .profile-badges{justify-content:center}
+
+  @media (min-height:560px){
+    .profile-summary{position:sticky;top:var(--pf-top);z-index:1;transition:box-shadow .2s ease}
+    <span class="c">/* light-theme-v3.css forces .card box-shadow with !important, hence specificity + !important */</span>
+    .profile-page .profile-summary[data-stuck]:not(.is-too-tall){box-shadow:0 14px 32px -14px color-mix(in srgb, var(--text-primary) 30%, transparent) !important}
+    .profile-summary.is-too-tall{position:static}
+    .profile-page .profile-panel{max-height:max(var(--pf-avail), 420px)}
+    .profile-panel-body{flex:1 1 auto;overflow-y:auto;overscroll-behavior-y:auto;
+      scrollbar-gutter:stable;scroll-padding-block:12px}
+  }
+}
+@supports not (position:sticky){ .profile-summary{position:static} }</code></pre>
+  <p class="small muted">No reduced-motion rules are needed here: the global <code>prefers-reduced-motion</code> block in <code>styles.css</code> (≈ line 2076) already shortens every transition and sets <code>scroll-behavior:auto</code>.</p>
+</section>
+
+<section id="js">
+  <h2><span class="sec">07</span>JavaScript: app.js</h2>
+  <p>Add a new self-contained function block after the dropzone block, in the same style as the other modules in <code>app.js</code>. It does nothing on pages without <code>[data-profile-page]</code>. It uses IntersectionObserver for the scroll edges and the “stuck” state, so no layout is read on every scroll event, and ResizeObserver to keep the top offset and fit guard current.</p>
+  <div class="codecap"><b>assets/app.js</b><span>append</span></div>
+<pre><code><span class="c">/* ==========================================================================
+   My profile — sticky summary guard, stuck state, panel scroll edges
+   Enhancement only: without it the CSS layout still works; this adds the
+   edge shadows, the stuck elevation and the too-tall guard.
+   ========================================================================== */</span>
+(function () {
+  const page = document.querySelector('[data-profile-page]');
+  if (!page) return;
+  const root = document.documentElement;
+  const bar = document.querySelector('[data-util-bar]');
+  const summary = page.querySelector('[data-profile-summary]');
+  const sentinel = page.querySelector('[data-stick-sentinel]');
+  const canObserve = 'IntersectionObserver' in window;
+
+  <span class="c">// The sticky offset and the page's scroll padding follow the util bar's
+  // real height, which differs between breakpoints.</span>
+  function syncBar() {
+    const h = bar ? bar.offsetHeight : 0;
+    root.style.setProperty('--util-bar-h', h + 'px');
+    root.style.scrollPaddingTop = (h + 12) + 'px';   <span class="c">// focused fields never land under the bar</span>
+  }
+
+  <span class="c">// A sticky card taller than the space under the bar would hide its own
+  // lower half until the page ends — so it only sticks when it fits.</span>
+  function fitSummary() {
+    if (!summary) return;
+    summary.classList.remove('is-too-tall');
+    const cs = getComputedStyle(summary);
+    if (cs.position !== 'sticky') return;
+    const room = window.innerHeight - (parseFloat(cs.top) || 0) - 16;
+    summary.classList.toggle('is-too-tall', summary.offsetHeight &gt; room);
+  }
+
+  <span class="c">// Stuck state: once the sentinel above the layout passes the sticky line,
+  // the card is pinned and gets a raised shadow.</span>
+  let stuckObserver = null;
+  function watchStuck() {
+    if (!summary || !sentinel || !canObserve) return;
+    if (stuckObserver) stuckObserver.disconnect();
+    const top = parseFloat(getComputedStyle(summary).top) || 0;
+    stuckObserver = new IntersectionObserver(function (entries) {
+      const e = entries[0];
+      const sticky = getComputedStyle(summary).position === 'sticky';
+      summary.toggleAttribute('data-stuck', sticky &amp;&amp; !e.isIntersecting &amp;&amp; e.boundingClientRect.top &lt; top);
+    }, { rootMargin: (-Math.ceil(top)) + 'px 0px 0px 0px' });
+    stuckObserver.observe(sentinel);
+  }
+
+  <span class="c">// Scroll edges: a 1px marker at each end of a panel body. A marker out of
+  // view means more content that way, so show that edge's shadow. When both
+  // are in view nothing scrolls, and the body leaves the tab order.</span>
+  if (canObserve) {
+    page.querySelectorAll('[data-profile-panel]').forEach(function (panel) {
+      const body = panel.querySelector('[data-panel-body]');
+      const edges = body ? body.querySelectorAll('[data-edge]') : [];
+      if (edges.length !== 2) return;
+      const seen = { top: true, bottom: true };
+      const io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) { seen[e.target.dataset.edge] = e.isIntersecting; });
+        panel.toggleAttribute('data-more-above', !seen.top);
+        panel.toggleAttribute('data-more-below', !seen.bottom);
+        if (seen.top &amp;&amp; seen.bottom) body.removeAttribute('tabindex');
+        else body.setAttribute('tabindex', '0');
+      }, { root: body });
+      edges.forEach(function (el) { io.observe(el); });
+    });
+  }
+
+  <span class="c">// One batched refresh per frame for resizes, bar changes and &lt;details&gt; toggles.</span>
+  let queued = false;
+  function refresh() {
+    if (queued) return;
+    queued = true;
+    requestAnimationFrame(function () { queued = false; syncBar(); fitSummary(); watchStuck(); });
+  }
+  refresh();
+  window.addEventListener('resize', refresh);
+  if ('ResizeObserver' in window) {
+    const ro = new ResizeObserver(refresh);
+    if (bar) ro.observe(bar);
+    if (summary) ro.observe(summary);
+  }
+
+  <span class="c">// After a save, the redirect lands on the submitted panel (#pf-edit or
+  // #pf-password). Move focus to its message so screen readers announce it.</span>
+  const note = page.querySelector('.profile-panel .notice');
+  if (note) { note.tabIndex = -1; note.focus({ preventScroll: true }); }
+})();</code></pre>
+  <p class="small muted">Why this can't loop: <code>fitSummary()</code> only switches <code>position</code>, which doesn't change the card's size, so the ResizeObserver never fires again because of it. <code>syncBar()</code> sets a custom property the bar itself doesn't use.</p>
+</section>
+
+<section id="layers">
+  <h2><span class="sec">08</span>Layering and z-index</h2>
+  <p>The sticky card gets <code>z-index:1</code> and nothing higher. It never overlaps other page content: it sits in its own grid column and stops at the bottom of the layout. The z-index only keeps its shadow above the neighboring column. It also sits inside the <code>.fade-in</code> stacking context, so no value it could be given would lift it above the app's global layers. That is intentional.</p>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Layer</th><th>z-index</th><th>Relation to this page</th></tr></thead>
+    <tbody>
+      <tr><td>Panel head / foot</td><td class="num">1 (in panel)</td><td>Edge shadows paint over the scrolling body</td></tr>
+      <tr><td><code>.profile-summary</code> (sticky)</td><td class="num">1</td><td>New. Must stay below every row that follows</td></tr>
+      <tr><td>Sticky action bars (add candidate)</td><td class="num">15</td><td>Not on this page</td></tr>
+      <tr><td>Meeting overlay <code>.room-active-overlay</code></td><td class="num">25</td><td>Covers the card when shown. Correct.</td></tr>
+      <tr><td>Acme Assist launcher</td><td class="num">30</td><td>Fixed bottom-right. Can overlap panel footers at narrow widths; see T10</td></tr>
+      <tr><td>Mobile sidebar drawer</td><td class="num">40</td><td>Above everything on the page</td></tr>
+      <tr><td><code>.util-bar</code> and its flyouts</td><td class="num">1000–1200</td><td>The card's <code>top</code> offset keeps it clear</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section id="responsive">
+  <h2><span class="sec">09</span>Responsive behavior</h2>
+  <p>Stickiness and panel scrolling apply only when both the width and the height give them room. Everything else falls back to the stacked page, which works fully on its own (R5, R7).</p>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Condition</th><th>Summary card</th><th>Form panels</th></tr></thead>
+    <tbody>
+      <tr><td>Container ≥ 820px and viewport ≥ 560px tall</td><td>Sticky, two columns</td><td>Capped at the space below the bar (min 420px). Body scrolls when it overflows</td></tr>
+      <tr><td>As above, but the card is taller than the space below the bar</td><td>Static (<code>.is-too-tall</code>)</td><td>Same as above</td></tr>
+      <tr><td>Container ≥ 820px, viewport &lt; 560px tall (landscape phone, 150%+ zoom)</td><td>Static, two columns</td><td>Full height, no inner scroll</td></tr>
+      <tr><td>Container &lt; 820px (tablet, sidebar open on a small laptop, phone)</td><td>Static, first. Compact horizontal identity row; jump links shown</td><td>Full height, no inner scroll. Button full width at ≤ 760px</td></tr>
+      <tr><td>No JavaScript</td><td>Sticky per CSS, no fit guard or stuck shadow</td><td>Scroll per CSS, no edge shadows</td></tr>
+    </tbody>
+  </table></div>
+  <div class="callout"><b>Why no scrolling inside panels on touch screens.</b> A scroll area inside a scrolling page is easy to get stuck in with a thumb, and on iOS the collapsing address bar changes the viewport height mid-gesture. On phones, the jump links and the normal page scroll cover the “don't lose context” goal. The candidate profile already turns off its sticky strip at 767px and below for the same reason.</div>
+  <p><code>100dvh</code> (with a <code>100vh</code> fallback declared first) means that on iPad Safari, where the desktop layout can apply, the panel cap follows the visible viewport as the toolbar shows and hides, instead of extending underneath it.</p>
+</section>
+
+<section id="a11y">
+  <h2><span class="sec">10</span>Accessibility</h2>
+  <p>Target: WCAG 2.2 AA. The requirements specific to this change:</p>
+  <ul>
+    <li><strong>Labels (1.3.1, 4.1.2).</strong> Every input has a <code>for</code>/<code>id</code> pair and hints are linked with <code>aria-describedby</code> (§5.2). This fixes an existing bug. <code>autocomplete</code> tokens are added for name, email, organization title, username and passwords (1.3.5).</li>
+    <li><strong>Keyboard access to scrolling areas (2.1.1).</strong> Tabbing into a field scrolls it into view inside its panel, and the panel scrolls when the page doesn't. A panel body that actually overflows also gets <code>tabindex="0"</code>, so someone reading non-focusable text such as hints can focus the area and scroll it with the arrow keys, Page Up/Down and Space. When nothing overflows, the tabindex is removed so there is no pointless extra tab stop. This passes axe's <code>scrollable-region-focusable</code> rule in both states.</li>
+    <li><strong>Names for scrolling areas.</strong> Each body is <code>role="group"</code>, labelled by its panel heading, so focusing it announces “Edit profile, group” rather than an unnamed element. The form itself is labelled by the same heading, so the two forms show up as distinct form landmarks.</li>
+    <li><strong>Focus not hidden (2.4.11).</strong> The heading and footer sit outside the scrolling body, so they can't cover a focused field. <code>scroll-padding-top</code> on <code>html</code> is set from the bar's measured height, so fields reached by tabbing through the page don't stop under the top bar's buttons.</li>
+    <li><strong>Visible focus (2.4.7).</strong> The app's global <code>:focus-visible</code> ring (2px outline, 2px offset) needs 4px outside every control. The body's side padding (22px) and top/bottom padding (8px/12px) leave room, so rings are never clipped by <code>overflow</code>. A focused scrolling body draws its ring inset (<code>outline-offset:-2px</code>) for the same reason.</li>
+    <li><strong>Save messages.</strong> After a save, the message appears inside the submitted panel with <code>role="status"</code> (or <code>alert</code> for errors) and is given focus, so it is announced without searching the page.</li>
+    <li><strong>Jump links</strong> are ordinary anchors. Following one moves the browser's sequential-focus starting point to the panel, so the next Tab goes to the first field inside it. No script is needed for that.</li>
+    <li><strong>Reflow (1.4.10).</strong> At 320 CSS px (1280px at 400% zoom) the page is the single stacked column with no horizontal scroll and no inner scrolling.</li>
+    <li><strong>Motion (2.3.3).</strong> Shadow transitions and smooth anchor scrolling are turned off under <code>prefers-reduced-motion: reduce</code>.</li>
+  </ul>
+</section>
+
+<section id="browsers">
+  <h2><span class="sec">11</span>Browser support</h2>
+  <p><strong>Supported:</strong> the latest two versions of Chrome and Edge, the latest two versions of Firefox plus the current ESR, and Safari 16.4 or later on macOS and iOS/iPadOS. Every feature below is available across that range, so there are no polyfills. Older browsers get the stacked layout, which works fully.</p>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Feature</th><th>Chrome / Edge</th><th>Firefox</th><th>Safari</th><th>If missing</th></tr></thead>
+    <tbody>
+      <tr><td><code>position: sticky</code></td><td class="num">56 / 16</td><td class="num">32</td><td class="num">13</td><td>Static card via <code>@supports</code></td></tr>
+      <tr><td>Container size queries</td><td class="num">105</td><td class="num">110</td><td class="num">16</td><td>Stacked layout</td></tr>
+      <tr><td><code>dvh</code> units</td><td class="num">108</td><td class="num">101</td><td class="num">15.4</td><td><code>100vh</code> fallback</td></tr>
+      <tr><td><code>color-mix()</code></td><td class="num">111</td><td class="num">113</td><td class="num">16.2</td><td>No edge-shadow color (cosmetic)</td></tr>
+      <tr><td>IntersectionObserver</td><td class="num">58</td><td class="num">55</td><td class="num">12.1</td><td>No shadows / stuck state</td></tr>
+      <tr><td>ResizeObserver</td><td class="num">64</td><td class="num">69</td><td class="num">13.1</td><td>Guard runs on window resize only</td></tr>
+      <tr><td><code>:focus-visible</code></td><td class="num">86</td><td class="num">85</td><td class="num">15.4</td><td>Already relied on app-wide</td></tr>
+      <tr><td><code>overscroll-behavior</code></td><td class="num">63</td><td class="num">59</td><td class="num">16</td><td>Default behavior (which is what's set)</td></tr>
+      <tr><td><code>scrollbar-gutter</code></td><td class="num">94</td><td class="num">97</td><td class="num">—</td><td>No reserved gutter; macOS and iOS overlay scrollbars take up no space anyway</td></tr>
+    </tbody>
+  </table></div>
+  <h3>Known quirks to check</h3>
+  <ul>
+    <li><strong>All browsers:</strong> a sticky grid item stretched to the full row height has no room to move, so it never appears to stick. The layout keeps <code>align-items:start</code>, and nothing should override it.</li>
+    <li><strong>Firefox:</strong> scroll anchoring may shift a scrolled panel body when <code>&lt;details&gt;</code> above it opens. Check T8. If it's noticeable, set <code>overflow-anchor:none</code> on <code>.profile-panel-body</code>.</li>
+    <li><strong>Windows (Chrome, Edge, Firefox):</strong> classic scrollbars take up about 15px. <code>scrollbar-gutter:stable</code> stops the fields shifting sideways when a panel starts to overflow.</li>
+    <li><strong>iPadOS Safari:</strong> this is the one touch browser where the desktop layout applies (landscape iPad, container ≥ 820px). Nested scrolling there is acceptable, but check T11.</li>
+  </ul>
+</section>
+
+<section id="testing">
+  <h2><span class="sec">12</span>Test plan</h2>
+  <p><strong>Environments:</strong> Chrome, Edge and Firefox on Windows 11; Chrome, Firefox and Safari on macOS; Safari on iOS 17+ and iPadOS. <strong>Viewports:</strong> 1440×900, 1366×768, 1280×720, 1024×768 (with the sidebar both open and collapsed), 1180×820 iPad landscape, 390×844 and 360×740. <strong>Accounts:</strong> Super Admin (summary without a permission list), Admin with every permission granted (seats row and the tallest summary card), Recruiter, Hiring manager, Employee. <strong>Data:</strong> one account with a 120-character name and a 60-character email.</p>
+  <div class="table-wrap"><table>
+    <thead><tr><th>#</th><th>Scenario</th><th>Pass when</th></tr></thead>
+    <tbody>
+      <tr><td class="num">T1</td><td>1440×900, Recruiter: scroll the page top to bottom</td><td>Card's top edge stays at bar height + 12px (±1px); raised shadow appears once it's pinned; card stops at the layout's bottom and never overlaps the page footer</td></tr>
+      <tr><td class="num">T2</td><td>1366×768 at 125% zoom, Admin with every permission, permissions expanded</td><td>Card becomes static (<code>.is-too-tall</code>), and all of it can be reached by scrolling. Collapsing permissions makes it sticky again with no reload</td></tr>
+      <tr><td class="num">T3</td><td>1200px window: toggle the sidebar</td><td>Layout switches between one and two columns in step with the sidebar animation; no horizontal scrollbar at any point</td></tr>
+      <tr><td class="num">T4</td><td>1280×720: scroll inside Edit profile</td><td>Heading and Save stay put; top shadow appears as soon as the body scrolls and bottom shadow disappears at the end, both within one frame</td></tr>
+      <tr><td class="num">T5</td><td>1440×900: Change password</td><td>No scrollbar, no shadows, body has no <code>tabindex</code></td></tr>
+      <tr><td class="num">T6</td><td>Mouse wheel / trackpad past the end of a panel</td><td>Scrolling continues on to the page; nothing feels stuck</td></tr>
+      <tr><td class="num">T7</td><td>Keyboard only: Tab from the address bar through the whole page and back with Shift+Tab</td><td>Every control is reachable in visual order; each focused element is fully visible, not under the top bar, the heading or the footer; focus rings are unclipped on all four sides</td></tr>
+      <tr><td class="num">T8</td><td>Use both jump links, then toggle permissions</td><td>Page scrolls the panel to just below the bar; the next Tab goes to the panel's first field; no panel shifts when <code>&lt;details&gt;</code> toggles</td></tr>
+      <tr><td class="num">T9</td><td>Submit each form once with valid data and once with invalid data</td><td>Page returns scrolled to that panel; message appears inside it, has focus and is announced; no message appears above the page</td></tr>
+      <tr><td class="num">T10</td><td>390×844 on iOS Safari and 360×740 on Android Chrome</td><td>One column; nothing sticky; no scrolling inside panels; no horizontal scroll; buttons full width; Acme Assist launcher doesn't cover a Save button at the end of the page</td></tr>
+      <tr><td class="num">T11</td><td>iPad landscape: scroll, then rotate to portrait</td><td>Panel caps follow the toolbar showing and hiding; layout switches to stacked on rotation without a stale <code>.is-too-tall</code></td></tr>
+      <tr><td class="num">T12</td><td>Light, dark and system theme; switch theme while scrolled</td><td>Edge shadows, dividers and stuck shadow are visible in both; card and panel surfaces come from the theme</td></tr>
+      <tr><td class="num">T13</td><td>OS reduced motion on</td><td>Jump links move instantly; no shadow transitions</td></tr>
+      <tr><td class="num">T14</td><td>VoiceOver + Safari; NVDA + Firefox and Chrome</td><td>Every field reads its label and hint; the two forms are listed as landmarks with their names; a focused scroll body reads as a named group</td></tr>
+      <tr><td class="num">T15</td><td>DevTools console and axe DevTools on each viewport</td><td>No console errors or warnings; axe reports no serious or critical issues</td></tr>
+      <tr><td class="num">T16</td><td>JavaScript disabled</td><td>Sticky card and scrolling panels still work; both forms submit</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section id="acceptance">
+  <h2><span class="sec">13</span>Acceptance criteria</h2>
+  <ul class="checks">
+    <li>T1–T16 pass in every supported browser, with each role run at least once in Chrome and once in Safari.</li>
+    <li>On desktop the summary card stays pinned below the top bar, never overlaps other content, and switches to static when it doesn't fit.</li>
+    <li>Edit profile and Change password each scroll on their own only when their content overflows, with their headings and Save buttons always visible.</li>
+    <li>Edge shadows appear only when there is more content in that direction.</li>
+    <li>On phones and short screens: one column, nothing sticky, no scrolling inside panels.</li>
+    <li>Every input has a programmatic label; keyboard focus is visible and unobscured throughout.</li>
+    <li><code>php -l profile.php</code> and <code>node --check assets/app.js</code> pass; no new files, dependencies or migrations.</li>
+    <li>Saving each form still writes exactly the same data and audit entries as before. Only the redirect target and where the message appears have changed.</li>
+  </ul>
+</section>
+
+<section id="out">
+  <h2><span class="sec">14</span>Out of scope and risks</h2>
+  <ul>
+    <li><strong>Out of scope:</strong> a password strength meter, a warning about unsaved changes, keeping entered values after a failed save (the page reloads after every POST, as it does today), and any change to <code>app/Controllers/AuthController</code>.</li>
+    <li><strong>Risk: scrolling inside the page on desktop.</strong> Some people find a second scrolling area inside the page confusing. Decisions D3 and D4 keep it to cases where content actually overflows and never trap the wheel. If testing still shows friction, the fallback is to remove the panel cap (one line in the container query) and keep the sticky card and jump links, which still meet R2 and R4.</li>
+    <li><strong>Risk: new ancestor overflow.</strong> Any later <code>overflow:hidden</code> on <code>.app-main</code> or <code>.content</code> will switch off sticky here and everywhere else the app uses it (sidebar, candidate snapshot, scorecard, interview schedule). Worth a comment next to <code>body{overflow-x:hidden}</code>.</li>
+  </ul>
+</section>
+
+<footer class="doc-foot">Based on the code in <code>profile.php</code>, <code>assets/styles.css</code>, <code>assets/app.js</code> and <code>includes/header.php</code> as of 19 Sep 2026. Line numbers are approximate; match on the selectors named.</footer>
+</main>
+</div>
+
+</html>

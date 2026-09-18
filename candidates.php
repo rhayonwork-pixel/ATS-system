@@ -143,6 +143,17 @@ $pageTitle='Candidates'; include __DIR__.'/includes/header.php';
 <!-- One list, two presentations: a table on wide screens and stacked cards on
      narrow ones. Same markup, so nothing is duplicated or hidden from search. -->
 <div class="card candidate-list-card">
+<!-- Root cause of the layout overflowing at laptop widths (1024-1280px, and
+     therefore at any browser zoom that has the same effect on layout viewport
+     width): candidate-table has min-width:940px and table-layout:fixed, and
+     the CSS (assets/styles.css) already scopes its horizontal-scroll rule to
+     ".candidate-list-card .table-wrap" -- but this page never rendered that
+     wrapper, so the rule never matched and the table pushed the whole page
+     wider than the viewport instead of scrolling inside its own card. Every
+     other page with a wide table in this app already wraps it in .table-wrap
+     (see admin.php, analytics.php, audit_trail.php, etc.); this brings
+     candidates.php in line with that convention. -->
+<div class="table-wrap">
 <table class="table candidate-table">
 <thead><tr><th></th><th>Candidate</th><th>Role</th><th>Stage</th><th>Rating</th><th>Assigned to</th><th>Applied</th><th>Resume</th><th></th></tr></thead>
 <tbody>
@@ -184,6 +195,7 @@ $pageTitle='Candidates'; include __DIR__.'/includes/header.php';
 <?php endforeach; ?>
 </tbody>
 </table>
+</div><!-- /.table-wrap -->
 <?php if(!$candidates): ?>
   <div class="empty-panel">
     <h2><?=icon('candidates',20)?> No candidates found</h2>
