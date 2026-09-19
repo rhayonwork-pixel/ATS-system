@@ -59,7 +59,7 @@ $navGroup = static function (string $key, string $label, string $iconName, strin
     return $out;
 };
 ?>
-<aside class="sidebar" id="app-sidebar" data-sidebar aria-label="Main navigation">
+<aside class="sidebar" id="app-sidebar" data-sidebar aria-label="Main navigation" tabindex="-1">
 
   <!-- Sidebar header.
        One state, two actions, no duplicate controls:

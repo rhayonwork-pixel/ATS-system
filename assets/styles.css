@@ -1468,7 +1468,21 @@ body.dark .toolbar-filters select{background-color:#16241c}
   background:var(--surface);border-right:1px solid var(--line);
   overflow-y:auto;overflow-x:hidden;
   transition:width .22s cubic-bezier(.4,0,.2,1);
+  /* Invisible scrollbar, scrolling intact: wheel, touch, and keyboard still
+     scroll the nav. contain stops a scroll that hits the top or bottom from
+     chaining into the page behind it (or behind the mobile drawer). */
+  scrollbar-width:none;          /* Firefox */
+  -ms-overflow-style:none;       /* IE / legacy Edge */
+  overscroll-behavior:contain;
 }
+.sidebar::-webkit-scrollbar{display:none}   /* Chrome, Safari, Edge */
+/* The aside carries tabindex="-1": clicking blank sidebar space focuses the
+   scroller itself, so arrows, Page Up/Down, Home and End scroll the nav rather
+   than the page. It is never a Tab stop, so it gets no ring of its own. */
+.sidebar:focus{outline:none}
+/* overflow-x:hidden clips anything painted outside the box, so rings inside the
+   sidebar are drawn inset rather than with the global 2px outer offset. */
+.sidebar :focus-visible{outline:2px solid var(--green);outline-offset:-2px}
 
 /* ── Brand ────────────────────────────────────────────────────────────── */
 .sidebar-brand{display:flex;align-items:center;padding:4px 6px 14px;border-bottom:1px solid var(--line);margin-bottom:8px}

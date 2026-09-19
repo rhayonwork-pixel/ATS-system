@@ -1,0 +1,251 @@
+/* Hiring pipeline board (pipeline.php + assets/pipeline.js).
+   Loaded only by pipeline.php, after the global stylesheets.
+
+   Z-index scale, all within this page:
+     1     .pb-card            base cards
+     10    .pb-col-head        sticky column headers (cards scroll beneath them)
+     100   .pb-drag-overlay    the card being dragged / flying (on <body>)
+     1000  .pb-modal, preview  confirmation modal and dialogs
+
+   Breakpoints (viewport):
+     <=480      accordion: stages stacked, each collapsible; touch drag needs a long press
+     481-1024   horizontal swipe board with scroll-snap
+     1025-1440  kanban, columns flex to fill
+     >=1441     kanban, roomier columns                                            */
+
+.pb-board{
+  --pb-col-bg:color-mix(in srgb, var(--paper) 62%, var(--line));
+  --pb-gap:14px;
+  --pb-col-max-h:max(440px, calc(100dvh - 230px));
+  --pb-ease:cubic-bezier(0.2, 0.8, 0.2, 1);
+  display:flex;align-items:flex-start;gap:var(--pb-gap);
+  min-width:0;
+  overflow-x:auto;overscroll-behavior-x:contain;
+  padding-bottom:8px;
+}
+
+/* ── Column ──────────────────────────────────────────────────────────── */
+.pb-col{
+  position:relative;          /* offsetParent for the virtual list */
+  flex:1 1 0;min-width:200px;
+  max-height:var(--pb-col-max-h);
+  overflow-y:auto;overscroll-behavior-y:contain;
+  background:var(--pb-col-bg);
+  border:1px solid var(--line);border-radius:14px;
+  scrollbar-width:thin;scrollbar-color:var(--line) transparent;
+  transition:box-shadow .15s ease, background-color .15s ease;
+}
+.pb-col.is-drop-target{
+  background:color-mix(in srgb, var(--green) 9%, var(--pb-col-bg));
+  box-shadow:inset 0 0 0 2px var(--green);
+}
+
+.pb-col-head{
+  position:sticky;top:0;z-index:10;
+  padding:12px 12px 10px;
+  background:var(--pb-col-bg);
+  border-bottom:1px solid var(--line);
+  border-radius:13px 13px 0 0;
+}
+.pb-col.is-drop-target .pb-col-head{background:color-mix(in srgb, var(--green) 9%, var(--pb-col-bg))}
+.pb-col-titlebar{display:flex;align-items:center;gap:8px;min-width:0}
+.pb-col-title{margin:0;font-size:13px;font-weight:800;letter-spacing:.01em;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pb-col-count{
+  margin-left:auto;flex:none;min-width:24px;padding:1px 8px;border-radius:99px;
+  background:var(--surface);border:1px solid var(--line);
+  font-size:11.5px;font-weight:800;text-align:center;color:var(--ink);
+}
+.pb-col-pending{
+  flex:none;padding:1px 7px;border-radius:99px;font-size:10.5px;font-weight:800;
+  background:var(--status-warning-bg);color:var(--status-warning-text);border:1px solid var(--status-warning-border);
+}
+.pb-col-pending[hidden]{display:none}
+.pb-col-progress{display:flex;align-items:center;gap:8px;margin-top:8px;min-width:0}
+.pb-col-progress-track{flex:1;min-width:24px;height:4px;border-radius:99px;background:var(--line);overflow:hidden}
+.pb-col-progress-fill{display:block;height:100%;background:var(--green);transform-origin:left center;transform:scaleX(0);transition:transform .3s var(--pb-ease)}
+.pb-col-progress-label{flex:none;font-size:11px;color:var(--muted);white-space:nowrap}
+
+/* The accordion toggle exists only on phones. */
+.pb-col-toggle{display:none}
+
+.pb-col-list{
+  position:relative;
+  display:flex;flex-direction:column;gap:9px;   /* gap == ROW_GAP in pipeline.js */
+  padding:10px 12px 12px;
+  min-height:72px;
+}
+/* Windowed list: a spacer of the full height; only visible rows are mounted,
+   placed with transform by pipeline.js. */
+.pb-col-list.is-virtual{display:block;padding:0;margin:10px 12px 12px}
+.pb-col-list.is-virtual > .pb-card{position:absolute;left:0;right:0;top:0}
+
+.pb-empty{
+  margin:0;padding:16px 8px;text-align:center;
+  border:1.5px dashed var(--line);border-radius:10px;
+  font-size:12.5px;color:var(--muted);
+}
+
+/* ── CandidateCard ───────────────────────────────────────────────────── */
+/* Fixed height (every line is single-line with ellipsis) so virtual rows can
+   be positioned from one measurement. */
+.pb-card{
+  position:relative;z-index:1;
+  display:flex;flex-direction:column;gap:6px;
+  padding:11px 12px;
+  background:var(--surface);color:var(--ink);
+  border:1px solid var(--line);border-radius:10px;
+  box-shadow:var(--shadow-sm);
+  cursor:grab;
+  user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;
+  scroll-margin-top:96px;scroll-margin-bottom:10px;   /* keyboard focus never lands under the sticky header */
+  transition:box-shadow .15s ease, border-color .15s ease, opacity .2s ease;
+}
+.pb-card:hover{border-color:color-mix(in srgb, var(--green) 45%, var(--line));box-shadow:var(--elevation-card)}
+.pb-card:focus-visible{outline:2px solid var(--green);outline-offset:2px}
+.pb-card [hidden]{display:none !important}
+.pb-card-head{display:flex;align-items:center;gap:9px;min-width:0}
+.pb-card .candidate-card-avatar{width:30px;height:30px;flex:none;object-fit:cover}
+.pb-card-name{flex:1;min-width:0;font-size:13.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pb-card .candidate-card-score{margin-left:0}
+.pb-card-meta{font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pb-card-actions{display:flex;gap:14px;padding-top:7px;border-top:1px solid var(--line)}
+.pb-card-actions a{font-size:11.5px;font-weight:700;color:var(--muted);cursor:pointer}
+.pb-card-actions a:hover{color:var(--green)}
+
+/* Long-press progress ring (touch): opacity only. */
+.pb-card::before{
+  content:"";position:absolute;inset:-1px;border-radius:inherit;pointer-events:none;
+  box-shadow:0 0 0 2px var(--green);opacity:0;transition:opacity .35s linear;
+}
+.pb-card.is-pressing::before{opacity:.7}
+
+/* Source card while its clone is being dragged: stays as a placeholder.
+   touch-action:none only while dragging, so idle cards never block scrolling. */
+.pb-card.is-drag-source{opacity:.35;touch-action:none}
+.pb-card.is-arriving{opacity:0}
+
+/* Pending: in the proposed column, striped + glowing until approved. */
+.pb-card-pending-tag{
+  position:absolute;top:-9px;right:10px;display:none;
+  padding:1px 8px;border-radius:99px;font-size:10px;font-weight:800;letter-spacing:.02em;
+  background:var(--status-warning-bg);color:var(--status-warning-text);border:1px solid var(--status-warning-border);
+}
+.pb-card.is-pending{
+  border-color:var(--green);
+  background-image:repeating-linear-gradient(135deg,
+    color-mix(in srgb, var(--green) 10%, transparent) 0 8px, transparent 8px 16px);
+  cursor:default;
+}
+.pb-card.is-pending .pb-card-pending-tag{display:block}
+.pb-card.is-pending::after{
+  content:"";position:absolute;inset:-2px;border-radius:inherit;pointer-events:none;
+  box-shadow:0 0 0 2px color-mix(in srgb, var(--green) 55%, transparent),0 0 18px color-mix(in srgb, var(--green) 45%, transparent);
+  animation:pb-glow 1.4s ease-in-out infinite alternate;
+}
+@keyframes pb-glow{from{opacity:.35}to{opacity:1}}
+
+/* Ghost: the empty slot left in the original column while a move is pending. */
+.pb-card.is-ghost{opacity:.4;border-style:dashed;box-shadow:none;filter:grayscale(1);cursor:default}
+
+/* Keyboard pick-up. */
+.pb-card.is-lifted{
+  border-color:var(--green);
+  box-shadow:0 0 0 2px var(--green),0 14px 28px rgba(15,23,42,.18);
+}
+
+/* ── Drag overlay (the moving clone, on <body>) ──────────────────────── */
+.pb-drag-overlay{
+  position:fixed;z-index:100;margin:0;
+  pointer-events:none;
+  will-change:transform;
+  cursor:grabbing;
+  box-shadow:0 18px 40px rgba(15,23,42,.24),0 4px 10px rgba(15,23,42,.12);
+}
+body.pb-dragging,body.pb-dragging *{cursor:grabbing !important}
+body.pb-dragging{user-select:none;-webkit-user-select:none}
+
+/* ── Skeletons ───────────────────────────────────────────────────────── */
+.pb-skel{
+  display:grid;grid-template-columns:30px 1fr;grid-template-rows:auto auto;gap:8px 10px;align-items:center;
+  height:92px;padding:12px;
+  background:var(--surface);border:1px solid var(--line);border-radius:10px;
+  animation:pb-pulse 1.5s infinite;
+}
+.pb-skel-avatar{grid-row:1 / span 2;width:30px;height:30px;border-radius:50%;background:var(--line)}
+.pb-skel-line{height:10px;border-radius:6px;background:var(--line)}
+.pb-skel-line.short{width:60%}
+@keyframes pb-pulse{0%,100%{opacity:1}50%{opacity:.45}}
+
+.pb-load-error{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+
+/* ── ApprovalModal ───────────────────────────────────────────────────── */
+.pb-modal{
+  position:fixed;inset:0;z-index:1000;
+  display:flex;align-items:center;justify-content:center;padding:20px;
+  background:var(--overlay-scrim, rgba(11,22,15,.45));
+  opacity:0;transition:opacity .18s ease;
+  overflow-y:auto;
+}
+.pb-modal[hidden]{display:none}
+.pb-modal.is-open{opacity:1}
+.pb-modal-box{
+  width:min(460px,100%);max-height:min(90dvh,720px);overflow-y:auto;
+  padding:24px;
+  background:var(--surface);color:var(--ink);
+  border:1px solid var(--line);border-radius:14px;
+  box-shadow:var(--elevation-flyout);
+  transform:translateY(8px) scale(.98);transition:transform .22s var(--pb-ease, ease);
+}
+.pb-modal.is-open .pb-modal-box{transform:none}
+.pb-modal-box h2{margin:0 0 4px;font-size:19px}
+.pb-modal-box .confirm-checkbox-row[hidden]{display:none}
+.pb-modal-box .btn.wide{margin-top:6px}
+.pb-modal-error{
+  margin:10px 0 0;padding:10px 12px;border-radius:8px;font-size:13px;
+  background:var(--status-danger-bg);color:var(--status-danger-text);border:1px solid var(--status-danger-border);
+}
+.pb-modal-error[hidden]{display:none}
+
+/* The preview dialog sits on the same modal tier. */
+.candidate-preview-overlay{z-index:1000}
+
+.pb-sr-only{position:absolute !important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+
+/* ── Ultra-wide (>=1441) ─────────────────────────────────────────────── */
+@media (min-width:1441px){
+  .pb-board{--pb-gap:18px}
+  .pb-col{min-width:240px}
+}
+
+/* ── Tablet / landscape (481-1024): swipe between columns ────────────── */
+@media (min-width:481px) and (max-width:1024px){
+  .pb-board{
+    scroll-snap-type:x mandatory;
+    -webkit-overflow-scrolling:touch;
+    scrollbar-width:thin;
+  }
+  .pb-col{flex:0 0 min(300px, 80%);scroll-snap-align:start}
+}
+/* Snapping fights the edge auto-scroll while a card is being dragged. */
+.pb-board.is-dragging{scroll-snap-type:none}
+
+/* ── Phone portrait (<=480): stacked accordion ───────────────────────── */
+@media (max-width:480px){
+  .pb-board{flex-direction:column;align-items:stretch;overflow-x:visible;gap:10px}
+  .pb-col{flex:none;width:100%;min-width:0;max-height:none;overflow:visible}
+  .pb-col:not(.is-collapsed){max-height:70dvh;overflow-y:auto}
+  .pb-col-head{padding-right:44px}
+  .pb-col.is-collapsed .pb-col-head{border-bottom-color:transparent;border-radius:13px}
+  .pb-col.is-collapsed .pb-col-list{display:none}
+  /* The whole header is the tap target; the caret sits at the right. */
+  .pb-col-toggle{
+    display:flex;align-items:center;justify-content:flex-end;
+    position:absolute;inset:0;padding:0 14px;
+    background:none;border:0;border-radius:inherit;color:var(--muted);cursor:pointer;
+  }
+  .pb-col-toggle:focus-visible{outline:2px solid var(--green);outline-offset:-2px}
+  .pb-col-caret{display:grid;place-items:center;transition:transform .2s var(--pb-ease)}
+  .pb-col.is-collapsed .pb-col-caret{transform:rotate(-90deg)}
+  .pb-modal{align-items:flex-end;padding:0}
+  .pb-modal-box{width:100%;border-radius:16px 16px 0 0;padding:20px 16px calc(16px + env(safe-area-inset-bottom))}
+}
