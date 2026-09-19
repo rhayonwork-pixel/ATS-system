@@ -1,0 +1,12 @@
+# Environment / secrets — .env holds DB and Resend credentials.
+.env
+.env.local
+.env.*.local
+
+# Runtime logs written by EmailService and friends.
+storage/logs/
+
+# OS / editor noise
+Thumbs.db
+desktop.ini
+.DS_Store
