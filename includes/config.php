@@ -138,6 +138,129 @@ function applications_for_email(PDO $pdo, string $email): array {
     return $stmt->fetchAll();
 }
 
+/**
+ * The candidate portal's "My Applications" list: every application under an
+ * email, with the job and organisation context a candidate needs to tell two
+ * of them apart. Kept separate from applications_for_email() above, which is
+ * the older, narrower query other callers still rely on.
+ *
+ * The department is the closest thing this single-tenant system has to an
+ * "organisation" below the company, so both are returned and the card shows
+ * "Company · Department".
+ */
+function candidate_applications_for_email(PDO $pdo, string $email): array {
+    $stmt = $pdo->prepare(
+        'SELECT a.id, a.stage, a.status, a.applied_at, a.updated_at,
+                j.title, j.slug, j.location, j.employment_type, d.name AS department
+         FROM applications a
+         JOIN candidates c ON c.id = a.candidate_id
+         JOIN jobs j       ON j.id = a.job_id
+         LEFT JOIN departments d ON d.id = j.department_id
+         WHERE c.email = ?
+         ORDER BY a.applied_at DESC'
+    );
+    $stmt->execute([strtolower(trim($email))]);
+    return $stmt->fetchAll() ?: [];
+}
+
+/**
+ * One stage + status pair -> the semantic status a candidate is shown.
+ *
+ * The recruiter-facing vocabulary (new / screening / interview / offer) is not
+ * what an applicant wants to read, and the colour has to carry meaning without
+ * relying on hue alone, so a label comes back with every tone. Tones are the
+ * four in the brief: pending (amber), review (blue), accepted (green),
+ * rejected (red), plus a neutral for a withdrawn application.
+ */
+function candidate_status_tone(string $stage, string $status = 'active'): array {
+    if ($status === 'withdrawn') return ['key' => 'withdrawn', 'label' => 'Withdrawn', 'tone' => 'neutral'];
+    return [
+        'new'       => ['key' => 'new',       'label' => 'Pending review', 'tone' => 'pending'],
+        'screening' => ['key' => 'screening', 'label' => 'Under review',   'tone' => 'review'],
+        'interview' => ['key' => 'interview', 'label' => 'Interviewing',   'tone' => 'review'],
+        'offer'     => ['key' => 'offer',     'label' => 'Offer stage',    'tone' => 'review'],
+        'hired'     => ['key' => 'hired',     'label' => 'Accepted',       'tone' => 'accepted'],
+        'rejected'  => ['key' => 'rejected',  'label' => 'Not selected',   'tone' => 'rejected'],
+    ][$stage] ?? ['key' => $stage, 'label' => ucfirst($stage), 'tone' => 'neutral'];
+}
+
+/**
+ * Everything the candidate actually submitted for one application, for the
+ * "view exactly what I sent" panel on the status page.
+ *
+ * Ownership is re-checked here against id + email rather than trusted from the
+ * caller, because this is also reachable as its own request (the accordion
+ * fetches it lazily) and a candidate must never be able to read another
+ * application by changing the id in the URL.
+ *
+ * Documents come from candidate_documents when migration 004 has been run and
+ * fall back to the legacy candidates.resume_path column otherwise, the same
+ * fallback candidate.php uses.
+ */
+function application_submission_payload(PDO $pdo, int $id, string $email): ?array {
+    $stmt = $pdo->prepare(
+        'SELECT a.id, a.stage, a.status, a.cover_letter, a.why_us, a.applied_at,
+                j.title, j.location, j.employment_type, d.name AS department,
+                c.id AS candidate_id, c.first_name, c.last_name, c.email, c.phone,
+                c.portfolio_url, c.source, c.resume_path
+         FROM applications a
+         JOIN candidates c ON c.id = a.candidate_id
+         JOIN jobs j       ON j.id = a.job_id
+         LEFT JOIN departments d ON d.id = j.department_id
+         WHERE a.id = ? AND c.email = ? LIMIT 1'
+    );
+    $stmt->execute([$id, strtolower(trim($email))]);
+    $row = $stmt->fetch();
+    if (!$row) return null;
+
+    $documents = [];
+    try {
+        $docs = $pdo->prepare(
+            'SELECT id, original_name, extension, byte_size, is_primary, created_at
+             FROM candidate_documents
+             WHERE candidate_id = ? ORDER BY is_primary DESC, created_at DESC'
+        );
+        $docs->execute([(int)$row['candidate_id']]);
+        $documents = $docs->fetchAll() ?: [];
+    } catch (Throwable $e) {
+        $documents = [];                       // migration 004 not imported
+    }
+
+    // Answers are returned as an ordered list rather than fixed fields so the
+    // view can render "what you submitted" without knowing which questions the
+    // form asked — new questions only have to be added here.
+    $sourceLabels = [
+        'linkedin' => 'LinkedIn', 'facebook' => 'Facebook', 'indeed' => 'Indeed',
+        'jobstreet' => 'JobStreet', 'company_website' => 'Company website',
+        'google' => 'Google search', 'referral' => 'Friend or colleague',
+        'agency' => 'Recruitment agency', 'university' => 'University / school',
+        'job_fair' => 'Job fair',
+    ];
+    $source = (string)($row['source'] ?? '');
+    $sourceLabel = $sourceLabels[$source] ?? ($source !== '' ? ucfirst(str_replace('_', ' ', $source)) : '');
+
+    $answers = [
+        ['label' => 'Full name',        'value' => trim($row['first_name'] . ' ' . $row['last_name']), 'long' => false],
+        ['label' => 'Email',            'value' => (string)$row['email'],       'long' => false],
+        ['label' => 'Phone',            'value' => (string)($row['phone'] ?? ''), 'long' => false],
+        ['label' => 'Portfolio',        'value' => (string)($row['portfolio_url'] ?? ''), 'long' => false, 'url' => true],
+        ['label' => 'How you heard about us', 'value' => $sourceLabel, 'long' => false],
+        ['label' => 'Cover letter',     'value' => (string)($row['cover_letter'] ?? ''), 'long' => true],
+        ['label' => 'Why you want to work here', 'value' => (string)($row['why_us'] ?? ''), 'long' => true],
+    ];
+
+    return [
+        'id'         => (int)$row['id'],
+        'title'      => $row['title'],
+        'department' => $row['department'],
+        'location'   => $row['location'],
+        'applied_at' => $row['applied_at'],
+        'answers'    => $answers,
+        'documents'  => $documents,
+        'legacy_resume' => legacy_resume_url($row['resume_path'] ?? null),
+    ];
+}
+
 /** Simulated AI candidate analysis (prototype, not a real model call).
  * Produces a score breakdown, summary, strengths/concerns, and a
  * recommendation from signals actually present in the application: text

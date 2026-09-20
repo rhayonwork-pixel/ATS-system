@@ -1,0 +1,438 @@
+/* ============================================================================
+   ACME ATS — CANDIDATE PORTAL / APPLICATION STATUS
+   Loaded only by application-status.php, after every global stylesheet.
+
+   THEME SAFETY
+   ------------
+   This file contains NO `[data-theme="dark"]` selector and no hardcoded
+   palette value outside the two local shadows below. Everything resolves
+   through the semantic tokens defined per theme in theme-tokens.css and
+   light-theme-tokens.css, so the page follows whichever theme is active
+   without either theme's rules being edited.
+
+   SCALE
+   -----
+   Spacing and type are declared once, on .cs-page, so the whole page moves
+   together. They are local (--cs-*) rather than global tokens because they
+   describe this page's rhythm, not the design system's.
+
+   BREAKPOINTS (the brief's three, exactly)
+   ----------------------------------------
+     <= 768px   phone   — stepper becomes a snapping horizontal track,
+                          cards stack to one column
+     769–1024   tablet  — stepper still scrolls if it must, cards 2 columns
+     >= 1025px  desktop — stepper spans the full width, cards auto-fit 2–3
+   ========================================================================== */
+
+.cs-page {
+  /* Type scale — 1.250 major third, rounded to whole pixels */
+  --cs-fs-xs: 12px;
+  --cs-fs-sm: 13px;
+  --cs-fs-base: 15px;
+  --cs-fs-lg: 19px;
+  --cs-fs-xl: 24px;
+  --cs-fs-2xl: 30px;
+
+  /* Spacing — 4px base */
+  --cs-1: 4px;  --cs-2: 8px;  --cs-3: 12px; --cs-4: 16px;
+  --cs-5: 20px; --cs-6: 24px; --cs-8: 32px; --cs-10: 40px; --cs-12: 48px;
+
+  --cs-radius: 14px;
+  --cs-radius-sm: 10px;
+  --cs-card-pad: var(--cs-6);        /* 1.5rem, per the design brief */
+
+  /* Motion: one duration and one easing for every interaction on the page. */
+  --cs-ease: 200ms ease-in-out;
+
+  /* The minimum comfortable touch target. Applied to every control here. */
+  --cs-tap: 44px;
+
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: var(--cs-8) var(--cs-5) var(--cs-12);
+  color: var(--text-primary);
+  font-size: var(--cs-fs-base);
+}
+
+/* ── Page header ─────────────────────────────────────────────────────── */
+.cs-head { margin-bottom: var(--cs-6); }
+.cs-eyebrow {
+  margin: 0;
+  font-size: var(--cs-fs-xs);
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--accent-primary);
+}
+.cs-head h1 {
+  margin: var(--cs-2) 0 var(--cs-3);
+  font-size: var(--cs-fs-2xl);
+  line-height: 1.15;
+  letter-spacing: -.02em;
+}
+.cs-lede { margin: 0; max-width: 62ch; color: var(--text-secondary); line-height: 1.6; }
+
+/* ── Lookup form ─────────────────────────────────────────────────────── */
+.cs-lookup {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr) auto;
+  gap: var(--cs-4);
+  align-items: end;
+  padding: var(--cs-card-pad);
+  background: var(--bg-surface);
+  border: 1px solid var(--border-default);
+  border-radius: var(--cs-radius);
+  box-shadow: var(--shadow-sm);
+}
+.cs-lookup .field { display: flex; flex-direction: column; gap: var(--cs-2); min-width: 0; }
+.cs-lookup label { font-size: var(--cs-fs-sm); font-weight: 600; color: var(--text-secondary); }
+.cs-lookup .hint { font-weight: 400; color: var(--text-muted); }
+.cs-lookup input {
+  min-height: var(--cs-tap);
+  padding: 0 var(--cs-3);
+  font-size: var(--cs-fs-base);
+  color: var(--text-primary);
+  background: var(--bg-input, var(--bg-surface));
+  border: 1px solid var(--border-input, var(--border-strong));
+  border-radius: var(--cs-radius-sm);
+  transition: border-color var(--cs-ease), box-shadow var(--cs-ease);
+}
+.cs-lookup input:hover:not(:disabled) { border-color: var(--border-focus, var(--accent-primary)); }
+.cs-lookup button { min-height: var(--cs-tap); }
+
+/* ── Banners and notices ─────────────────────────────────────────────── */
+.cs-banner, .cs-notice {
+  margin-top: var(--cs-5);
+  padding: var(--cs-5) var(--cs-card-pad);
+  border-radius: var(--cs-radius);
+  border: 1px solid var(--border-default);
+  background: var(--bg-surface);
+  box-shadow: var(--shadow-sm);
+}
+.cs-banner-id { margin: var(--cs-2) 0; font-size: var(--cs-fs-2xl); font-weight: 800; letter-spacing: -.02em; }
+.cs-notice { padding: var(--cs-4) var(--cs-5); }
+.cs-notice-ok  { background: var(--status-success-bg); border-color: var(--status-success-border); color: var(--status-success-text); }
+.cs-notice-err { background: var(--status-danger-bg);  border-color: var(--status-danger-border);  color: var(--status-danger-text); }
+.cs-notice a { color: inherit; }
+
+/* ── 2. HORIZONTAL PROGRESS ──────────────────────────────────────────── */
+.cs-progress {
+  margin-top: var(--cs-6);
+  padding: var(--cs-card-pad);
+  background: var(--bg-surface);
+  border: 1px solid var(--border-default);
+  border-radius: var(--cs-radius);
+  box-shadow: var(--shadow-md);
+}
+.cs-progress-head {
+  display: flex; flex-wrap: wrap; gap: var(--cs-3);
+  align-items: flex-start; justify-content: space-between;
+  margin-bottom: var(--cs-5);
+}
+.cs-progress-head h2 { margin: 0; font-size: var(--cs-fs-xl); letter-spacing: -.01em; }
+.cs-progress-sub { margin: var(--cs-1) 0 0; color: var(--text-secondary); font-size: var(--cs-fs-sm); }
+
+/* The scroller is the same element at every width. Below 768px it snaps;
+   above it, the track simply fits and never scrolls. */
+.cs-stepper-scroll {
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scrollbar-width: thin;
+  padding-bottom: var(--cs-2);
+  border-radius: var(--cs-radius-sm);
+}
+.cs-stepper-scroll:focus-visible { outline: 2px solid var(--accent-primary); outline-offset: 2px; }
+
+.cs-stepper {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+  gap: var(--cs-2);
+  margin: 0; padding: 0;
+  list-style: none;
+  min-width: 100%;
+}
+.cs-step {
+  position: relative;
+  display: flex; align-items: center; gap: var(--cs-3);
+  min-height: var(--cs-tap);
+  padding: var(--cs-3) var(--cs-3) var(--cs-3) 0;
+}
+/* The connector is drawn as a pseudo-element on the step, not as a border on
+   the list, so it can be tinted per state and never runs past the last step. */
+.cs-step::after {
+  content: "";
+  position: absolute; left: calc(var(--cs-8) + var(--cs-2)); right: 0; top: 50%;
+  height: 2px; transform: translateY(-50%);
+  background: var(--border-default);
+  z-index: 0;
+}
+.cs-step:last-child::after { display: none; }
+.cs-step.is-done::after { background: var(--accent-primary); }
+
+.cs-step-marker {
+  position: relative; z-index: 1;
+  flex: 0 0 auto;
+  display: grid; place-items: center;
+  width: var(--cs-8); height: var(--cs-8);
+  border-radius: 50%;
+  font-size: var(--cs-fs-sm); font-weight: 700;
+  background: var(--bg-surface);
+  color: var(--text-muted);
+  border: 2px solid var(--border-strong, var(--border-default));
+  transition: background var(--cs-ease), color var(--cs-ease), border-color var(--cs-ease);
+}
+.cs-step-text { position: relative; z-index: 1; display: flex; flex-direction: column; background: var(--bg-surface); padding-right: var(--cs-2); }
+.cs-step-label { font-weight: 650; font-size: var(--cs-fs-sm); }
+.cs-step-state { font-size: var(--cs-fs-xs); color: var(--text-muted); }
+
+.cs-step.is-done .cs-step-marker {
+  background: var(--accent-primary); border-color: var(--accent-primary); color: var(--text-on-accent, #fff);
+}
+.cs-step.is-current .cs-step-marker {
+  background: var(--accent-primary); border-color: var(--accent-primary); color: var(--text-on-accent, #fff);
+  box-shadow: 0 0 0 4px var(--accent-glow, rgba(37, 99, 235, .18));
+}
+.cs-step.is-current .cs-step-label { color: var(--accent-primary); }
+.cs-step.is-current .cs-step-state { color: var(--text-secondary); font-weight: 600; }
+/* A finished application keeps its history but stops advertising a live
+   stage, so the halo is dropped when the stepper is marked closed. */
+.cs-stepper[data-closed] .cs-step-marker { box-shadow: none; }
+
+.cs-outcome {
+  margin-top: var(--cs-5);
+  padding: var(--cs-4) var(--cs-5);
+  border-radius: var(--cs-radius-sm);
+  border: 1px solid var(--border-default);
+  background: var(--bg-canvas-soft, var(--bg-surface-hover));
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+.cs-outcome.tone-rejected { background: var(--status-danger-bg); border-color: var(--status-danger-border); color: var(--status-danger-text); }
+.cs-outcome p { margin: 0; }
+.cs-outcome-note { margin-top: var(--cs-4); padding-top: var(--cs-4); border-top: 1px solid var(--border-default); }
+.cs-outcome-note h3 { margin: 0 0 var(--cs-2); font-size: var(--cs-fs-sm); text-transform: uppercase; letter-spacing: .06em; }
+
+.cs-progress-foot { margin-top: var(--cs-5); padding-top: var(--cs-4); border-top: 1px solid var(--border-default); }
+.cs-foot-note { margin-top: var(--cs-5); color: var(--text-muted); font-size: var(--cs-fs-sm); }
+
+/* ── Upcoming interview (inside the progress section) ────────────────── */
+.cs-interview {
+  margin-top: var(--cs-5);
+  padding: var(--cs-5);
+  border: 1px solid var(--border-default);
+  border-radius: var(--cs-radius-sm);
+  background: var(--bg-canvas-soft, var(--bg-surface));
+}
+.cs-interview-head { display: flex; flex-wrap: wrap; gap: var(--cs-3); align-items: center; justify-content: space-between; }
+.cs-interview-head h3 { margin: var(--cs-1) 0 0; font-size: var(--cs-fs-lg); }
+.cs-interview-grid {
+  display: grid; gap: var(--cs-4);
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  margin-top: var(--cs-4);
+}
+.cs-k { display: block; font-size: var(--cs-fs-xs); text-transform: uppercase; letter-spacing: .06em; color: var(--text-muted); }
+.cs-join { display: flex; flex-wrap: wrap; gap: var(--cs-4); align-items: center; justify-content: space-between; margin-top: var(--cs-4); }
+.cs-join .btn, .cs-interview .btn { min-height: var(--cs-tap); }
+
+/* ── Status chips ────────────────────────────────────────────────────── *
+   Colour never carries the meaning alone: every chip also states its status
+   in words, and the dot is decorative (aria-hidden). */
+.cs-chip {
+  display: inline-flex; align-items: center; gap: var(--cs-2);
+  padding: 6px var(--cs-3);
+  border-radius: 999px;
+  font-size: var(--cs-fs-xs); font-weight: 700; white-space: nowrap;
+  border: 1px solid transparent;
+}
+.cs-chip-dot { width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+.cs-chip.tone-pending  { background: var(--status-warning-bg); color: var(--status-warning-text); border-color: var(--status-warning-border); }
+.cs-chip.tone-review   { background: var(--status-info-bg);    color: var(--status-info-text);    border-color: var(--status-info-border); }
+.cs-chip.tone-accepted { background: var(--status-success-bg); color: var(--status-success-text); border-color: var(--status-success-border); }
+.cs-chip.tone-rejected { background: var(--status-danger-bg);  color: var(--status-danger-text);  border-color: var(--status-danger-border); }
+.cs-chip.tone-neutral  { background: var(--bg-surface-hover);  color: var(--text-secondary);      border-color: var(--border-default); }
+
+/* ── 3. MY APPLICATIONS ──────────────────────────────────────────────── */
+.cs-apps { margin-top: var(--cs-10); }
+.cs-apps-head { display: flex; flex-wrap: wrap; gap: var(--cs-2) var(--cs-4); align-items: baseline; justify-content: space-between; margin-bottom: var(--cs-4); }
+.cs-apps-head h2 { margin: 0; font-size: var(--cs-fs-xl); letter-spacing: -.01em; }
+.cs-apps-count { margin: 0; color: var(--text-muted); font-size: var(--cs-fs-sm); }
+
+.cs-grid { display: grid; gap: var(--cs-4); margin: 0; padding: 0; list-style: none; grid-template-columns: 1fr; }
+
+.cs-card {
+  display: flex; flex-direction: column; gap: var(--cs-2);
+  padding: var(--cs-card-pad);
+  background: var(--bg-surface);
+  border: 1px solid var(--border-default);
+  border-radius: var(--cs-radius);
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow var(--cs-ease), transform var(--cs-ease), border-color var(--cs-ease);
+}
+.cs-card:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); }
+.cs-card.is-focus { border-color: var(--accent-primary); box-shadow: var(--shadow-md); }
+.cs-card-top { display: flex; gap: var(--cs-3); align-items: flex-start; justify-content: space-between; }
+.cs-card-org { margin: 0; font-size: var(--cs-fs-xs); font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--text-muted); }
+.cs-card-title { margin: 0; font-size: var(--cs-fs-lg); line-height: 1.3; }
+.cs-card-meta { margin: 0; color: var(--text-secondary); font-size: var(--cs-fs-sm); }
+.cs-card-flag { margin: 0; font-size: var(--cs-fs-xs); font-weight: 600; color: var(--accent-primary); }
+.cs-card-actions { display: flex; flex-wrap: wrap; gap: var(--cs-2); margin-top: var(--cs-2); }
+.cs-card-actions .btn { min-height: var(--cs-tap); display: inline-flex; align-items: center; gap: var(--cs-2); }
+
+.cs-toggle-caret {
+  width: 0; height: 0;
+  border-left: 5px solid transparent; border-right: 5px solid transparent;
+  border-top: 6px solid currentColor;
+  transition: transform var(--cs-ease);
+}
+.cs-toggle[aria-expanded="true"] .cs-toggle-caret { transform: rotate(180deg); }
+
+/* ── Details accordion ───────────────────────────────────────────────── */
+.cs-detail { overflow: hidden; }
+.cs-detail.is-animating { transition: height var(--cs-ease); }
+.cs-detail-inner {
+  display: grid; gap: var(--cs-5);
+  margin-top: var(--cs-4);
+  padding-top: var(--cs-4);
+  border-top: 1px solid var(--border-default);
+}
+.cs-detail-title { margin: 0 0 var(--cs-3); font-size: var(--cs-fs-xs); text-transform: uppercase; letter-spacing: .06em; color: var(--text-muted); }
+.cs-answers { display: grid; gap: var(--cs-3); margin: 0; }
+.cs-answer { display: grid; grid-template-columns: minmax(120px, 30%) 1fr; gap: var(--cs-3); }
+.cs-answer.is-long { grid-template-columns: 1fr; }
+.cs-answer dt { font-size: var(--cs-fs-sm); font-weight: 600; color: var(--text-secondary); }
+.cs-answer dd { margin: 0; line-height: 1.6; overflow-wrap: anywhere; }
+.cs-answer.is-long dd {
+  padding: var(--cs-3);
+  background: var(--bg-canvas-soft, var(--bg-surface-hover));
+  border: 1px solid var(--border-default);
+  border-radius: var(--cs-radius-sm);
+}
+
+.cs-files { display: grid; gap: var(--cs-2); margin: 0; padding: 0; list-style: none; }
+.cs-file {
+  display: flex; flex-wrap: wrap; gap: var(--cs-3); align-items: center;
+  padding: var(--cs-3);
+  border: 1px solid var(--border-default);
+  border-radius: var(--cs-radius-sm);
+  background: var(--bg-surface);
+}
+.cs-file-icon {
+  flex: 0 0 auto; display: grid; place-items: center;
+  width: 38px; height: 38px; border-radius: 9px;
+  font-size: 10px; font-weight: 800; letter-spacing: .04em;
+  background: var(--accent-soft, var(--bg-surface-hover)); color: var(--accent-deep, var(--text-secondary));
+}
+.cs-file-meta { flex: 1 1 180px; min-width: 0; display: flex; flex-direction: column; }
+.cs-file-name { font-weight: 600; overflow-wrap: anywhere; }
+.cs-file-sub { font-size: var(--cs-fs-xs); color: var(--text-muted); }
+.cs-file-actions { display: flex; gap: var(--cs-2); }
+.cs-file-actions .btn { min-height: var(--cs-tap); }
+.cs-empty-line { margin: 0; color: var(--text-muted); font-size: var(--cs-fs-sm); }
+
+/* ── Empty state ─────────────────────────────────────────────────────── */
+.cs-empty {
+  display: flex; flex-direction: column; align-items: center; text-align: center;
+  gap: var(--cs-3);
+  padding: var(--cs-12) var(--cs-6);
+  background: var(--bg-surface);
+  border: 1px dashed var(--border-strong, var(--border-default));
+  border-radius: var(--cs-radius);
+}
+.cs-empty-art { width: 160px; height: 120px; }
+.cs-art-back  { fill: var(--bg-surface-hover); }
+.cs-art-front { fill: var(--accent-soft, var(--bg-surface-hover)); stroke: var(--accent-primary); stroke-width: 2; }
+.cs-art-line  { fill: var(--accent-primary); opacity: .35; }
+.cs-empty h3 { margin: var(--cs-2) 0 0; font-size: var(--cs-fs-lg); }
+.cs-empty p { margin: 0; max-width: 46ch; color: var(--text-secondary); line-height: 1.6; }
+.cs-empty .btn { min-height: var(--cs-tap); margin-top: var(--cs-2); }
+
+/* ── Loading skeletons ───────────────────────────────────────────────── *
+   One shimmer definition, reused. The gradient is built from the surface
+   tokens, so it shimmers correctly in either theme. */
+.cs-sk {
+  display: block;
+  border-radius: 6px;
+  background: linear-gradient(90deg,
+              var(--bg-surface-hover) 25%,
+              var(--border-subtle, var(--border-default)) 37%,
+              var(--bg-surface-hover) 63%);
+  background-size: 400% 100%;
+  animation: cs-shimmer 1.4s ease-in-out infinite;
+}
+.cs-sk-line { height: 14px; margin-bottom: var(--cs-3); }
+.cs-sk-sm { height: 10px; }
+.cs-sk-btn { height: var(--cs-tap); width: 140px; border-radius: var(--cs-radius-sm); }
+.cs-sk-file { height: 62px; border-radius: var(--cs-radius-sm); }
+.cs-skel-steps { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: var(--cs-3); margin-top: var(--cs-5); }
+.cs-sk-step { height: 42px; border-radius: var(--cs-radius-sm); }
+@keyframes cs-shimmer { 0% { background-position: 100% 50%; } 100% { background-position: 0 50%; } }
+
+/* ── Interactive states, applied once to every control on the page ───── */
+/* `html` is in the selector only to match the specificity of
+   light-theme-v3.css's `html[data-theme="light"] .btn { min-height: 42px }`,
+   which would otherwise win and drop every control below the 44px target.
+   It is NOT a theme selector: this rule applies in both themes. */
+html .cs-page .btn {
+  /* Every control on this page clears the 44x44 target, including the ones the
+     global .btn.small rule would otherwise render at 36px. */
+  min-height: var(--cs-tap);
+  display: inline-flex; align-items: center; justify-content: center; gap: var(--cs-2);
+  transition: background var(--cs-ease), color var(--cs-ease), box-shadow var(--cs-ease), transform var(--cs-ease);
+}
+.cs-page .btn:active:not(:disabled) { transform: scale(.98); }
+.cs-page a:focus-visible,
+.cs-page button:focus-visible,
+.cs-page input:focus-visible,
+.cs-page [tabindex]:focus-visible {
+  outline: 2px solid var(--accent-primary);
+  outline-offset: 2px;
+  border-radius: var(--cs-radius-sm);
+}
+.cs-page .btn:disabled { opacity: .5; cursor: not-allowed; }
+
+.sr-only {
+  position: absolute; width: 1px; height: 1px;
+  padding: 0; margin: -1px; overflow: hidden;
+  clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+
+/* ── Tablet: 769–1024 ────────────────────────────────────────────────── */
+@media (min-width: 769px) {
+  .cs-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+/* ── Desktop: >= 1025 ────────────────────────────────────────────────── *
+   auto-fit rather than a fixed count, so an ultrawide gets a third column
+   and nothing has to know the viewport width. */
+@media (min-width: 1025px) {
+  .cs-grid { grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); }
+}
+
+/* ── Phone: <= 768 ───────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .cs-page { padding: var(--cs-5) var(--cs-4) var(--cs-10); --cs-card-pad: var(--cs-5); }
+  .cs-head h1 { font-size: var(--cs-fs-xl); }
+  .cs-lookup { grid-template-columns: 1fr; }
+  .cs-lookup button { width: 100%; }
+
+  /* The stepper stops sharing the width and becomes a snapping track. Each
+     step keeps a readable minimum instead of being squeezed to nothing. */
+  .cs-stepper-scroll { scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; }
+  .cs-stepper { grid-auto-columns: minmax(180px, 1fr); }
+  .cs-step { scroll-snap-align: start; }
+  .cs-progress-head { flex-direction: column; align-items: flex-start; }
+  .cs-answer { grid-template-columns: 1fr; gap: var(--cs-1); }
+  .cs-card-actions .btn, .cs-file-actions .btn { flex: 1 1 auto; justify-content: center; }
+}
+
+/* Honour a reduced-motion preference: no shimmer, no slide, no lift. The
+   state still changes — it just changes instantly. */
+@media (prefers-reduced-motion: reduce) {
+  .cs-page *, .cs-page *::before, .cs-page *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+  }
+  .cs-card:hover { transform: none; }
+}
