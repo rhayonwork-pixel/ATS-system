@@ -356,6 +356,11 @@ function icon(string $name, int $size = 18): string {
         'grid'       => '<rect x="3" y="3" width="8" height="8" rx="1.8"/><rect x="13" y="3" width="8" height="8" rx="1.8"/><rect x="3" y="13" width="8" height="8" rx="1.8"/><rect x="13" y="13" width="8" height="8" rx="1.8"/>',
         'send'       => '<path d="M21.5 2.5 2.5 9.7l7.4 3.4 3.4 7.4z"/><path d="M21.5 2.5 13.3 20.5l-3.4-7.4-7.4-3.4z"/>',
         'expand'     => '<path d="M9 3H3v6M15 21h6v-6M15 3h6v6M9 21H3v-6"/>',
+        // Meeting-room controls (interview-room.php).
+        'pip'        => '<rect x="2.5" y="4.5" width="19" height="15" rx="2.5"/><rect x="12.5" y="11.5" width="7" height="6" rx="1.4" fill="currentColor" stroke="none"/>',
+        'minimize'   => '<path d="M4 14h6v6M20 10h-6V4"/><path d="M10 14 3.5 20.5M14 10 20.5 3.5"/>',
+        'info'       => '<circle cx="12" cy="12" r="9"/><path d="M12 11v5"/><circle cx="12" cy="7.8" r="1.1" fill="currentColor" stroke="none"/>',
+        'hangup'     => '<path d="M3.2 10.3c5-3.6 12.6-3.6 17.6 0 1 .7 1.3 2 .7 3l-1.1 1.7c-.5.8-1.6 1-2.4.5l-2.3-1.4c-.6-.4-.9-1-.8-1.7l.2-1.3c-2.1-.7-4.3-.7-6.4 0l.2 1.3c.1.7-.2 1.4-.8 1.7l-2.3 1.4c-.8.5-1.9.3-2.4-.5L2.5 13.3c-.6-1-.3-2.3.7-3z"/>',
         'link'       => '<path d="M9.5 14.5 14.5 9.5"/><path d="M11 6.5 13 4.4a3.5 3.5 0 0 1 5 5L16 11.5"/><path d="M13 17.5 11 19.6a3.5 3.5 0 0 1-5-5L8 12.5"/>',
         'bell'       => '<path d="M6 10a6 6 0 0 1 12 0c0 3.7.6 5.3 2 6.3.3.2.4.5.3.7-.1.3-.4.5-.7.5H4.4c-.3 0-.6-.2-.7-.5-.1-.2 0-.5.3-.7 1.4-1 2-2.6 2-6.3z"/><path d="M9.5 20a2.5 2.5 0 0 0 5 0"/>',
         'search'     => '<circle cx="11" cy="11" r="7"/><path d="M20 20l-3.6-3.6"/>',

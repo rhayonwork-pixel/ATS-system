@@ -49,6 +49,31 @@ final class InterviewSignalService
         return $s->fetch() ?: null;
     }
 
+    /**
+     * Every SDP line, including the last, must end with CRLF — RFC 4566 treats
+     * the terminator as part of the line, and Chrome refuses to parse a session
+     * description whose final line is unterminated ("Invalid SDP line").
+     *
+     * The signalling endpoints trim() what they receive, which strips that final
+     * CRLF. That went unnoticed while the last line was an a=ssrc attribute the
+     * parser tolerated; adding a data channel moved a=max-message-size to the
+     * end, and every answer then failed. Normalising here fixes both directions
+     * at once and also repairs rows that were stored before this change.
+     */
+    private static function normaliseSdp(string $sdp): string
+    {
+        $sdp = str_replace("
+", "
+", $sdp);
+        $sdp = rtrim($sdp, "
+");
+        $sdp = str_replace("
+", "
+", $sdp);
+        return $sdp === '' ? '' : $sdp . "
+";
+    }
+
     private static function ensureRow(int $interviewId): void
     {
         db()->prepare('INSERT IGNORE INTO interview_signals(interview_id) VALUES (?)')->execute([$interviewId]);
@@ -58,7 +83,7 @@ final class InterviewSignalService
     {
         self::ensureRow($interviewId);
         db()->prepare('UPDATE interview_signals SET offer_sdp=?, offer_updated_at=NOW() WHERE interview_id=?')
-            ->execute([$sdp, $interviewId]);
+            ->execute([self::normaliseSdp($sdp), $interviewId]);
     }
 
     public static function getOffer(int $interviewId): ?string
@@ -66,14 +91,14 @@ final class InterviewSignalService
         $s = db()->prepare('SELECT offer_sdp FROM interview_signals WHERE interview_id=?');
         $s->execute([$interviewId]);
         $sdp = $s->fetchColumn();
-        return $sdp !== false && $sdp !== null ? (string) $sdp : null;
+        return $sdp !== false && $sdp !== null ? self::normaliseSdp((string) $sdp) : null;
     }
 
     public static function saveAnswer(int $interviewId, string $sdp): void
     {
         self::ensureRow($interviewId);
         db()->prepare('UPDATE interview_signals SET answer_sdp=?, answer_updated_at=NOW(), connected_at=COALESCE(connected_at, NOW()) WHERE interview_id=?')
-            ->execute([$sdp, $interviewId]);
+            ->execute([self::normaliseSdp($sdp), $interviewId]);
     }
 
     public static function getAnswer(int $interviewId): ?string
@@ -81,7 +106,7 @@ final class InterviewSignalService
         $s = db()->prepare('SELECT answer_sdp FROM interview_signals WHERE interview_id=?');
         $s->execute([$interviewId]);
         $sdp = $s->fetchColumn();
-        return $sdp !== false && $sdp !== null ? (string) $sdp : null;
+        return $sdp !== false && $sdp !== null ? self::normaliseSdp((string) $sdp) : null;
     }
 
     /** The other side's role — a host only needs candidate ICE and vice versa. */

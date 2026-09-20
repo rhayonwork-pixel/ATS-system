@@ -226,21 +226,43 @@ $pageTitle='Interview room'; $minimal=true; include __DIR__.'/includes/header.ph
 
   <!-- STATE 3 — LIVE MEETING. Cloned in only after the device check is passed,
        and removed again on leave. Nothing inside this template is parsed as
-       part of the page, so no video element, control, chat, notes panel or
-       media stream exists before the user actually joins. -->
+       part of the page, so no video element, control, chat, notes panel, mini
+       window or media stream exists before the user actually joins.
+
+       Layout (assets/css/interview-room.css):
+         .mr            fixed, full-viewport meeting shell
+           .mr-topbar   identity + PiP / minimise / fullscreen
+           .mr-body     [ .mr-stage (video grid) | .mr-panel (320px) ]
+           .mr-bar      fixed 80px control bar: left info / centre / right
+           .mr-mini     draggable floating window (minimised state)
+           .mr-modal    settings
+       Behaviour lives in assets/js/interview-room-ui.js. -->
   <template data-call-tpl>
-  <div class="room-call" data-call hidden>
-    <div class="room-call-head">
-      <span class="live-dot"></span><strong>Live</strong><span class="meta" data-timer>00:00</span>
-      <span class="meta room-code-chip"><?=icon('link',12)?> Room <?=e($code)?></span>
-      <button type="button" class="icon-toggle small" data-toggle-fullscreen title="Fullscreen"><?=icon('expand',15)?></button>
-    </div>
-    <div class="room-body">
-      <div class="room-main">
+  <div class="mr room-call" data-call data-view="grid" hidden>
+
+    <header class="mr-topbar room-call-head">
+      <div class="mr-topbar-left">
+        <span class="mr-live"><span class="live-dot"></span>Live</span>
+        <span class="mr-timer" data-timer>00:00</span>
+        <span class="mr-rec-chip"><span class="mr-rec-dot"></span>Recording</span>
+      </div>
+      <div class="mr-topbar-mid">
+        <strong><?=e($row['title'])?></strong>
+        <span class="mr-room-code"><?=icon('link',12)?> <?=e($code)?></span>
+      </div>
+      <div class="mr-topbar-right">
+        <button type="button" class="mr-icon-btn" data-toggle-pip title="Picture-in-picture" aria-label="Picture-in-picture"><?=icon('pip',16)?></button>
+        <button type="button" class="mr-icon-btn" data-minimise title="Minimise to floating window" aria-label="Minimise to floating window"><?=icon('minimize',16)?></button>
+        <button type="button" class="mr-icon-btn" data-toggle-fullscreen title="Fullscreen" aria-label="Fullscreen"><?=icon('expand',16)?></button>
+      </div>
+    </header>
+
+    <div class="mr-body">
+      <main class="mr-stage">
         <?php if($isStaff): ?>
         <!-- Admission prompt. Hidden until someone is actually waiting, and
              filled in by the poller so it appears without a refresh. -->
-        <div class="admit-card" data-admit-card hidden>
+        <div class="admit-card mr-admit" data-admit-card hidden>
           <div class="admit-body">
             <span class="admit-avatar" data-admit-initials>?</span>
             <div class="admit-text">
@@ -256,144 +278,260 @@ $pageTitle='Interview room'; $minimal=true; include __DIR__.'/includes/header.ph
         </div>
         <?php endif; ?>
 
-        <div class="room-stage" data-stage data-pinned="" data-count="2">
-        <div class="video-tile" data-tile="self">
-          <video data-local-preview-call autoplay muted playsinline></video>
-          <div class="tile-empty" data-preview-empty-call><?=icon('video',40)?></div>
-          <span class="tile-label"><span class="tile-mic" data-self-mic><?=icon('mic',11)?></span><span class="tile-name">You<?php if($isStaff): ?> · Interviewer<?php endif; ?></span></span>
-          <button type="button" class="pin-btn" data-pin="self" title="Pin yourself" aria-label="Pin yourself"><?=icon('expand',14)?></button>
+        <!-- Auto-fit grid: one row for two people, reflowing as tiles appear.
+             data-stage / data-tile / data-pin are kept so the existing pin
+             controller keeps working unchanged. -->
+        <div class="mr-grid" data-stage data-grid data-pinned="" data-count="2">
+
+          <div class="mr-tile" data-tile="self">
+            <video data-local-preview-call autoplay muted playsinline></video>
+            <div class="mr-tile-avatar" data-preview-empty-call>
+              <span class="mr-avatar-initials"><?=e(strtoupper(mb_substr($myName,0,1)))?></span>
+            </div>
+            <div class="mr-tile-badges">
+              <span class="mr-badge mr-badge-hand" data-hand-badge="self" hidden><?=icon('hand',13)?> Hand raised</span>
+            </div>
+            <span class="mr-tile-label">
+              <span class="mr-mic" data-self-mic><?=icon('mic',12)?></span>
+              <span class="mr-name tile-name">You<?php if($isStaff): ?> · Interviewer<?php endif; ?></span>
+            </span>
+            <button type="button" class="mr-pin pin-btn" data-pin="self" title="Pin yourself" aria-label="Pin yourself"><?=icon('expand',13)?></button>
+          </div>
+
+          <div class="mr-tile" data-tile="peer">
+            <video data-remote-video autoplay playsinline hidden></video>
+            <div class="mr-tile-avatar" data-peer-avatar>
+              <?php if($isStaff && !empty($row['profile_image'])): ?>
+                <img class="mr-avatar-img" src="<?=e($row['profile_image'])?>" alt="">
+              <?php else: ?>
+                <span class="mr-avatar-initials"><?=e(strtoupper(mb_substr($peerName,0,1)))?></span>
+              <?php endif; ?>
+            </div>
+            <div class="mr-tile-badges">
+              <span class="mr-badge mr-badge-hand" data-hand-badge="peer" hidden><?=icon('hand',13)?> Hand raised</span>
+            </div>
+            <span class="mr-tile-label">
+              <span class="mr-mic" data-peer-mic><?=icon('mic',12)?></span>
+              <span class="mr-name tile-name"><?=e($peerName)?></span>
+            </span>
+            <span class="mr-tile-status" data-peer-status>Waiting for the other participant to join…</span>
+            <button type="button" class="mr-pin pin-btn" data-pin="peer" title="Pin <?=e($peerName)?>" aria-label="Pin participant"><?=icon('expand',13)?></button>
+          </div>
+
+          <div class="mr-tile mr-tile-screen" data-tile="screen" hidden>
+            <video data-screen-video autoplay playsinline muted></video>
+            <div class="mr-tile-avatar" data-screen-placeholder><?=icon('screen',34)?><span data-screen-label>Presented screen</span></div>
+            <span class="mr-tile-label">
+              <span class="mr-name tile-name" data-screen-owner>Presentation</span>
+            </span>
+            <button type="button" class="mr-pin pin-btn" data-pin="screen" title="Pin the presented screen" aria-label="Pin presentation"><?=icon('expand',13)?></button>
+          </div>
         </div>
 
-        <div class="video-tile" data-tile="peer">
-          <video data-remote-video autoplay playsinline hidden></video>
-          <?php if($isStaff): ?>
-            <?php if(!empty($row['profile_image'])): ?>
-              <img class="peer-avatar avatar-image" src="<?=e($row['profile_image'])?>" alt="<?=e($row['first_name'].' '.$row['last_name'])?>">
-            <?php else: ?>
-              <div class="peer-avatar"><?=strtoupper(substr($row['first_name'],0,1).substr($row['last_name'],0,1))?></div>
-            <?php endif; ?>
-          <?php else: ?>
-            <div class="peer-avatar"><?=strtoupper(substr((string)($row['interviewer_name'] ?: 'Interviewer'),0,1))?></div>
-          <?php endif; ?>
-          <span class="tile-label"><span class="tile-mic" data-peer-mic><?=icon('mic',11)?></span><span class="tile-name"><?=e($peerName)?></span></span>
-          <span class="peer-status meta small" data-peer-status>Waiting for the other participant to join…</span>
-          <button type="button" class="pin-btn" data-pin="peer" title="Pin <?=e($peerName)?>" aria-label="Pin participant"><?=icon('expand',14)?></button>
-        </div>
-
-        <div class="video-tile" data-tile="screen" hidden>
-          <div class="screen-placeholder"><?=icon('screen',40)?><span data-screen-label>Presented screen</span></div>
-          <span class="tile-label"><span class="tile-name" data-screen-owner>Presentation</span></span>
-          <button type="button" class="pin-btn" data-pin="screen" title="Pin the presented screen" aria-label="Pin presentation"><?=icon('expand',14)?></button>
-        </div>
-        </div>
-
-        <div class="stage-strip" data-strip hidden>
+        <div class="mr-strip" data-strip hidden>
           <span class="meta small" data-strip-hint></span>
           <button type="button" class="btn small ghost" data-unpin><?=icon('grid',13)?> Grid view</button>
         </div>
-      </div>
+      </main>
 
-      <!-- Right rail. Notes sits above Chat, and each panel opens, minimises and
-           closes on its own without touching the other. Nothing in here submits
-           a form or navigates, so no panel action can end the meeting. -->
-      <aside class="room-rail" data-rail hidden>
-        <?php if($isStaff && !interview_accepts_review($row)): ?>
-        <section class="rail-panel" data-panel="notes" hidden>
-          <header class="rail-head">
-            <h3><?=icon('chat',15)?> Interview notes</h3>
-            <div class="rail-head-actions">
-              <span class="meta small rail-status" data-notes-status><?= $row['notes_updated_at'] ? 'Saved '.e(time_ago($row['notes_updated_at'])) : 'Not saved yet' ?></span>
-              <button type="button" class="rail-icon-btn" data-panel-minimise="notes" title="Minimise notes" aria-label="Minimise notes">&minus;</button>
-              <button type="button" class="rail-icon-btn" data-panel-close="notes" title="Close notes" aria-label="Close notes">&times;</button>
-            </div>
-          </header>
-          <div class="rail-body" data-panel-body="notes">
-            <!-- No form and no save button: notes autosave as they are typed, so
-                 there is nothing here that can submit the page. -->
-            <textarea data-notes-field rows="10" placeholder="Candidate explained their approach to..."><?=e($row['live_notes'] ?? '')?></textarea>
-            <p class="meta small">Only the hiring team sees this. Everything saves as you type.</p>
+      <!-- Side panel: one 320px surface, tabbed, slides in from the right. -->
+      <aside class="mr-panel" data-panel-root hidden aria-label="Meeting panel">
+        <header class="mr-panel-head">
+          <div class="mr-tabs" role="tablist" aria-label="Panel sections">
+            <button type="button" class="mr-tab" role="tab" aria-selected="false" data-panel-tab="chat" id="mr-tab-chat" aria-controls="mr-pane-chat">
+              Chat <span class="mr-unread" data-chat-unread hidden>0</span>
+            </button>
+            <button type="button" class="mr-tab" role="tab" aria-selected="false" data-panel-tab="people" id="mr-tab-people" aria-controls="mr-pane-people">People</button>
+            <?php if($isStaff && !interview_accepts_review($row)): ?>
+            <button type="button" class="mr-tab" role="tab" aria-selected="false" data-panel-tab="notes" id="mr-tab-notes" aria-controls="mr-pane-notes">Notes</button>
+            <?php endif; ?>
+            <button type="button" class="mr-tab" role="tab" aria-selected="false" data-panel-tab="info" id="mr-tab-info" aria-controls="mr-pane-info">Info</button>
           </div>
+          <button type="button" class="mr-icon-btn" data-panel-close title="Close panel" aria-label="Close panel">&times;</button>
+        </header>
+
+        <section class="mr-pane" data-panel="chat" id="mr-pane-chat" role="tabpanel" aria-labelledby="mr-tab-chat" hidden>
+          <div class="mr-chat-log" data-chat-log></div>
+          <form class="mr-chat-form" data-chat-form>
+            <input type="text" name="message" placeholder="Send a message to everyone…" autocomplete="off" maxlength="500" aria-label="Message">
+            <button type="submit" aria-label="Send message"><?=icon('send',15)?></button>
+          </form>
+          <p class="mr-chat-note" data-chat-note>Messages are delivered directly to the other participant and are not stored.</p>
+        </section>
+
+        <section class="mr-pane" data-panel="people" id="mr-pane-people" role="tabpanel" aria-labelledby="mr-tab-people" hidden>
+          <div class="mr-person">
+            <span class="mr-person-avatar"><?=e(strtoupper(mb_substr($myName,0,1)))?></span>
+            <div class="mr-person-text">
+              <strong><?=e($myName)?> (you)</strong>
+              <span class="meta small" data-people-status-you>Mic on · Cam on</span>
+            </div>
+            <span class="mr-person-icons"><span class="mr-mic" data-people-mic-you><?=icon('mic',12)?></span></span>
+          </div>
+          <div class="mr-person">
+            <span class="mr-person-avatar"><?=e(strtoupper(mb_substr($peerName,0,1)))?></span>
+            <div class="mr-person-text">
+              <strong><?=e($peerName)?></strong>
+              <span class="meta small" data-people-status-peer>Not joined yet</span>
+            </div>
+            <span class="mr-person-icons"><span class="mr-mic" data-people-mic-peer><?=icon('mic',12)?></span></span>
+          </div>
+        </section>
+
+        <?php if($isStaff && !interview_accepts_review($row)): ?>
+        <!-- No <form> and no save button: notes autosave as they are typed, so
+             nothing in this panel can submit the page or end the meeting. -->
+        <section class="mr-pane" data-panel="notes" id="mr-pane-notes" role="tabpanel" aria-labelledby="mr-tab-notes" hidden>
+          <div class="mr-notes-head">
+            <span class="meta small rail-status" data-notes-status><?= $row['notes_updated_at'] ? 'Saved '.e(time_ago($row['notes_updated_at'])) : 'Not saved yet' ?></span>
+          </div>
+          <textarea data-notes-field rows="12" placeholder="Candidate explained their approach to…"><?=e($row['live_notes'] ?? '')?></textarea>
+          <p class="meta small">Only the hiring team sees this. Everything saves as you type.</p>
         </section>
         <?php endif; ?>
 
-        <section class="rail-panel" data-panel="chat" hidden>
-          <header class="rail-head">
-            <h3><?=icon('chat',15)?> Chat</h3>
-            <div class="rail-head-actions">
-              <button type="button" class="rail-icon-btn" data-panel-minimise="chat" title="Minimise chat" aria-label="Minimise chat">&minus;</button>
-              <button type="button" class="rail-icon-btn" data-panel-close="chat" title="Close chat" aria-label="Close chat">&times;</button>
-            </div>
-          </header>
-          <div class="rail-body" data-panel-body="chat">
-            <div class="chat-log" data-chat-log></div>
-            <form class="chat-form" data-chat-form>
-              <input type="text" name="message" placeholder="Message everyone…" autocomplete="off" maxlength="500">
-              <button type="submit" aria-label="Send"><?=icon('send',15)?></button>
-            </form>
-          </div>
-        </section>
-
-        <section class="rail-panel" data-panel="people" hidden>
-          <header class="rail-head">
-            <h3><?=icon('users',15)?> Participants</h3>
-            <div class="rail-head-actions">
-              <button type="button" class="rail-icon-btn" data-panel-minimise="people" title="Minimise participants" aria-label="Minimise participants">&minus;</button>
-              <button type="button" class="rail-icon-btn" data-panel-close="people" title="Close participants" aria-label="Close participants">&times;</button>
-            </div>
-          </header>
-          <div class="rail-body" data-panel-body="people">
-            <div class="people-row"><span class="people-avatar you"><?=strtoupper(substr($myName,0,1))?></span><div><strong><?=e($myName)?> (you)</strong><span class="meta small" data-people-status-you>Mic on · Cam on</span></div></div>
-            <div class="people-row"><span class="people-avatar peer"><?=strtoupper(substr($peerName,0,1))?></span><div><strong><?=e($peerName)?></strong><span class="meta small" data-people-status-peer>Not joined yet</span></div></div>
-          </div>
+        <section class="mr-pane" data-panel="info" id="mr-pane-info" role="tabpanel" aria-labelledby="mr-tab-info" hidden>
+          <dl class="mr-info">
+            <div><dt>Position</dt><dd><?=e($row['title'])?></dd></div>
+            <div><dt>Interview type</dt><dd><?=e(ucfirst($row['meeting_type']))?> · <?=e(ucfirst($row['interview_type']))?></dd></div>
+            <div><dt>Interviewer</dt><dd><?=e($row['interviewer_name'] ?? 'To be confirmed')?></dd></div>
+            <div><dt>Scheduled</dt><dd><?=e(date('M j, Y · g:i A', strtotime($row['starts_at'])))?></dd></div>
+            <div><dt>Room code</dt><dd><?=e($code)?></dd></div>
+          </dl>
+          <?php if($isCandidate): ?>
+          <p class="meta small">Use the controls below to mute, turn off your camera, or leave. If you get disconnected, open your interview link again.</p>
+          <div class="actions"><a class="btn secondary small" href="application-status.php" data-external-ok>My application</a></div>
+          <?php endif; ?>
         </section>
       </aside>
     </div>
-    <div class="room-controls">
-      <button type="button" class="icon-toggle on" data-toggle-mic-call aria-pressed="true" title="Mute / unmute"><?=icon('mic',18)?></button>
-      <button type="button" class="icon-toggle on" data-toggle-cam-call aria-pressed="true" title="Start / stop camera"><?=icon('video',18)?></button>
-      <button type="button" class="icon-toggle" data-toggle-share aria-pressed="false" title="Share screen"><?=icon('screen',18)?></button>
-      <button type="button" class="icon-toggle" data-toggle-hand aria-pressed="false" title="Raise hand"><?=icon('hand',18)?></button>
-      <button type="button" class="icon-toggle" data-toggle-panel="chat" aria-pressed="false" title="Chat"><?=icon('chat',18)?></button>
-      <button type="button" class="icon-toggle" data-toggle-panel="people" aria-pressed="false" title="Participants"><?=icon('users',18)?></button>
-      <?php if($isStaff && !interview_accepts_review($row)): ?>
-      <!-- Notes is a meeting control like any other, and sits next to End
-           meeting. It is rendered for staff only, so the candidate's page has
-           no notes button and no notes markup at all. -->
-      <button type="button" class="icon-toggle notes-control" data-toggle-panel="notes" aria-pressed="false" title="Interview notes"><?=icon('chat',18)?><span class="control-text">Notes</span></button>
-      <?php endif; ?>
-      <div class="control-more">
-        <button type="button" class="icon-toggle" data-more-toggle title="More"><?=icon('more',18)?></button>
-        <div class="control-more-menu" data-more-menu hidden>
-          <button type="button" data-record-toggle><?=icon('record',15)?> Record meeting</button>
-          <button type="button" data-layout-toggle><?=icon('grid',15)?> Toggle layout</button>
+
+    <!-- Fixed control bar. Centre cluster = the meeting controls, right cluster
+         = the panels, per Meet/Zoom convention. -->
+    <footer class="mr-bar">
+      <div class="mr-bar-left">
+        <span class="mr-bar-title"><?=e($row['title'])?></span>
+        <span class="mr-bar-sub" data-bar-clock></span>
+      </div>
+
+      <div class="mr-bar-center">
+        <button type="button" class="mr-ctl is-on" data-toggle-mic-call aria-pressed="true" title="Mute / unmute (M)" aria-label="Mute microphone">
+          <span class="mr-ctl-on"><?=icon('mic',20)?></span><span class="mr-ctl-off"><?=icon('mic-off',20)?></span>
+        </button>
+        <button type="button" class="mr-ctl is-on" data-toggle-cam-call aria-pressed="true" title="Start / stop camera (V)" aria-label="Turn camera off">
+          <span class="mr-ctl-on"><?=icon('video',20)?></span><span class="mr-ctl-off"><?=icon('cam-off',20)?></span>
+        </button>
+        <button type="button" class="mr-ctl" data-toggle-share aria-pressed="false" title="Present your screen" aria-label="Present your screen"><?=icon('screen',20)?></button>
+        <button type="button" class="mr-ctl" data-toggle-hand aria-pressed="false" title="Raise hand" aria-label="Raise hand"><?=icon('hand',20)?></button>
+        <?php if($isStaff && !interview_accepts_review($row)): ?>
+          <button type="button" class="mr-ctl mr-ctl-leave" data-end-meeting title="End the meeting for everyone" aria-label="End meeting"><?=icon('hangup',20)?><span class="mr-ctl-text">End</span></button>
+        <?php else: ?>
+          <button type="button" class="mr-ctl mr-ctl-leave" data-leave-room title="Leave the meeting" aria-label="Leave meeting"><?=icon('hangup',20)?><span class="mr-ctl-text">Leave</span></button>
+        <?php endif; ?>
+      </div>
+
+      <div class="mr-bar-right">
+        <button type="button" class="mr-ctl mr-ctl-quiet" data-toggle-panel="people" aria-pressed="false" title="Participants" aria-label="Participants">
+          <?=icon('users',18)?><span class="mr-ctl-count" data-people-count>1</span>
+        </button>
+        <button type="button" class="mr-ctl mr-ctl-quiet" data-toggle-panel="chat" aria-pressed="false" title="Chat" aria-label="Chat">
+          <?=icon('chat',18)?><span class="mr-dot" data-chat-dot hidden></span>
+        </button>
+        <button type="button" class="mr-ctl mr-ctl-quiet" data-open-settings title="Meeting settings" aria-label="Meeting settings"><?=icon('settings',18)?></button>
+      </div>
+    </footer>
+
+    <!-- Shown in the page while the meeting is minimised. In a multi-page app a
+         normal link would tear down the call, so everything here opens in a new
+         tab and the meeting keeps running in this one. -->
+    <section class="mr-minimised-page" data-minimised-page hidden>
+      <div class="eyebrow">Meeting in progress</div>
+      <h2><?=e($row['title'])?></h2>
+      <p class="meta">The interview is still connected in this tab. Use the floating window to talk, or bring the meeting back to full screen.</p>
+      <div class="actions">
+        <button type="button" class="btn" data-mini-expand><?=icon('expand',15)?> Back to the meeting</button>
+        <?php if($isStaff): ?>
+          <a class="btn secondary" href="candidate.php?id=<?=(int)$row['application_id']?>" target="_blank" rel="noopener" data-external-ok>Open candidate profile</a>
+          <a class="btn ghost" href="interviews.php" target="_blank" rel="noopener" data-external-ok>Interviews</a>
+        <?php else: ?>
+          <a class="btn secondary" href="application-status.php" target="_blank" rel="noopener" data-external-ok>My application</a>
+        <?php endif; ?>
+      </div>
+    </section>
+
+    <!-- Floating window. Used when the meeting is minimised inside this page and
+         as the fallback when the browser refuses native Picture-in-Picture.
+         Its <video> shares the MediaStream with the grid and stays muted, so the
+         audio path is never touched when the view changes. -->
+    <div class="mr-mini" data-mini data-place="bottom-right" hidden role="dialog" aria-label="Meeting, minimised">
+      <div class="mr-mini-head" data-mini-drag title="Drag to move">
+        <span class="mr-mini-live"><span class="live-dot"></span><span data-mini-timer>00:00</span></span>
+        <button type="button" class="mr-mini-btn" data-mini-expand title="Back to the meeting" aria-label="Back to the meeting"><?=icon('expand',13)?></button>
+      </div>
+      <div class="mr-mini-video">
+        <video data-mini-video autoplay playsinline muted></video>
+        <div class="mr-mini-avatar" data-mini-avatar><span data-mini-initials>?</span></div>
+        <span class="mr-mini-name" data-mini-name>Connecting…</span>
+      </div>
+      <div class="mr-mini-controls">
+        <button type="button" class="mr-mini-btn is-on" data-mini-mic aria-pressed="true" title="Mute / unmute" aria-label="Mute microphone">
+          <span class="mr-ctl-on"><?=icon('mic',14)?></span><span class="mr-ctl-off"><?=icon('mic-off',14)?></span>
+        </button>
+        <button type="button" class="mr-mini-btn is-on" data-mini-cam aria-pressed="true" title="Start / stop camera" aria-label="Turn camera off">
+          <span class="mr-ctl-on"><?=icon('video',14)?></span><span class="mr-ctl-off"><?=icon('cam-off',14)?></span>
+        </button>
+        <button type="button" class="mr-mini-btn mr-mini-leave" data-mini-expand title="Expand to full screen" aria-label="Expand to full screen"><?=icon('expand',14)?></button>
+      </div>
+    </div>
+
+    <!-- Settings. Record and layout live here rather than in a hidden overflow
+         menu; both keep their original hooks. -->
+    <div class="mr-modal" data-settings-modal hidden>
+      <div class="mr-modal-box" role="dialog" aria-modal="true" aria-labelledby="mr-settings-title">
+        <header class="mr-modal-head">
+          <h2 id="mr-settings-title"><?=icon('settings',17)?> Meeting settings</h2>
+          <button type="button" class="mr-icon-btn" data-settings-close aria-label="Close settings">&times;</button>
+        </header>
+
+        <label class="mr-setting">
+          <input type="checkbox" data-setting="autoPip" checked>
+          <span>
+            <strong>Auto Picture-in-Picture</strong>
+            <span class="meta small">Pop the video out when you switch tabs or windows. Browsers may refuse this without a click — the floating window is used instead.</span>
+          </span>
+        </label>
+
+        <label class="mr-setting">
+          <input type="checkbox" data-setting="miniOnBlur">
+          <span>
+            <strong>Show the floating window when I leave this tab</strong>
+            <span class="meta small">The minimised player is waiting for you when you come back.</span>
+          </span>
+        </label>
+
+        <div class="mr-setting mr-setting-block">
+          <strong>Floating window position</strong>
+          <div class="mr-place-grid" role="radiogroup" aria-label="Floating window position">
+            <button type="button" class="mr-place" data-place-choice="top-left" role="radio" aria-checked="false">Top left</button>
+            <button type="button" class="mr-place" data-place-choice="top-right" role="radio" aria-checked="false">Top right</button>
+            <button type="button" class="mr-place" data-place-choice="bottom-left" role="radio" aria-checked="false">Bottom left</button>
+            <button type="button" class="mr-place" data-place-choice="bottom-right" role="radio" aria-checked="true">Bottom right</button>
+          </div>
+        </div>
+
+        <label class="mr-setting">
+          <input type="checkbox" data-setting="mirror" checked>
+          <span><strong>Mirror my camera</strong><span class="meta small">Only affects how you see yourself.</span></span>
+        </label>
+
+        <div class="mr-modal-actions">
+          <button type="button" class="btn secondary small" data-layout-toggle><?=icon('grid',15)?> Toggle layout</button>
+          <button type="button" class="btn secondary small" data-record-toggle><?=icon('record',15)?> Record meeting</button>
+          <button type="button" class="btn small" data-settings-close>Done</button>
         </div>
       </div>
-      <?php if($isStaff && !interview_accepts_review($row)): ?>
-        <button type="button" class="btn danger end-control" data-end-meeting><?=icon('signout',16)?> End meeting</button>
-      <?php else: ?>
-        <button type="button" class="btn danger" data-leave-room><?=icon('signout',16)?> <?= $isStaff ? 'Leave' : 'Leave meeting' ?></button>
-      <?php endif; ?>
     </div>
   </div>
-
-
-  <?php if($isCandidate): ?>
-  <!-- The candidate sees only their own interview details. Notes, scores,
-       recommendations and every internal control are rendered for staff only,
-       so none of it reaches this page in any form. -->
-  <aside class="card candidate-panel">
-    <div class="eyebrow">Interview information</div>
-    <h2><?=e($row['title'])?></h2>
-    <div class="wr-meta">
-      <div><span class="label">Interview type</span><strong><?=e(ucfirst($row['meeting_type']))?> · <?=e(ucfirst($row['interview_type']))?></strong></div>
-      <div><span class="label">Interviewer</span><strong><?=e($row['interviewer_name'] ?? 'To be confirmed')?></strong></div>
-      <div><span class="label">Scheduled</span><strong><?=e(date('M j, Y · g:i A', strtotime($row['starts_at'])))?></strong></div>
-      <div><span class="label">Status</span><strong><?=e(interview_state_label(interview_state($row)))?></strong></div>
-    </div>
-    <p class="meta small">Use the controls above to mute, turn off your camera, or leave. If you get disconnected, open your interview link again.</p>
-    <div class="actions"><a class="btn secondary" href="application-status.php">My application</a></div>
-  </aside>
-  <?php endif; ?>
   </template>
 
   <?php endif; /* !$showReview */ ?>
@@ -467,6 +605,7 @@ $pageTitle='Interview room'; $minimal=true; include __DIR__.'/includes/header.ph
   <?php endif; ?>
   <?php endif; ?>
 </div>
+<link rel="stylesheet" href="assets/css/interview-room.css?v=<?= @filemtime(__DIR__.'/assets/css/interview-room.css') ?: time() ?>">
 <script>
 (function(){
 
@@ -487,6 +626,24 @@ $pageTitle='Interview room'; $minimal=true; include __DIR__.'/includes/header.ph
   // after it is mounted, since those elements do not exist before that.
   window.ACME_ROOM = window.ACME_ROOM || { onMount: [], onUnmount: [] };
   function runHooks(list) { list.forEach(function (fn) { try { fn(); } catch (e) { console.error(e); } }); }
+
+  /* Event bus. The meeting UI (assets/js/interview-room-ui.js) is a separate
+     file, so it cannot see the locals in this closure. It subscribes here
+     instead; late subscribers still receive the last value of a sticky event,
+     because the UI module is mounted after the media is already running. */
+  ACME_ROOM.events = ACME_ROOM.events || {};
+  ACME_ROOM.last = ACME_ROOM.last || {};
+  ACME_ROOM.on = function (name, fn) {
+    (ACME_ROOM.events[name] = ACME_ROOM.events[name] || []).push(fn);
+    if (name in ACME_ROOM.last) { try { fn(ACME_ROOM.last[name]); } catch (e) { console.error(e); } }
+    return fn;
+  };
+  ACME_ROOM.emit = function (name, payload, sticky) {
+    if (sticky !== false) ACME_ROOM.last[name] = payload;
+    (ACME_ROOM.events[name] || []).forEach(function (fn) {
+      try { fn(payload); } catch (e) { console.error(e); }
+    });
+  };
 
   const roomEl   = document.querySelector('[data-room]');
   const entryEl  = document.querySelector('[data-screen="entry"]');
@@ -560,8 +717,8 @@ $pageTitle='Interview room'; $minimal=true; include __DIR__.'/includes/header.ph
   const room = document.querySelector('[data-room]'); if(!room) return;
   const code = room.dataset.roomCode, title = room.dataset.title, myName = room.dataset.myName;
   let stream = null, screenStream = null, sharing = false;
-  const previews = document.querySelectorAll('[data-local-preview],[data-local-preview-call]');
-  const emptyEls = document.querySelectorAll('[data-preview-empty],[data-preview-empty-call]');
+  // NOTE: the preview <video> elements live inside <template> until their
+  // screen is mounted, so they are looked up at use time, never at load time.
 
   /* ---------- countdown until interview start ---------- */
   const startsAt = new Date(room.dataset.startsAt).getTime();
@@ -582,130 +739,20 @@ $pageTitle='Interview room'; $minimal=true; include __DIR__.'/includes/header.ph
   async function enableDevices(){
     try {
       stream = await navigator.mediaDevices.getUserMedia({video:true,audio:true});
-      previews.forEach(v=>{v.srcObject = stream;});
-      emptyEls.forEach(el=>el.style.display='none');
+      ACME_ROOM.stream = stream;
+      document.querySelectorAll('[data-local-preview],[data-local-preview-call]')
+        .forEach(function (v) { v.srcObject = stream; });
+      ACME_ROOM.emit('local-stream', stream);
     } catch(err){
       const t = document.querySelector('#toast'); if(t){t.textContent='Camera/mic permission was not granted — continuing in preview-only mode.'; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),3200);}
     }
   }
   onClick('[data-enable-devices]', enableDevices);
-  function toggleTrack(kind, btns){
-    if(!stream) return;
-    stream.getTracks().filter(t=>t.kind===kind).forEach(t=>t.enabled=!t.enabled);
-    const on = stream.getTracks().find(t=>t.kind===kind)?.enabled;
-    btns.forEach(b=>{b.classList.toggle('on',on);b.setAttribute('aria-pressed',String(!!on));});
-    const you = document.querySelector('[data-people-status-you]');
-    if (you) { const micOn = stream.getTracks().find(t=>t.kind==='audio')?.enabled; const camOn = stream.getTracks().find(t=>t.kind==='video')?.enabled; you.textContent = `Mic ${micOn?'on':'off'} · Cam ${camOn?'on':'off'}`; }
-  }
-  const micBtns=[document.querySelector('[data-toggle-mic]'),document.querySelector('[data-toggle-mic-call]')].filter(Boolean);
-  const camBtns=[document.querySelector('[data-toggle-cam]'),document.querySelector('[data-toggle-cam-call]')].filter(Boolean);
-  micBtns.forEach(b=>b.addEventListener('click',()=>toggleTrack('audio',micBtns)));
-  camBtns.forEach(b=>b.addEventListener('click',()=>toggleTrack('video',camBtns)));
-
-  /* ---------- screen share (local preview swap) ---------- */
-  onClick('[data-toggle-share]', async function(e, btnEl){
-    const btn = btnEl;
-    const mainVideo = document.querySelector('[data-local-preview-call]');
-    if (!sharing) {
-      try {
-        screenStream = await navigator.mediaDevices.getDisplayMedia({video:true});
-        if (mainVideo) mainVideo.srcObject = screenStream;
-        sharing = true; btn.classList.add('on'); btn.setAttribute('aria-pressed','true');
-        // A presented screen becomes a tile in its own right, so either side can
-        // pin it the same way they pin a person.
-        const screenTile = document.querySelector('[data-tile="screen"]');
-        if (screenTile) {
-          screenTile.hidden = false;
-          const owner = document.querySelector('[data-screen-owner]');
-          if (owner) owner.textContent = (document.querySelector('[data-room]')?.dataset.myName || 'Someone') + ' is presenting';
-        }
-        screenStream.getVideoTracks()[0].addEventListener('ended', stopShare);
-      } catch(err) { /* user cancelled the picker */ }
-    } else { stopShare(); }
-    function stopShare(){
-    const screenTile = document.querySelector('[data-tile="screen"]');
-    if (screenTile) screenTile.hidden = true;
-      if (screenStream) screenStream.getTracks().forEach(t=>t.stop());
-      if (mainVideo && stream) mainVideo.srcObject = stream;
-      sharing = false; btn.classList.remove('on'); btn.setAttribute('aria-pressed','false');
-    }
-  });
-
-  /* ---------- raise hand ---------- */
-  onClick('[data-toggle-hand]', function(e, btnEl){
-    const btn = e.currentTarget; const on = btn.classList.toggle('on');
-    btn.setAttribute('aria-pressed', String(on));
-    const t = document.querySelector('#toast'); if(t){t.textContent = on ? 'You raised your hand' : 'Hand lowered'; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2200);}
-  });
-
-  /* ---------- more menu ---------- */
-  onClick('[data-more-toggle]', function(){
-    document.querySelector('[data-more-menu]')?.toggleAttribute('hidden');
-  });
-  document.addEventListener('click', e=>{
-    const menu = document.querySelector('[data-more-menu]'); const toggle = document.querySelector('[data-more-toggle]');
-    if (menu && !menu.hidden && !menu.contains(e.target) && e.target!==toggle) menu.hidden = true;
-  });
-  onClick('[data-record-toggle]', function(e, btnEl){
-    const btn = e.currentTarget; const recording = btn.classList.toggle('on');
-    btn.innerHTML = (recording ? '<?=icon('record',15)?> Stop recording' : '<?=icon('record',15)?> Record meeting');
-    document.querySelector('.room-call-head')?.classList.toggle('is-recording', recording);
-  });
-  onClick('[data-layout-toggle]', function(){
-    document.querySelector('[data-stage]')?.classList.toggle('layout-spotlight');
-  });
-  onClick('[data-toggle-fullscreen]', function(){
-    const el = document.querySelector('.room-wrap');
-    if (!document.fullscreenElement) el.requestFullscreen?.(); else document.exitFullscreen?.();
-  });
-
-  /* ---------- chat ----------
-     The old tabbed side drawer was replaced by the stacked rail; its toggles
-     now live in the rail controller. These three definitions belong to the
-     chat itself and must stay: renderChat() runs on load, so if it is missing
-     the ReferenceError aborts the rest of this block and every handler below
-     it — including Leave — silently stops working. */
-  const chatKey = 'acme-chat:' + (room.dataset.roomCode || '');
-  const chatLog = document.querySelector('[data-chat-log]');
-
-  function loadChat() {
-    try { return JSON.parse(localStorage.getItem(chatKey) || '[]'); }
-    catch (e) { return []; }
-  }
-
-  function renderChat() {
-    if (!chatLog) return;
-    const msgs = loadChat();
-    if (!msgs.length) {
-      chatLog.innerHTML = '<p class="meta small">No messages yet.</p>';
-      return;
-    }
-    chatLog.innerHTML = '';
-    msgs.forEach(function (m) {
-      const row = document.createElement('div');
-      row.className = 'chat-msg' + (m.from === myName ? ' is-me' : '');
-      const who = document.createElement('strong');
-      who.textContent = m.from;
-      const body = document.createElement('p');
-      body.textContent = m.text;          // textContent, so a message cannot inject markup
-      const when = document.createElement('span');
-      when.className = 'meta small';
-      when.textContent = new Date(m.at).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
-      row.append(who, body, when);
-      chatLog.appendChild(row);
-    });
-    chatLog.scrollTop = chatLog.scrollHeight;
-  }
-
-  document.querySelector('[data-chat-form]')?.addEventListener('submit', e=>{
-    e.preventDefault();
-    const input = e.currentTarget.querySelector('input'); const text = input.value.trim(); if(!text) return;
-    const msgs = loadChat(); msgs.push({from:myName, text, at:Date.now()});
-    localStorage.setItem(chatKey, JSON.stringify(msgs.slice(-100)));
-    input.value=''; renderChat();
-  });
-  window.addEventListener('storage', e=>{ if(e.key===chatKey) renderChat(); });
-  renderChat();
+  /* Mic, camera, screen share, raise hand, chat and the panels are owned by
+     assets/js/interview-room-ui.js, which binds them by delegation after the
+     meeting is mounted. They used to be bound here with querySelector at load
+     time, against elements that were still inside <template>, so the bindings
+     silently matched nothing. */
 
   /* ---------- presence: tell the database this room is live, for the HR-app "meeting ongoing" banner ---------- */
   let heartbeatInterval = null;
@@ -769,12 +816,23 @@ $pageTitle='Interview room'; $minimal=true; include __DIR__.'/includes/header.ph
 
   function startWebRTC() {
     pc = new RTCPeerConnection({ iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] });
+    ACME_ROOM.pc = pc;
+    ACME_ROOM.emit('pc', pc);
 
     if (stream) stream.getTracks().forEach(t => pc.addTrack(t, stream));
+
+    /* One data channel carries chat and participant state (mic, camera, raised
+       hand, speaking). The offerer creates it; the answerer receives it. */
+    if (isHost) {
+      bindChannel(pc.createDataChannel('acme-room', { ordered: true }));
+    } else {
+      pc.ondatachannel = function (ev) { bindChannel(ev.channel); };
+    }
 
     pc.ontrack = function (ev) {
       const video = document.querySelector('[data-remote-video]');
       if (video && ev.streams[0]) video.srcObject = ev.streams[0];
+      if (ev.streams[0]) ACME_ROOM.emit('remote-stream', ev.streams[0]);
       setPeerConnected(true);
     };
     pc.onconnectionstatechange = function () {
@@ -794,6 +852,18 @@ $pageTitle='Interview room'; $minimal=true; include __DIR__.'/includes/header.ph
     }
 
     iceTimer = setInterval(pollForIce, 2000);
+  }
+
+  function bindChannel(ch) {
+    ACME_ROOM.channel = ch;
+    ch.onopen = function () { ACME_ROOM.emit('channel-open', ch); };
+    ch.onclose = function () { ACME_ROOM.emit('channel-closed', ch, false); };
+    ch.onmessage = function (ev) {
+      let msg = null;
+      try { msg = JSON.parse(ev.data); } catch (e) { return; }
+      if (msg && msg.type) ACME_ROOM.emit('peer:' + msg.type, msg, false);
+    };
+    ACME_ROOM.emit('channel', ch);
   }
 
   function pollForAnswer() {
@@ -831,6 +901,8 @@ $pageTitle='Interview room'; $minimal=true; include __DIR__.'/includes/header.ph
   }
 
   function stopWebRTC() {
+    ACME_ROOM.emit('teardown', null, false);
+    ACME_ROOM.channel = null;
     if (iceTimer) clearInterval(iceTimer);
     if (sdpTimer) clearInterval(sdpTimer);
     if (statusTimer) clearInterval(statusTimer);
@@ -858,6 +930,7 @@ $pageTitle='Interview room'; $minimal=true; include __DIR__.'/includes/header.ph
     timerInterval = setInterval(()=>{seconds++;const m=String(Math.floor(seconds/60)).padStart(2,'0');const s=String(seconds%60).padStart(2,'0');const el=document.querySelector('[data-timer]');if(el)el.textContent=`${m}:${s}`;},1000);
     setPeerConnected(false);
     startWebRTC();
+    ACME_ROOM.emit('joined', { stream: stream });
   });
   onClick('[data-leave-room]', function(ev, btnEl){
     const btn = btnEl;
@@ -1030,109 +1103,9 @@ $pageTitle='Interview room'; $minimal=true; include __DIR__.'/includes/header.ph
   });
 });
 
-/* ---------- Rail panels: Notes, Chat and Participants, each independent ----------
-   Notes sits above Chat. Opening, minimising or closing one never touches the
-   other, and none of them removes content — panels are hidden, not emptied. */
-// Registered rather than run now: these elements only exist once the live
-// meeting has been mounted.
-(window.ACME_ROOM = window.ACME_ROOM || { onMount: [], onUnmount: [] }).onMount.push(function () {
-
-  const room = document.querySelector('[data-room]');
-  const rail = document.querySelector('[data-rail]');
-  if (!room || !rail) return;
-
-  const KEY = 'acme-rail:' + (room.dataset.roomCode || '');
-  const panels = {};
-  rail.querySelectorAll('[data-panel]').forEach(function (el) { panels[el.dataset.panel] = el; });
-
-  function syncRail() {
-    const anyOpen = Object.values(panels).some(function (p) { return !p.hidden; });
-    rail.hidden = !anyOpen;
-    room.classList.toggle('rail-open', anyOpen);
-    try {
-      localStorage.setItem(KEY, JSON.stringify(
-        Object.keys(panels).reduce(function (acc, k) {
-          acc[k] = { open: !panels[k].hidden, min: panels[k].classList.contains('is-minimised') };
-          return acc;
-        }, {})
-      ));
-    } catch (e) {}
-  }
-
-  function setControl(name, on) {
-    const btn = document.querySelector('[data-toggle-panel="' + name + '"]');
-    if (!btn) return;
-    btn.classList.toggle('on', on);
-    btn.setAttribute('aria-pressed', on ? 'true' : 'false');
-  }
-
-  function openPanel(name, open) {
-    const panel = panels[name];
-    if (!panel) return;
-    panel.hidden = !open;
-    if (open) panel.classList.remove('is-minimised');
-    setControl(name, open);
-    syncRail();
-    if (open && name === 'notes') panel.querySelector('[data-notes-field]')?.focus();
-  }
-
-  function minimisePanel(name) {
-    const panel = panels[name];
-    if (!panel) return;
-    // Minimising collapses the body only. The content stays in the DOM.
-    const min = !panel.classList.contains('is-minimised');
-    panel.classList.toggle('is-minimised', min);
-    const body = panel.querySelector('[data-panel-body]');
-    if (body) body.hidden = min;
-    const btn = panel.querySelector('[data-panel-minimise]');
-    if (btn) { btn.innerHTML = min ? '&plus;' : '&minus;'; btn.title = min ? 'Expand' : 'Minimise'; }
-    syncRail();
-  }
-
-  document.querySelectorAll('[data-toggle-panel]').forEach(function (btn) {
-    btn.addEventListener('click', function () {
-      const name = btn.dataset.togglePanel;
-      openPanel(name, panels[name] && panels[name].hidden);
-    });
-  });
-
-  rail.addEventListener('click', function (ev) {
-    const min = ev.target.closest('[data-panel-minimise]');
-    if (min) { minimisePanel(min.dataset.panelMinimise); return; }
-    const close = ev.target.closest('[data-panel-close]');
-    if (close) { openPanel(close.dataset.panelClose, false); return; }
-  });
-
-  // Attached to document, so bind it only on the first mount.
-  if (!window.ACME_ROOM.railEscBound) {
-    window.ACME_ROOM.railEscBound = true;
-    document.addEventListener('keydown', function (ev) {
-      const liveRail = document.querySelector('[data-rail]');
-      if (ev.key !== 'Escape' || !liveRail || liveRail.hidden) return;
-      const openNow = liveRail.querySelectorAll('[data-panel]:not([hidden])');
-      if (openNow.length) {
-        const last = openNow[openNow.length - 1];
-        last.hidden = true;
-        const btn = document.querySelector('[data-toggle-panel="' + last.dataset.panel + '"]');
-        if (btn) { btn.classList.remove('on'); btn.setAttribute('aria-pressed', 'false'); }
-        if (!liveRail.querySelector('[data-panel]:not([hidden])')) {
-          liveRail.hidden = true;
-          document.querySelector('[data-room]')?.classList.remove('rail-open');
-        }
-      }
-    });
-  }
-
-  // Everything starts closed on a fresh join so the camera has the full width;
-  // a returning interviewer gets their previous arrangement back.
-  let saved = null;
-  try { saved = JSON.parse(localStorage.getItem(KEY) || 'null'); } catch (e) {}
-  Object.keys(panels).forEach(function (name) {
-    const state = saved && saved[name];
-    openPanel(name, !!(state && state.open));
-    if (state && state.open && state.min) minimisePanel(name);
-  });
-});
+/* The side panel (Chat, People, Notes, Info) is owned by
+   assets/js/interview-room-ui.js. The old stacked "rail" controller that lived
+   here was removed with the markup it drove. */
 
 /* ---------- End meeting from the control bar ---------- */
 (window.ACME_ROOM = window.ACME_ROOM || { onMount: [], onUnmount: [] }).onMount.push(function () {
@@ -1229,4 +1202,5 @@ $pageTitle='Interview room'; $minimal=true; include __DIR__.'/includes/header.ph
 })();
 </script>
 
+<script src="assets/js/interview-room-ui.js?v=<?= @filemtime(__DIR__.'/assets/js/interview-room-ui.js') ?: time() ?>"></script>
 <?php include __DIR__.'/includes/footer.php'; ?>

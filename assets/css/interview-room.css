@@ -1,0 +1,564 @@
+/* ============================================================================
+   INTERVIEW ROOM — meeting UI
+   Loaded by interview-room.php only, after the global stylesheets.
+
+   The meeting is a dark surface in BOTH app themes, the way Meet, Zoom and
+   Teams are: video reads better against near-black, and the room is a mode, not
+   a page. It therefore carries its own tokens (--mr-*) and never reads the app
+   light/dark palette, so neither theme can bleed into it.
+
+   Structure
+     .mr              fixed, full-viewport meeting shell
+       .mr-topbar     identity, PiP / minimise / fullscreen
+       .mr-body       [ .mr-stage (auto-fit video grid) | .mr-panel (320px) ]
+       .mr-bar        fixed 80px control bar: left info / centre / right
+       .mr-mini       draggable floating window (minimised state)
+       .mr-modal      settings
+
+   Z-index inside the room
+     1    tiles
+     5    tile overlays (labels, badges, pin)
+     20   control bar, top bar
+     40   side panel on small screens
+     9999 floating window
+     10000 settings modal
+   ========================================================================== */
+
+.mr {
+  --mr-bg: #0f1115;
+  --mr-surface: #181b21;
+  --mr-surface-2: #21252d;
+  --mr-surface-3: #2b313b;
+  --mr-line: #333a45;
+  --mr-text: #e8eaed;
+  --mr-text-dim: #9aa4b2;
+  --mr-accent: #3b82f6;          /* active speaker + focus */
+  --mr-accent-soft: rgba(59, 130, 246, .18);
+  --mr-danger: #ea4335;          /* muted state + leave, Meet convention */
+  --mr-danger-hover: #c5372c;
+  --mr-warn: #fbbc04;            /* raised hand */
+  --mr-good: #34a853;
+  --mr-radius: 14px;
+  --mr-bar-h: 80px;
+  --mr-panel-w: 320px;
+  --mr-ease: cubic-bezier(.2, .8, .2, 1);
+
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: flex;
+  flex-direction: column;
+  background: var(--mr-bg);
+  color: var(--mr-text);
+  font-size: 14px;
+}
+.mr[hidden] { display: none; }
+.mr *, .mr *::before, .mr *::after { box-sizing: border-box; }
+
+/* A transformed, filtered or will-change ancestor becomes the containing block
+   for position:fixed descendants — so the page's fade-in animation on
+   .room-wrap was silently sizing this "full viewport" shell (and the control
+   bar, and the floating window) to that element instead of the viewport.
+   body.in-meeting is set by the room's state machine while the call is live. */
+body.in-meeting .room-wrap,
+body.in-meeting .content,
+body.in-meeting .public-shell,
+body.in-meeting .app-main {
+  animation: none !important;
+  transform: none !important;
+  filter: none !important;
+  perspective: none !important;
+  will-change: auto !important;
+}
+/* Nothing behind the meeting should scroll while it is on screen. */
+body.in-meeting { overflow: hidden; }
+body.in-meeting.room-minimised { overflow: auto; }
+
+/* Minimised: the meeting collapses to the floating window and the page behind
+   it becomes usable again. Media is untouched — only layout changes. */
+.mr.is-minimised { position: static; inset: auto; height: auto; overflow: visible; background: none; }
+.mr.is-minimised > .mr-topbar,
+.mr.is-minimised > .mr-body,
+.mr.is-minimised > .mr-bar { display: none; }
+
+/* ── Top bar ─────────────────────────────────────────────────────────── */
+.mr-topbar {
+  flex: none;
+  display: flex; align-items: center; gap: 14px;
+  height: 56px; padding: 0 16px;
+  background: transparent;
+  border-bottom: 1px solid var(--mr-line);
+}
+.mr-topbar-left, .mr-topbar-right { display: flex; align-items: center; gap: 10px; }
+.mr-topbar-mid {
+  flex: 1; min-width: 0;
+  display: flex; align-items: baseline; gap: 10px; justify-content: center;
+}
+.mr-topbar-mid strong { font-size: 14px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.mr-room-code { color: var(--mr-text-dim); font-size: 12px; display: inline-flex; align-items: center; gap: 5px; white-space: nowrap; }
+.mr-live { display: inline-flex; align-items: center; gap: 7px; font-size: 12.5px; font-weight: 700; letter-spacing: .02em; }
+.mr-live .live-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--mr-danger); }
+.mr-timer { color: var(--mr-text-dim); font-variant-numeric: tabular-nums; font-size: 13px; }
+
+/* Shown only while recording (the existing [data-record-toggle] handler adds
+   .is-recording to this bar). */
+.mr-rec-chip { display: none; align-items: center; gap: 6px; padding: 3px 9px; border-radius: 99px;
+  background: rgba(234, 67, 53, .16); color: #ff8a80; font-size: 11.5px; font-weight: 700; }
+.mr-topbar.is-recording .mr-rec-chip { display: inline-flex; }
+.mr-rec-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--mr-danger); animation: mr-blink 1.4s infinite; }
+
+.mr-icon-btn {
+  display: inline-grid; place-items: center;
+  width: 34px; height: 34px; flex: none;
+  border: 0; border-radius: 50%;
+  background: transparent; color: var(--mr-text-dim);
+  cursor: pointer; transition: background .15s, color .15s;
+}
+.mr-icon-btn:hover { background: var(--mr-surface-2); color: var(--mr-text); }
+.mr-icon-btn.is-on { background: var(--mr-accent-soft); color: #9ec5fe; }
+
+/* ── Body: stage + panel ─────────────────────────────────────────────── */
+.mr-body { flex: 1; min-height: 0; display: flex; }
+
+.mr-stage {
+  flex: 1; min-width: 0; position: relative;
+  display: flex; flex-direction: column; justify-content: center;
+  padding: 16px 16px calc(var(--mr-bar-h) + 16px);
+  overflow: hidden;
+}
+
+/* THE GRID. auto-fit + minmax gives Meet's behaviour for free: one tile fills
+   the row, two sit side by side, more wrap — without a single JS branch.
+   min() keeps a single tile from overflowing a narrow phone. */
+.mr-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr));
+  gap: 12px;
+  align-content: center;
+  width: 100%; max-height: 100%;
+  margin: 0 auto;
+}
+/* One participant: don't stretch a lone tile across an ultrawide screen. */
+.mr-grid[data-count="1"] { max-width: 1100px; }
+.mr-grid[data-count="2"] { max-width: 1500px; }
+
+.mr-tile {
+  position: relative; z-index: 1;
+  aspect-ratio: 16 / 9;
+  min-height: 0;
+  border-radius: var(--mr-radius);
+  overflow: hidden;
+  background: var(--mr-surface);
+  box-shadow: inset 0 0 0 1px var(--mr-line);
+  transition: box-shadow .18s var(--mr-ease);
+}
+.mr-tile video {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  display: block;
+  background: var(--mr-surface);
+}
+.mr-tile video[hidden] { display: none; }
+/* Self-view is mirrored, the way every conferencing app does it. */
+.mr.mirror-self [data-tile="self"] video { transform: scaleX(-1); }
+/* A presented screen is letterboxed, never cropped. */
+.mr-tile-screen video { object-fit: contain; background: #000; }
+
+/* ACTIVE SPEAKER. Inset shadow, so the highlight cannot shift the layout. */
+.mr-tile.is-speaking { box-shadow: inset 0 0 0 3px var(--mr-good); }
+.mr-tile.is-pinned   { box-shadow: inset 0 0 0 2px var(--mr-accent); }
+
+.mr-tile-avatar {
+  position: absolute; inset: 0;
+  display: grid; place-items: center; gap: 8px;
+  background: var(--mr-surface);
+  color: var(--mr-text-dim);
+}
+.mr-tile-avatar[hidden] { display: none; }
+.mr-avatar-initials {
+  display: grid; place-items: center;
+  width: 78px; height: 78px; border-radius: 50%;
+  background: var(--mr-surface-3); color: var(--mr-text);
+  font-size: 28px; font-weight: 700;
+}
+.mr-avatar-img { width: 78px; height: 78px; border-radius: 50%; object-fit: cover; }
+
+.mr-tile-label {
+  position: absolute; left: 10px; bottom: 10px; z-index: 5;
+  display: inline-flex; align-items: center; gap: 7px;
+  max-width: calc(100% - 64px);
+  padding: 5px 10px; border-radius: 8px;
+  background: rgba(0, 0, 0, .55);
+  font-size: 12.5px; font-weight: 600;
+}
+.mr-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.mr-tile-status {
+  position: absolute; left: 50%; top: 58%; z-index: 5;
+  transform: translateX(-50%);
+  color: var(--mr-text-dim); font-size: 12.5px; text-align: center;
+  max-width: 80%;
+}
+.mr-tile-badges { position: absolute; top: 10px; left: 10px; z-index: 5; display: flex; gap: 6px; }
+.mr-badge {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 4px 9px; border-radius: 99px;
+  font-size: 11.5px; font-weight: 700;
+}
+.mr-badge[hidden] { display: none; }
+.mr-badge-hand { background: var(--mr-warn); color: #201a00; }
+.mr-badge-hand .icon { animation: mr-wave 1.6s ease-in-out infinite; }
+
+.mr-mic { display: inline-grid; place-items: center; width: 18px; height: 18px; color: var(--mr-text); }
+.mr-mic.is-muted { color: var(--mr-danger); }
+/* TALKING: the mic pulses on the active speaker. Transform + opacity only. */
+.mr-mic.is-talking { color: var(--mr-good); animation: mr-pulse 1.1s ease-in-out infinite; }
+
+.mr-pin {
+  position: absolute; top: 8px; right: 8px; z-index: 5;
+  display: grid; place-items: center;
+  width: 30px; height: 30px;
+  border: 0; border-radius: 8px;
+  background: rgba(0, 0, 0, .5); color: #fff;
+  opacity: 0; cursor: pointer; transition: opacity .15s, background .15s;
+}
+.mr-tile:hover .mr-pin, .mr-pin:focus-visible, .mr-pin.on { opacity: 1; }
+.mr-pin:hover { background: rgba(0, 0, 0, .75); }
+
+/* Spotlight: the pinned tile takes the stage, everyone else drops to a strip. */
+.mr-grid:not([data-pinned=""]) { display: flex; flex-wrap: wrap; align-items: stretch; }
+.mr-grid:not([data-pinned=""]) .mr-tile { flex: 0 0 200px; aspect-ratio: 16 / 9; }
+.mr-grid:not([data-pinned=""]) .mr-tile.is-pinned { flex: 1 0 100%; aspect-ratio: auto; min-height: 0; }
+
+.mr-strip {
+  position: absolute; left: 50%; bottom: calc(var(--mr-bar-h) + 10px);
+  transform: translateX(-50%);
+  display: flex; align-items: center; gap: 12px;
+  padding: 7px 10px 7px 14px; border-radius: 99px;
+  background: var(--mr-surface-2); color: var(--mr-text-dim);
+  font-size: 12.5px; white-space: nowrap;
+}
+.mr-strip[hidden] { display: none; }
+
+/* Admission prompt floats over the stage. */
+.mr-admit {
+  position: absolute; top: 14px; left: 50%; transform: translateX(-50%); z-index: 6;
+  width: min(520px, calc(100% - 32px));
+  background: var(--mr-surface-2) !important;
+  border: 1px solid var(--mr-line) !important;
+  color: var(--mr-text) !important;
+  border-radius: 12px;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, .45);
+}
+
+/* ── Side panel ──────────────────────────────────────────────────────── */
+.mr-panel {
+  flex: none;
+  width: var(--mr-panel-w);
+  display: flex; flex-direction: column;
+  margin: 8px 8px calc(var(--mr-bar-h) + 8px) 0;
+  background: var(--mr-surface);
+  border: 1px solid var(--mr-line);
+  border-radius: var(--mr-radius);
+  overflow: hidden;
+  transform: translateX(calc(100% + 16px));
+  opacity: 0;
+  transition: transform .24s var(--mr-ease), opacity .24s var(--mr-ease);
+}
+.mr-panel[hidden] { display: none; }
+.mr.panel-open .mr-panel { transform: none; opacity: 1; }
+
+.mr-panel-head {
+  flex: none; display: flex; align-items: center; gap: 8px;
+  padding: 6px 6px 6px 10px;
+  border-bottom: 1px solid var(--mr-line);
+}
+.mr-tabs { display: flex; gap: 2px; flex: 1; min-width: 0; }
+.mr-tab {
+  position: relative;
+  padding: 9px 10px;
+  border: 0; border-radius: 8px;
+  background: transparent; color: var(--mr-text-dim);
+  font: inherit; font-size: 13px; font-weight: 600;
+  cursor: pointer; white-space: nowrap;
+}
+.mr-tab:hover { background: var(--mr-surface-2); color: var(--mr-text); }
+.mr-tab[aria-selected="true"] { background: var(--mr-accent-soft); color: #9ec5fe; }
+.mr-unread {
+  display: inline-grid; place-items: center;
+  min-width: 17px; height: 17px; padding: 0 5px; margin-left: 4px;
+  border-radius: 99px; background: var(--mr-danger); color: #fff;
+  font-size: 10.5px; font-weight: 800;
+}
+.mr-unread[hidden] { display: none; }
+
+.mr-pane { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 10px; padding: 12px; overflow-y: auto; }
+.mr-pane[hidden] { display: none; }
+
+.mr-chat-log { flex: 1; min-height: 0; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
+.mr-chat-empty { color: var(--mr-text-dim); font-size: 12.5px; margin: auto 0; text-align: center; }
+.mr-msg { display: flex; flex-direction: column; gap: 2px; }
+.mr-msg strong { font-size: 12px; color: var(--mr-text-dim); font-weight: 700; }
+.mr-msg p {
+  margin: 0; padding: 8px 11px;
+  border-radius: 12px 12px 12px 3px;
+  background: var(--mr-surface-2);
+  font-size: 13.5px; line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+.mr-msg.is-me { align-items: flex-end; }
+.mr-msg.is-me p { border-radius: 12px 12px 3px 12px; background: #1d3a63; }
+.mr-msg time { font-size: 10.5px; color: var(--mr-text-dim); }
+.mr-msg.is-undelivered p { outline: 1px dashed var(--mr-danger); }
+
+.mr-chat-form { flex: none; display: flex; gap: 8px; }
+.mr-chat-form input {
+  flex: 1; min-width: 0;
+  padding: 10px 12px;
+  border: 1px solid var(--mr-line); border-radius: 10px;
+  background: var(--mr-surface-2); color: var(--mr-text);
+  font: inherit;
+}
+.mr-chat-form input::placeholder { color: var(--mr-text-dim); }
+.mr-chat-form button {
+  flex: none; display: grid; place-items: center;
+  width: 42px; border: 0; border-radius: 10px;
+  background: var(--mr-accent); color: #fff; cursor: pointer;
+}
+.mr-chat-note { flex: none; margin: 0; color: var(--mr-text-dim); font-size: 11.5px; }
+
+.mr-person { display: flex; align-items: center; gap: 10px; padding: 8px 6px; border-radius: 10px; }
+.mr-person:hover { background: var(--mr-surface-2); }
+.mr-person-avatar {
+  display: grid; place-items: center; flex: none;
+  width: 34px; height: 34px; border-radius: 50%;
+  background: var(--mr-surface-3); font-weight: 700; font-size: 13px;
+}
+.mr-person-text { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.mr-person-text strong { font-size: 13px; }
+.mr-person-text .meta { color: var(--mr-text-dim); font-size: 11.5px; }
+.mr-person-icons { display: flex; gap: 8px; color: var(--mr-text-dim); }
+
+.mr-notes-head { display: flex; justify-content: flex-end; }
+.mr-pane textarea {
+  flex: 1; min-height: 180px; resize: vertical;
+  padding: 11px 12px;
+  border: 1px solid var(--mr-line); border-radius: 10px;
+  background: var(--mr-surface-2); color: var(--mr-text);
+  font: inherit; font-size: 13.5px; line-height: 1.5;
+}
+.mr-pane .meta, .mr-pane .rail-status { color: var(--mr-text-dim); font-size: 11.5px; }
+
+.mr-info { margin: 0; display: flex; flex-direction: column; gap: 12px; }
+.mr-info > div { display: flex; flex-direction: column; gap: 2px; }
+.mr-info dt { color: var(--mr-text-dim); font-size: 11px; text-transform: uppercase; letter-spacing: .08em; font-weight: 700; }
+.mr-info dd { margin: 0; font-size: 13.5px; }
+
+/* ── Control bar ─────────────────────────────────────────────────────── */
+.mr-bar {
+  position: fixed; bottom: 0; left: 0; z-index: 20;
+  width: 100%; height: var(--mr-bar-h);
+  display: grid; grid-template-columns: 1fr auto 1fr; align-items: center;
+  gap: 12px; padding: 0 16px;
+  background: linear-gradient(to top, var(--mr-bg) 65%, rgba(15, 17, 21, .86));
+}
+.mr-bar-left { display: flex; flex-direction: column; min-width: 0; color: var(--mr-text-dim); font-size: 12.5px; }
+.mr-bar-title { color: var(--mr-text); font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.mr-bar-center { display: flex; align-items: center; gap: 10px; justify-self: center; }
+.mr-bar-right { display: flex; align-items: center; gap: 8px; justify-self: end; }
+
+.mr-ctl {
+  position: relative;
+  display: inline-grid; place-items: center;
+  width: 48px; height: 48px;
+  border: 0; border-radius: 50%;
+  background: var(--mr-surface-2); color: var(--mr-text);
+  cursor: pointer;
+  transition: background .15s, color .15s, transform .1s;
+}
+.mr-ctl:hover { background: var(--mr-surface-3); }
+.mr-ctl:active { transform: scale(.95); }
+.mr-ctl:focus-visible { outline: 2px solid var(--mr-accent); outline-offset: 3px; }
+/* OFF is the loud state, as in Meet: red = your mic or camera is off. This must
+   name the two controls explicitly — share and raise-hand are also
+   aria-pressed="false" when idle, and a blanket rule painted them red too. */
+.mr-ctl[data-toggle-mic-call][aria-pressed="false"],
+.mr-ctl[data-toggle-cam-call][aria-pressed="false"],
+.mr-mini-btn[data-mini-mic][aria-pressed="false"],
+.mr-mini-btn[data-mini-cam][aria-pressed="false"] { background: var(--mr-danger); color: #fff; }
+.mr-ctl.is-on[aria-pressed="true"] { background: var(--mr-surface-2); }
+.mr-ctl .mr-ctl-off { display: none; }
+.mr-ctl[aria-pressed="false"] .mr-ctl-on { display: none; }
+.mr-ctl[aria-pressed="false"] .mr-ctl-off { display: grid; }
+/* Screen share and raise hand light up when active. */
+.mr-ctl[data-toggle-share][aria-pressed="true"],
+.mr-ctl[data-toggle-hand][aria-pressed="true"] { background: var(--mr-accent); color: #fff; }
+.mr-ctl-quiet { background: transparent; color: var(--mr-text-dim); width: 44px; height: 44px; }
+.mr-ctl-quiet:hover { background: var(--mr-surface-2); color: var(--mr-text); }
+.mr-ctl-quiet[aria-pressed="true"] { background: var(--mr-accent-soft); color: #9ec5fe; }
+
+.mr-ctl-leave {
+  width: auto; min-width: 64px; padding: 0 20px;
+  border-radius: 99px;
+  background: var(--mr-danger); color: #fff;
+  gap: 8px; grid-auto-flow: column;
+  font-weight: 700;
+}
+.mr-ctl-leave:hover { background: var(--mr-danger-hover); }
+.mr-ctl-text { font-size: 13.5px; }
+
+.mr-ctl-count {
+  position: absolute; top: 2px; right: 0;
+  min-width: 16px; height: 16px; padding: 0 4px;
+  display: grid; place-items: center;
+  border-radius: 99px; background: var(--mr-surface-3); color: var(--mr-text);
+  font-size: 10px; font-weight: 800;
+}
+/* Unread chat while the panel is closed. */
+.mr-dot {
+  position: absolute; top: 6px; right: 6px;
+  width: 9px; height: 9px; border-radius: 50%;
+  background: var(--mr-danger);
+  box-shadow: 0 0 0 2px var(--mr-bg);
+}
+.mr-dot[hidden] { display: none; }
+
+/* ── Floating window (minimised) ─────────────────────────────────────── */
+.mr-mini {
+  position: fixed; z-index: 9999;
+  width: 280px;
+  border-radius: 12px; overflow: hidden;
+  background: var(--mr-surface);
+  border: 1px solid var(--mr-line);
+  box-shadow: 0 18px 44px rgba(0, 0, 0, .5);
+  color: var(--mr-text);
+  font-size: 13px;
+}
+.mr-mini[hidden] { display: none; }
+.mr-mini[data-place="bottom-right"] { right: 20px; bottom: 20px; left: auto; top: auto; }
+.mr-mini[data-place="bottom-left"]  { left: 20px;  bottom: 20px; right: auto; top: auto; }
+.mr-mini[data-place="top-right"]    { right: 20px; top: 20px;    left: auto; bottom: auto; }
+.mr-mini[data-place="top-left"]     { left: 20px;  top: 20px;    right: auto; bottom: auto; }
+/* While dragging, position comes from inline left/top. */
+.mr-mini[data-place="custom"] { right: auto; bottom: auto; }
+.mr-mini.is-dragging { cursor: grabbing; user-select: none; box-shadow: 0 24px 60px rgba(0, 0, 0, .6); }
+
+.mr-mini-head {
+  display: flex; align-items: center; justify-content: space-between; gap: 8px;
+  padding: 6px 6px 6px 10px;
+  background: var(--mr-surface-2);
+  cursor: grab; touch-action: none;
+}
+.mr-mini.is-dragging .mr-mini-head { cursor: grabbing; }
+.mr-mini-live { display: inline-flex; align-items: center; gap: 6px; font-size: 11.5px; font-weight: 700; }
+.mr-mini-live .live-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--mr-danger); }
+.mr-mini-video { position: relative; aspect-ratio: 16 / 9; background: #000; }
+.mr-mini-video video { width: 100%; height: 100%; object-fit: cover; display: block; }
+.mr-mini-avatar { position: absolute; inset: 0; display: grid; place-items: center; background: var(--mr-surface); }
+.mr-mini-avatar[hidden] { display: none; }
+.mr-mini-avatar span {
+  display: grid; place-items: center;
+  width: 52px; height: 52px; border-radius: 50%;
+  background: var(--mr-surface-3); font-weight: 700;
+}
+.mr-mini-name {
+  position: absolute; left: 8px; bottom: 8px;
+  padding: 3px 8px; border-radius: 6px;
+  background: rgba(0, 0, 0, .6); font-size: 11.5px; font-weight: 600;
+}
+.mr-mini-controls { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 8px; }
+.mr-mini-btn {
+  display: inline-grid; place-items: center;
+  width: 34px; height: 34px;
+  border: 0; border-radius: 50%;
+  background: var(--mr-surface-2); color: var(--mr-text);
+  cursor: pointer; transition: background .15s;
+}
+.mr-mini-btn:hover { background: var(--mr-surface-3); }
+.mr-mini-btn[aria-pressed="false"] { background: var(--mr-danger); color: #fff; }
+.mr-mini-btn .mr-ctl-off { display: none; }
+.mr-mini-btn[aria-pressed="false"] .mr-ctl-on { display: none; }
+.mr-mini-btn[aria-pressed="false"] .mr-ctl-off { display: grid; }
+
+/* What the page shows behind the floating window while minimised. */
+.mr-minimised-page {
+  max-width: 640px; margin: 40px auto; padding: 24px;
+  border-radius: 14px;
+  background: var(--bg-surface, #fff); color: var(--text-primary, #0f172a);
+  border: 1px solid var(--border-default, #e2e8f0);
+  box-shadow: var(--shadow-md, 0 4px 6px -1px rgba(0, 0, 0, .05));
+}
+.mr-minimised-page[hidden] { display: none; }
+.mr-minimised-page h2 { margin: 0 0 6px; font-size: 19px; }
+.mr-minimised-page .actions { margin-top: 16px; display: flex; gap: 10px; flex-wrap: wrap; }
+
+/* ── Settings modal ──────────────────────────────────────────────────── */
+.mr-modal {
+  position: fixed; inset: 0; z-index: 10000;
+  display: flex; align-items: center; justify-content: center; padding: 20px;
+  background: rgba(0, 0, 0, .6);
+}
+.mr-modal[hidden] { display: none; }
+.mr-modal-box {
+  width: min(460px, 100%); max-height: min(86dvh, 640px); overflow-y: auto;
+  padding: 20px;
+  border-radius: var(--mr-radius);
+  background: var(--mr-surface); color: var(--mr-text);
+  border: 1px solid var(--mr-line);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, .55);
+}
+.mr-modal-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 14px; }
+.mr-modal-head h2 { margin: 0; font-size: 17px; display: flex; align-items: center; gap: 9px; }
+.mr-setting { display: flex; gap: 11px; padding: 11px 0; border-bottom: 1px solid var(--mr-line); cursor: pointer; }
+.mr-setting:last-of-type { border-bottom: 0; }
+.mr-setting > span { display: flex; flex-direction: column; gap: 3px; }
+.mr-setting strong { font-size: 13.5px; font-weight: 600; }
+.mr-setting .meta { color: var(--mr-text-dim); font-size: 12px; line-height: 1.45; }
+.mr-setting input[type="checkbox"] { width: 17px; height: 17px; margin-top: 2px; accent-color: var(--mr-accent); flex: none; }
+.mr-setting-block { flex-direction: column; cursor: default; }
+.mr-place-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 4px; }
+.mr-place {
+  padding: 9px 10px;
+  border: 1px solid var(--mr-line); border-radius: 9px;
+  background: var(--mr-surface-2); color: var(--mr-text-dim);
+  font: inherit; font-size: 12.5px; cursor: pointer;
+}
+.mr-place:hover { color: var(--mr-text); }
+.mr-place[aria-checked="true"] { border-color: var(--mr-accent); background: var(--mr-accent-soft); color: #9ec5fe; font-weight: 700; }
+.mr-modal-actions { display: flex; gap: 8px; justify-content: flex-end; flex-wrap: wrap; margin-top: 18px; }
+
+/* ── Animations ──────────────────────────────────────────────────────── */
+@keyframes mr-pulse { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.22); opacity: .72; } }
+@keyframes mr-blink { 0%, 100% { opacity: 1; } 50% { opacity: .25; } }
+@keyframes mr-wave  { 0%, 100% { transform: rotate(0deg); } 30% { transform: rotate(14deg); } 60% { transform: rotate(-8deg); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .mr-mic.is-talking, .mr-rec-dot, .mr-badge-hand .icon { animation: none; }
+  .mr-panel { transition: none; }
+}
+
+/* ── Responsive ──────────────────────────────────────────────────────── */
+@media (max-width: 1024px) {
+  .mr-topbar-mid strong { display: none; }
+  .mr-bar-left { display: none; }
+  .mr-bar { grid-template-columns: auto 1fr auto; }
+  .mr-bar-center { justify-self: center; }
+}
+@media (max-width: 760px) {
+  .mr { --mr-bar-h: 76px; }
+  .mr-stage { padding: 10px 10px calc(var(--mr-bar-h) + 10px); }
+  .mr-grid { grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr)); gap: 8px; }
+  /* The panel becomes a sheet over the stage rather than stealing its width. */
+  .mr-panel {
+    position: absolute; inset: 0 0 var(--mr-bar-h) 0; z-index: 40;
+    width: auto; margin: 0; border-radius: 0; border: 0;
+  }
+  .mr-ctl { width: 44px; height: 44px; }
+  .mr-ctl-leave { min-width: 44px; padding: 0 14px; }
+  .mr-ctl-text { display: none; }
+  .mr-mini { width: 210px; }
+}
+@media (max-width: 420px) {
+  .mr-bar-center { gap: 6px; }
+  .mr-ctl { width: 40px; height: 40px; }
+  .mr-topbar { padding: 0 8px; }
+}
