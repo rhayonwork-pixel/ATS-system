@@ -43,6 +43,11 @@ if ($private && $user) {
 <link rel="stylesheet" href="assets/css/components.css?v=<?= @filemtime(__DIR__.'/../assets/css/components.css') ?: time() ?>">
 <link rel="stylesheet" href="assets/styles.css?v=<?= @filemtime(__DIR__.'/../assets/styles.css') ?: time() ?>">
 <link rel="stylesheet" href="assets/light-theme-v3.css?v=<?= @filemtime(__DIR__.'/../assets/light-theme-v3.css') ?: time() ?>">
+<!-- Light theme only, and last: the tokens file is the single source of light
+     palette values, the fixes file repairs light-mode components. Neither file
+     contains a dark selector, so dark mode is unaffected by both. -->
+<link rel="stylesheet" href="assets/css/light-theme-tokens.css?v=<?= @filemtime(__DIR__.'/../assets/css/light-theme-tokens.css') ?: time() ?>">
+<link rel="stylesheet" href="assets/css/components-light-fixes.css?v=<?= @filemtime(__DIR__.'/../assets/css/components-light-fixes.css') ?: time() ?>">
 <script>
 /* Applied before first paint so the page never flashes the wrong theme.
    Explicit choice wins; otherwise the OS preference decides. body.dark is set

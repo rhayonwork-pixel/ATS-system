@@ -1,0 +1,180 @@
+/* ============================================================================
+   ACME ATS — LIGHT THEME TOKENS
+   Deliverable 1 of 2 (see components-light-fixes.css for the component rules).
+
+   SCOPE / SAFETY
+   --------------
+   Every declaration below lives inside `html[data-theme="light"]` (plus the
+   pre-hydration fallback `html:not([data-theme="dark"])`, because the inline
+   theme script in includes/header.php sets the attribute before first paint and
+   a JS failure must still land on light). Nothing here reads, references or
+   redefines a `[data-theme="dark"]` selector or a dark value, so dark mode is
+   byte-for-byte unaffected: it keeps taking its values from
+   assets/css/theme-tokens.css `:root[data-theme="dark"]`.
+
+   LOAD ORDER (includes/header.php)
+   --------------------------------
+     theme-tokens.css        base :root tokens + the dark block (untouched)
+     components.css
+     styles.css              legacy component CSS, theme-agnostic
+     light-theme-v3.css      light-only component rules, consumes --lt-*
+     light-theme-tokens.css  THIS FILE — the single source of light values
+     components-light-fixes.css
+
+   WHY THIS FILE EXISTS
+   --------------------
+   light-theme-v3.css shipped its own `--lt-*` palette and then aliased the
+   semantic tokens to it, so the app had two competing light palettes: the
+   slate/blue set in theme-tokens.css and v3's warm/teal set. Re-pointing the
+   `--lt-*` names here (section 7) means v3's several hundred component rules
+   keep working unchanged while rendering ONE agreed palette. Do not reintroduce
+   palette values into v3 — change them here.
+
+   CHANGE LOG — variables updated, so regressions are easy to spot
+   ---------------------------------------------------------------
+     --bg-canvas        #F7F7F9  -> #F8FAFC   cool neutral, matches the surface family
+     --bg-surface       #FFFEFC  -> #FFFFFF   pure white cards, no cream cast
+     --bg-surface-hover #EEF3F1  -> #F1F5F9
+     --text-primary     #17211C  -> #0F172A   17.9:1 on white (was a green-black)
+     --text-secondary   #34423A  -> #475569   7.6:1 on white
+     --text-muted       #526159  -> #64748B   4.8:1 on white (AA for body text)
+     --border-default   #D2DAD5  -> #E2E8F0   lighter, cleaner separation
+     --border-input     #7C8B83  -> #8290A5   3.2:1 on white (WCAG 1.4.11 needs 3:1)
+     --shadow-sm        (card shadow) -> 0 1px 2px rgba(0,0,0,.05)
+     --shadow-md        (hover shadow)-> two-layer ambient shadow for cards
+     --shadow-lg        NEW              modals, flyouts, drawers
+     --lt-overlay-scrim NEW              v3 used this name but never defined it,
+                                         so .candidate-preview-overlay resolved to
+                                         an invalid value and rendered with NO scrim
+     --accent-*         kept teal (#0F766E) — brand colour, 5.47:1 with white text
+   ========================================================================== */
+
+html[data-theme="light"],
+html:not([data-theme="dark"]) {
+
+  /* ── 1. Canvas & surfaces ──────────────────────────────────────────────
+     Canvas is deliberately a step darker than surface so white cards read as
+     raised rather than dissolving into the page. */
+  --bg-canvas: #F8FAFC;            /* app background */
+  --bg-canvas-soft: #FCFDFE;       /* secondary strips, table zebra */
+  --bg-surface: #FFFFFF;           /* cards, modals, dropdowns, inputs */
+  --bg-surface-elevated: #FFFFFF;  /* floating surfaces sit on the same white */
+  --bg-surface-hover: #F1F5F9;     /* row/list/button hover wash */
+  --bg-surface-active: #E2E8F0;    /* pressed wash */
+  --bg-input: #FFFFFF;             /* inputs are never transparent */
+  --bg-disabled: #F1F5F9;          /* disabled controls */
+  --bg-app: var(--bg-canvas);
+  --autofill-tint: rgba(15, 118, 110, .06);
+
+  /* ── 2. Typography ─────────────────────────────────────────────────────
+     Ratios measured against --bg-surface (#FFFFFF); all pass WCAG AA for
+     normal-size text, so they also pass on --bg-canvas. */
+  --text-primary: #0F172A;         /* 17.85:1 */
+  --text-secondary: #475569;       /* 7.58:1  */
+  --text-muted: #64748B;           /* 4.76:1  — still AA, use for meta text */
+  --text-placeholder: #64748B;     /* 4.76:1  — placeholders must be readable */
+  --text-on-accent: #FFFFFF;       /* 5.47:1 on --accent-primary */
+  --text-disabled: #64748B;
+
+  /* ── 3. Borders ────────────────────────────────────────────────────────
+     --border-default is decorative separation. --border-input is the visible
+     boundary of a control and therefore must clear 3:1 (WCAG 1.4.11). */
+  --border-subtle: #F1F5F9;
+  --border-default: #E2E8F0;
+  --border-strong: #CBD5E1;
+  --border-input: #8290A5;         /* 3.24:1 on white, 3.10:1 on canvas */
+  --border-focus: #0F766E;
+
+  /* ── 4. Brand accent ───────────────────────────────────────────────────
+     Teal is the light theme's brand accent. -primary carries white text at
+     5.47:1; -deep is for large filled panels where white text should sit more
+     comfortably; -soft is the tint behind active navigation. */
+  --accent-primary: #0F766E;
+  --accent-hover: #0B5F59;
+  --accent-active: #084C47;
+  --accent-deep: #115E59;          /* 7.58:1 with white */
+  --accent-soft: #CCFBF1;          /* accent text on it: 4.86:1 */
+  --accent-soft-hover: #99F6E4;
+  --accent-contrast: #FFFFFF;
+  --accent-glow: rgba(15, 118, 110, .18);
+
+  /* ── 5. Status ─────────────────────────────────────────────────────────
+     Every text/background pair below is >= 6:1. */
+  --status-success-bg: #DCFCE7;  --status-success-text: #166534;  --status-success-border: #86EFAC;
+  --status-warning-bg: #FEF3C7;  --status-warning-text: #92400E;  --status-warning-border: #FCD34D;
+  --status-danger-bg: #FEE2E2;   --status-danger-text: #991B1B;   --status-danger-border: #FCA5A5;
+  --status-info-bg: #DBEAFE;     --status-info-text: #1E40AF;     --status-info-border: #93C5FD;
+  --status-teal-bg: #CCFBF1;     --status-teal-text: #115E59;     --status-teal-border: #5EEAD4;
+  --status-danger-strong: #DC2626;  /* small non-text accents: dots, live pips */
+  --status-success: var(--status-success-text);
+  --status-warning: var(--status-warning-text);
+  --status-danger: var(--status-danger-text);
+
+  /* Data-visualisation series. Kept mid-tone so they read on white. */
+  --chart-1: #0F766E;  --chart-2: #2563EB;  --chart-3: #7C3AED;
+  --chart-4: #C2410C;  --chart-5: #0891B2;
+
+  /* ── 6. Elevation & scrim ──────────────────────────────────────────────
+     Three steps only: resting control, card, floating surface. */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, .05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, .05), 0 2px 4px -1px rgba(0, 0, 0, .03);
+  --shadow-lg: 0 10px 15px -3px rgba(15, 23, 42, .08), 0 4px 6px -4px rgba(15, 23, 42, .05);
+  --shadow-focus: 0 0 0 3px var(--accent-glow);
+  --shadow: var(--shadow-md);
+  --elevation-card: var(--shadow-md);
+  --elevation-flyout: var(--shadow-lg);
+  --overlay-scrim: rgba(15, 23, 42, .45);
+
+  /* ── 7. Aliases ────────────────────────────────────────────────────────
+     Older stylesheets use short names; light-theme-v3.css uses --lt-*. Both
+     are pointed at the tokens above so there is exactly one place to edit. */
+  --ink: var(--text-primary);
+  --muted: var(--text-muted);
+  --paper: var(--bg-canvas);
+  --surface: var(--bg-surface);
+  --elevated: var(--bg-surface-elevated);
+  --line: var(--border-default);
+  --border-color: var(--border-default);
+  --green: var(--accent-primary);
+  --lime: var(--accent-soft);
+  --orange: var(--status-warning-text);
+
+  --lt-canvas: var(--bg-canvas);
+  --lt-canvas-soft: var(--bg-canvas-soft);
+  --lt-surface: var(--bg-surface);
+  --lt-surface-raised: var(--bg-surface-elevated);
+  --lt-surface-tint: var(--bg-surface-hover);
+  --lt-surface-hover: var(--bg-surface-hover);
+  --lt-surface-active: var(--bg-surface-active);
+
+  --lt-text: var(--text-primary);
+  --lt-text-strong: var(--text-primary);
+  --lt-text-secondary: var(--text-secondary);
+  --lt-text-muted: var(--text-muted);
+  --lt-text-placeholder: var(--text-placeholder);
+
+  --lt-border: var(--border-default);
+  --lt-border-strong: var(--border-input);
+  --lt-border-focus: var(--border-focus);
+
+  --lt-primary: var(--accent-primary);
+  --lt-primary-hover: var(--accent-hover);
+  --lt-primary-active: var(--accent-active);
+  --lt-primary-soft: var(--accent-soft);
+  --lt-primary-soft-hover: var(--accent-soft-hover);
+  --lt-primary-contrast: var(--accent-contrast);
+
+  --lt-success: var(--status-success-text);  --lt-success-bg: var(--status-success-bg);  --lt-success-border: var(--status-success-border);
+  --lt-warning: var(--status-warning-text);  --lt-warning-bg: var(--status-warning-bg);  --lt-warning-border: var(--status-warning-border);
+  --lt-danger: var(--status-danger-text);    --lt-danger-bg: var(--status-danger-bg);    --lt-danger-border: var(--status-danger-border);
+  --lt-info: var(--status-info-text);        --lt-info-bg: var(--status-info-bg);        --lt-info-border: var(--status-info-border);
+
+  --lt-shadow-card: var(--shadow-md);
+  --lt-shadow-hover: var(--shadow-lg);
+  --lt-shadow-float: var(--shadow-lg);
+  --lt-shadow-focus: var(--shadow-focus);
+  /* Defined here for the first time: v3 consumes this name in
+     .candidate-preview-overlay but never declared it, which made the whole
+     declaration invalid and left that modal with no scrim at all. */
+  --lt-overlay-scrim: var(--overlay-scrim);
+}

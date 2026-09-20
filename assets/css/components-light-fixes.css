@@ -1,0 +1,479 @@
+/* ============================================================================
+   ACME ATS — LIGHT THEME COMPONENT FIXES
+   Deliverable 2 of 2. Loads last, after light-theme-v3.css and
+   light-theme-tokens.css.
+
+   SCOPE / SAFETY
+   --------------
+   Every selector is prefixed with `html[data-theme="light"]`, so none of this
+   can reach dark mode. No dark variable, dark selector or dark component is
+   referenced anywhere in this file.
+
+   `!important` is used only where the rule it replaces is itself `!important`
+   (light-theme-v3.css) or lives in the minified legacy styles.css; each such
+   case is marked "overrides !important".
+
+   WHAT THIS FILE FIXES
+   --------------------
+   1. Dark / legacy-palette artifacts left over from the pre-teal green theme
+   2. Cards, panels and tables: one surface, one border, one elevation
+   3. Inputs: always white, always a visible boundary
+   4. Navigation: a vibrant accent indicator instead of an inverted block
+   5. Modals and dropdowns: higher elevation + crisp border, and a real scrim
+   6. Interactive states: hover, focus-visible, active, disabled
+   ========================================================================== */
+
+/* ══ 1. DARK / LEGACY ARTIFACTS ══════════════════════════════════════════ */
+
+/* The public-site CTA rendered teal-on-teal (contrast 1.0 — text invisible).
+   Cause: light-theme-v3.css sets `a { color: var(--lt-primary) }`, which
+   outranks `.nav-cta { color:#fff }` in styles.css. Restoring the contrast
+   colour for every link that sits on an accent fill. */
+html[data-theme="light"] .nav-cta,
+html[data-theme="light"] a.btn:not(.secondary):not(.ghost),
+html[data-theme="light"] .stage-tab.active,
+html[data-theme="light"] a.chip.active {
+  color: var(--text-on-accent) !important;   /* overrides !important */
+}
+
+/* Legacy dark-green hovers (#24563f) from the old palette turned buttons
+   near-black in the teal theme. */
+html[data-theme="light"] .nav-cta:hover,
+html[data-theme="light"] .ai-form button:hover {
+  background: var(--accent-hover);
+  color: var(--text-on-accent) !important;   /* overrides !important */
+}
+
+/* Hardcoded two-green gradients (#3d8362 -> #204a35) replaced with the brand
+   accent so these panels match the rest of the light theme. */
+html[data-theme="light"] .ai-head,
+html[data-theme="light"] .auth-brand {
+  background: linear-gradient(120deg, var(--accent-primary), var(--accent-deep)) !important;
+  color: var(--text-on-accent);
+}
+
+/* Large accent-filled panels: white text on --accent-primary is 5.47:1, which
+   is thin for the small print inside these panels. --accent-deep lifts every
+   nested label to >= 7:1 without changing the look. */
+html[data-theme="light"] .dark-section,
+html[data-theme="light"] .hero-panel {
+  background: var(--accent-deep) !important;
+  color: var(--text-on-accent) !important;
+}
+html[data-theme="light"] .dark-section p,
+html[data-theme="light"] .hero-panel p,
+html[data-theme="light"] .hero-panel span,
+html[data-theme="light"] .panel-kicker,
+html[data-theme="light"] .panel-foot {
+  color: rgba(255, 255, 255, .92) !important;   /* was #c9e8a4 / #dcebd9: 4.06:1 */
+}
+
+/* Legacy mint tints (#edf5e9, #eef1ec, #c8dfbf, #e9ede6) predate the teal
+   accent and read as a different product. Mapped onto tokens. */
+html[data-theme="light"] .pill,
+html[data-theme="light"] .tag-pill,
+html[data-theme="light"] .status-stage-badge {
+  background: var(--accent-soft) !important;
+  color: var(--accent-active) !important;
+  border-color: var(--accent-soft-hover);
+}
+/* Informational banners are wide surfaces, so they take a diluted accent wash;
+   the full --accent-soft chip tint is too loud at that size. */
+html[data-theme="light"] .notice {
+  background: color-mix(in srgb, var(--accent-soft) 45%, #FFFFFF) !important;
+  border: 1px solid var(--accent-soft-hover) !important;
+  color: var(--text-primary) !important;
+}
+html[data-theme="light"] .notice.success {
+  background: var(--status-success-bg) !important;
+  border-color: var(--status-success-border) !important;
+  color: var(--status-success-text) !important;
+}
+html[data-theme="light"] .notice.error {
+  background: var(--status-danger-bg) !important;
+  border-color: var(--status-danger-border) !important;
+  color: var(--status-danger-text) !important;
+}
+html[data-theme="light"] .kanban-col {
+  background: var(--bg-canvas) !important;
+  border: 1px solid var(--border-default) !important;
+}
+html[data-theme="light"] .cap-bar {
+  background: var(--bg-disabled) !important;
+}
+
+/* Status text/dots that were hardcoded rust, amber and indigo. */
+html[data-theme="light"] .error,
+html[data-theme="light"] .form-error,
+html[data-theme="light"] .field-error {
+  color: var(--status-danger-text) !important;
+}
+html[data-theme="light"] .field.invalid input,
+html[data-theme="light"] .field.invalid textarea,
+html[data-theme="light"] input[aria-invalid="true"] {
+  border-color: var(--status-danger-text) !important;
+  box-shadow: 0 0 0 3px rgba(153, 27, 27, .12) !important;
+}
+html[data-theme="light"] .live-dot,
+html[data-theme="light"] .stage-step.rejected .dot,
+html[data-theme="light"] .ui-join-status.state-ended .join-dot,
+html[data-theme="light"] .ui-join-status.state-cancelled .join-dot,
+html[data-theme="light"] .room-call-head.is-recording:before {
+  background: var(--status-danger-strong) !important;
+  border-color: var(--status-danger-strong) !important;
+}
+html[data-theme="light"] .review-callout.is-rejected { border-left-color: var(--status-danger-text) !important; }
+html[data-theme="light"] .review-callout.is-changes  { border-left-color: var(--chart-3) !important; }
+
+/* Chart/series colours drawn from the token ramp so every graph on the page
+   belongs to the same palette. */
+html[data-theme="light"] .funnel-fill      { background: var(--chart-1) !important; }
+html[data-theme="light"] .funnel-fill.alt  { background: var(--chart-2) !important; }
+html[data-theme="light"] .funnel-fill.hire { background: var(--chart-3) !important; }
+html[data-theme="light"] .notif-dot.prio-low { background: var(--chart-2) !important; }
+
+/* CONTRAST FAILURES found by measuring the rendered pages.
+   .score-pill was #ED8B55 on white = 2.47:1; the delta chips were 4.45:1. */
+html[data-theme="light"] .score-pill,
+html[data-theme="light"] .badge.low,
+html[data-theme="light"] .pill.status-paused,
+html[data-theme="light"] .pill.status-pending,
+html[data-theme="light"] .jstate-pending {
+  background: var(--status-warning-bg) !important;
+  color: var(--status-warning-text) !important;    /* 6.37:1 */
+  border-color: var(--status-warning-border);
+}
+html[data-theme="light"] .ov-stat-delta.down,
+html[data-theme="light"] .pill.status-disabled,
+html[data-theme="light"] .pill.status-rejected,
+html[data-theme="light"] .jstate-rejected,
+html[data-theme="light"] .badge.full {
+  background: var(--status-danger-bg) !important;
+  color: var(--status-danger-text) !important;     /* 6.80:1 */
+  border-color: var(--status-danger-border);
+}
+html[data-theme="light"] .ov-stat-delta.up,
+html[data-theme="light"] .jstate-approved,
+html[data-theme="light"] .pill.status-open,
+html[data-theme="light"] .pill.status-active {
+  background: var(--status-success-bg) !important;
+  color: var(--status-success-text) !important;    /* 6.49:1 */
+  border-color: var(--status-success-border);
+}
+
+/* Audit-trail category badges were hardcoded mint/lilac/sand tints carrying
+   --text-muted, which only clears 4.18:1 on a tinted chip. Each category now
+   uses a token pair, and the base chip uses --text-secondary. */
+html[data-theme="light"] .audit-badge {
+  background: var(--bg-surface-hover) !important;
+  color: var(--text-secondary) !important;         /* 7.1:1 on the chip */
+}
+html[data-theme="light"] .audit-badge.cat-security {
+  background: var(--status-danger-bg) !important;  color: var(--status-danger-text) !important;
+}
+html[data-theme="light"] .audit-badge.cat-approval {
+  background: var(--status-success-bg) !important; color: var(--status-success-text) !important;
+}
+html[data-theme="light"] .audit-badge.cat-interview {
+  background: var(--status-info-bg) !important;    color: var(--status-info-text) !important;
+}
+html[data-theme="light"] .audit-badge.cat-job {
+  background: var(--status-warning-bg) !important; color: var(--status-warning-text) !important;
+}
+html[data-theme="light"] .audit-badge.cat-account {
+  background: var(--status-teal-bg) !important;    color: var(--status-teal-text) !important;
+}
+html[data-theme="light"] .audit-badge.cat-candidate {
+  background: #EDE9FE !important;                  /* violet-100 */
+  color: #5B21B6 !important;                       /* violet-800: 7.4:1 on it */
+}
+
+/* Legacy green-black shadow literals (#173b2818, #10291d38) replaced with the
+   token ramp so elevation is consistent. */
+html[data-theme="light"] .job-card:hover,
+html[data-theme="light"] .profile-photo-preview,
+html[data-theme="light"] .ai-panel {
+  box-shadow: var(--shadow-lg) !important;
+}
+
+/* ══ 2. CARDS, PANELS, TABLES ════════════════════════════════════════════
+   One recipe: white surface, one-pixel token border, --shadow-md, 1.5rem of
+   padding. Compact//structural variants keep their own padding. */
+html[data-theme="light"] .card,
+html[data-theme="light"] .panel,
+html[data-theme="light"] .analytics-card,
+html[data-theme="light"] .attendance-card,
+html[data-theme="light"] .approval-card,
+html[data-theme="light"] .allowance-card,
+html[data-theme="light"] .admit-card,
+html[data-theme="light"] .apply-section,
+html[data-theme="light"] .candidate-panel,
+html[data-theme="light"] .candidate-list-card,
+html[data-theme="light"] .auth-card,
+html[data-theme="light"] .stat {
+  background: var(--bg-surface) !important;        /* overrides !important */
+  border: 1px solid var(--border-default) !important;
+  box-shadow: var(--shadow-md) !important;         /* was a near-flat 1px shadow */
+  border-radius: 14px;
+}
+html[data-theme="light"] .card,
+html[data-theme="light"] .panel,
+html[data-theme="light"] .analytics-card,
+html[data-theme="light"] .approval-card,
+html[data-theme="light"] .apply-section,
+html[data-theme="light"] .candidate-panel,
+html[data-theme="light"] .auth-card {
+  padding: 1.5rem;                                 /* uniform container padding */
+}
+/* Only cards explicitly marked flush lose their padding. An earlier version of
+   this rule also matched any card containing a table, which pushed those cards'
+   headings hard against the border — tables keep the same 1.5rem inset as
+   every other card body. */
+html[data-theme="light"] .card.flush,
+html[data-theme="light"] .card.no-pad {
+  padding: 0;
+}
+html[data-theme="light"] .card:hover,
+html[data-theme="light"] .analytics-card:hover,
+html[data-theme="light"] .candidate-list-card:hover {
+  box-shadow: var(--shadow-lg) !important;
+  border-color: var(--border-strong) !important;
+}
+
+html[data-theme="light"] .table-wrap,
+html[data-theme="light"] .candidate-table,
+html[data-theme="light"] .audit-table {
+  background: var(--bg-surface) !important;
+  border: 1px solid var(--border-default) !important;
+  box-shadow: var(--shadow-md) !important;
+}
+html[data-theme="light"] thead,
+html[data-theme="light"] .table-head {
+  background: var(--bg-canvas) !important;         /* was a mint tint */
+}
+html[data-theme="light"] th {
+  color: var(--text-secondary) !important;
+  border-bottom: 1px solid var(--border-default) !important;
+}
+html[data-theme="light"] td {
+  color: var(--text-primary) !important;           /* was --text-secondary: body
+                                                      copy in tables now reads at
+                                                      17.9:1 instead of 7.6:1 */
+  border-bottom: 1px solid var(--border-subtle) !important;
+}
+html[data-theme="light"] tbody tr:hover {
+  background: var(--bg-surface-hover) !important;
+}
+
+/* ══ 3. INPUTS ═══════════════════════════════════════════════════════════
+   White fill, visible boundary, comfortable padding. An input must never look
+   transparent or disabled when it is neither. */
+/* `:not(:disabled)` matters: without it this rule is more specific than the
+   disabled rule in section 6 and a disabled field keeps the enabled white fill. */
+html[data-theme="light"] input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="file"]):not([type="submit"]):not([type="button"]):not(:disabled),
+html[data-theme="light"] select:not(:disabled),
+html[data-theme="light"] textarea:not(:disabled),
+html[data-theme="light"] .form-control:not(:disabled) {
+  background: var(--bg-input) !important;          /* overrides !important */
+  color: var(--text-primary) !important;
+  border: 1px solid var(--border-input) !important;/* 3.24:1 — WCAG 1.4.11 */
+  border-radius: 10px;
+  box-shadow: var(--shadow-sm);
+  padding: .625rem .75rem;
+  min-height: 42px;
+}
+html[data-theme="light"] textarea { min-height: 96px; }
+
+/* Was a hardcoded slate-green (#596A61); hover now previews the focus colour. */
+html[data-theme="light"] input:hover:not(:disabled),
+html[data-theme="light"] select:hover:not(:disabled),
+html[data-theme="light"] textarea:hover:not(:disabled) {
+  border-color: var(--accent-primary) !important;
+}
+html[data-theme="light"] input::placeholder,
+html[data-theme="light"] textarea::placeholder {
+  color: var(--text-placeholder) !important;       /* 4.76:1, readable */
+  opacity: 1;
+}
+html[data-theme="light"] input:read-only:not([type="checkbox"]):not([type="radio"]),
+html[data-theme="light"] textarea:read-only {
+  background: var(--bg-canvas) !important;         /* readable, but clearly not editable */
+  color: var(--text-secondary) !important;
+}
+html[data-theme="light"] .field label,
+html[data-theme="light"] .form-label,
+html[data-theme="light"] label {
+  color: var(--text-secondary);
+}
+
+/* ══ 4. NAVIGATION ═══════════════════════════════════════════════════════
+   The active page is marked with a vibrant accent bar plus a soft accent
+   wash — not an inverted dark block. */
+html[data-theme="light"] .sidebar {
+  background: var(--bg-surface) !important;
+  border-right: 1px solid var(--border-default) !important;
+  box-shadow: var(--shadow-sm) !important;
+}
+html[data-theme="light"] .sidebar a,
+html[data-theme="light"] .nav-item {
+  color: var(--text-secondary) !important;
+}
+html[data-theme="light"] .sidebar a:hover,
+html[data-theme="light"] .nav-item:hover,
+html[data-theme="light"] .nav-group-btn:hover {
+  background: var(--bg-surface-hover) !important;
+  color: var(--text-primary) !important;
+}
+html[data-theme="light"] .sidebar a.active,
+html[data-theme="light"] .sidebar .active,
+html[data-theme="light"] .nav-item.active {
+  position: relative;
+  background: var(--accent-soft) !important;
+  color: var(--accent-active) !important;          /* 8.73:1 on the wash */
+  font-weight: 700;
+}
+html[data-theme="light"] .sidebar a.active::before,
+html[data-theme="light"] .nav-item.active::before {
+  content: "";
+  position: absolute;
+  left: 0; top: 50%;
+  width: 3px; height: 62%;
+  transform: translateY(-50%);
+  border-radius: 0 3px 3px 0;
+  background: var(--accent-primary);               /* the vibrant indicator */
+}
+html[data-theme="light"] .sidebar a.active .icon,
+html[data-theme="light"] .nav-item.active .icon {
+  color: var(--accent-primary) !important;
+}
+html[data-theme="light"] .util-bar {
+  background: color-mix(in srgb, var(--bg-canvas) 88%, transparent) !important;
+  border-bottom: 1px solid var(--border-default) !important;
+}
+html[data-theme="light"] .topbar {
+  background: var(--bg-surface) !important;
+  border-bottom: 1px solid var(--border-default) !important;
+}
+html[data-theme="light"] .nav-link:hover {
+  background: var(--bg-surface-hover) !important;
+  color: var(--accent-active) !important;
+}
+
+/* ══ 5. MODALS, DROPDOWNS, FLYOUTS ═══════════════════════════════════════
+   Floating surfaces get --shadow-lg and a crisp border so they never blend
+   into the page beneath them. */
+html[data-theme="light"] .modal-box,
+html[data-theme="light"] .pb-modal-box,
+html[data-theme="light"] .candidate-preview-modal,
+html[data-theme="light"] .preview-panel,
+html[data-theme="light"] .notif-flyout,
+html[data-theme="light"] .nav-flyout,
+html[data-theme="light"] .nav-menu,
+html[data-theme="light"] .control-more-menu,
+html[data-theme="light"] .dropdown-menu,
+html[data-theme="light"] [role="menu"] {
+  background: var(--bg-surface-elevated) !important;
+  border: 1px solid var(--border-default) !important;
+  box-shadow: var(--shadow-lg) !important;
+}
+/* Every scrim comes from one token. .candidate-preview-overlay in particular
+   had NO scrim at all: v3 pointed it at --lt-overlay-scrim, a variable that was
+   never defined, which made the declaration invalid. */
+html[data-theme="light"] .modal-overlay,
+html[data-theme="light"] .candidate-preview-overlay,
+html[data-theme="light"] .pb-modal,
+html[data-theme="light"] .sidebar-backdrop,
+html[data-theme="light"] .notif-backdrop {
+  background: var(--overlay-scrim) !important;
+}
+/* Native dropdown lists follow the surface, not the OS default. */
+html[data-theme="light"] select option {
+  background: var(--bg-surface);
+  color: var(--text-primary);
+}
+
+/* ══ 6. INTERACTIVE STATES ═══════════════════════════════════════════════ */
+
+/* Hover — primary buttons darken, quiet buttons take the surface wash. */
+html[data-theme="light"] .btn:not(.ghost):not(.secondary):not(:disabled):hover,
+html[data-theme="light"] button.primary:not(:disabled):hover {
+  background: var(--accent-hover) !important;
+  border-color: var(--accent-hover) !important;
+  box-shadow: var(--shadow-md) !important;
+}
+html[data-theme="light"] .btn.secondary:not(:disabled):hover,
+html[data-theme="light"] .btn.ghost:not(:disabled):hover {
+  background: var(--bg-surface-hover) !important;
+  border-color: var(--accent-primary) !important;
+  color: var(--accent-active) !important;
+}
+/* Destructive buttons were rendering in the brand teal: light-theme-v3.css
+   paints every `.btn:not(.ghost):not(.secondary)` with --lt-primary, and that
+   selector outranks a plain `.btn.danger`. The `:not()` chain below is repeated
+   deliberately so this rule is specific enough to win (and it must stay
+   specific if that rule is ever edited). */
+html[data-theme="light"] .btn.danger:not(.ghost):not(.secondary),
+html[data-theme="light"] button.danger:not(.ghost):not(.secondary) {
+  background: var(--status-danger-text) !important;   /* white on it: 7.40:1 */
+  border-color: var(--status-danger-text) !important;
+  color: var(--text-on-accent) !important;
+}
+html[data-theme="light"] .btn.danger:not(.ghost):not(.secondary):not(:disabled):hover,
+html[data-theme="light"] button.danger:not(.ghost):not(.secondary):not(:disabled):hover {
+  background: #7F1D1D !important;                     /* red-900 */
+  border-color: #7F1D1D !important;
+}
+
+/* Focus — one high-visibility ring everywhere, replacing v3's hardcoded
+   #2D8C84 (which was not one of the theme's colours). */
+html[data-theme="light"] :where(a, button, .btn, input, select, textarea, summary, [role="button"], [tabindex]):focus-visible {
+  outline: 2px solid var(--accent-primary) !important;
+  outline-offset: 2px;
+  box-shadow: var(--shadow-focus) !important;
+}
+/* The sidebar clips its overflow, so its rings are drawn inside the element —
+   otherwise the ring is cut off at the sidebar edge. */
+html[data-theme="light"] .sidebar :focus-visible {
+  outline: 2px solid var(--accent-primary) !important;
+  outline-offset: -2px;
+}
+
+/* Active — a small press, nothing that shifts layout. */
+html[data-theme="light"] .btn:not(:disabled):active,
+html[data-theme="light"] button:not(:disabled):active,
+html[data-theme="light"] .button:not(:disabled):active {
+  transform: scale(.98);
+  box-shadow: inset 0 1px 2px rgba(15, 23, 42, .12) !important;
+}
+html[data-theme="light"] .nav-item:active {
+  background: var(--bg-surface-active) !important;
+}
+
+/* Disabled — greyed and unmistakably inert, with no dark-theme colour.
+   The selectors mirror the `:not()` chains used by light-theme-v3.css and by
+   the input rule in section 3; without that, those rules are more specific and
+   a disabled control keeps its enabled fill. */
+html[data-theme="light"] input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="file"]):disabled,
+html[data-theme="light"] select:disabled,
+html[data-theme="light"] textarea:disabled,
+html[data-theme="light"] .form-control:disabled,
+html[data-theme="light"] button:not(.ghost):not(.secondary):disabled,
+html[data-theme="light"] .btn:not(.ghost):not(.secondary):disabled,
+html[data-theme="light"] .btn.disabled:not(.ghost):not(.secondary),
+html[data-theme="light"] .btn.secondary:disabled,
+html[data-theme="light"] .btn.ghost:disabled,
+html[data-theme="light"] [aria-disabled="true"]:not(.ghost):not(.secondary) {
+  opacity: .5 !important;
+  background: var(--bg-disabled) !important;       /* was #E8ECEA / #e9ede6 */
+  border-color: var(--border-default) !important;
+  color: var(--text-disabled) !important;
+  cursor: not-allowed !important;
+  box-shadow: none !important;
+  transform: none !important;
+}
+
+/* Selection follows the accent rather than the browser default blue. */
+html[data-theme="light"] ::selection {
+  background: var(--accent-soft);
+  color: var(--accent-active);
+}
