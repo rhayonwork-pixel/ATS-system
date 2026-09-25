@@ -286,42 +286,62 @@ $old = $_POST ?? [];
     <div class="field-error" id="profile-photo-error"></div>
   </div>
 
-  <?php $resumeBad = $errorField === 'resume'; ?>
+  <?php
+    $resumeBad = $errorField === 'resume';
+    // The size limit shown here, enforced in the browser and enforced by the
+    // server are ONE number: DOC_MAX_BYTES in includes/documents.php, which is
+    // what store_candidate_document() rejects above. They used to be three
+    // (the page said 5MB, the script enforced 5MB, the server allowed 10MB).
+    $resumeMaxMb = (int)round(DOC_MAX_BYTES / 1048576);
+  ?>
   <div class="card sidebar-card" style="margin-bottom:16px">
     <div class="section-head compact"><h2 style="font-size:15px" id="resume-heading">Resume <span class="req">*</span></h2></div>
-    <!-- ONE zone. This used to be a .resume-drop label wrapping a .dropzone
-         AND a second "Click to upload resume" prompt: two dashed borders, two
-         sets of instructions, and a hardcoded #f4f9f2 hover that painted a
-         near-white block over the dark theme.
+    <!-- Two states, one zone.
 
-         The real <input type="file"> is the control: it sits over the whole
-         zone, invisible, so a click anywhere opens the picker, a keyboard user
-         Tabs straight to it and Enter or Space opens it, and the form still
-         uploads with JavaScript switched off. No wrapper tabindex -- that would
-         add a second tab stop that does the same thing as the first. -->
+         EMPTY: the prompt, and the real <input type="file"> stretched invisibly
+         over the whole zone -- a click anywhere opens the picker, Tab lands on
+         it, Enter or Space opens it, and it still uploads with JavaScript off.
+
+         ATTACHED: the prompt is gone entirely and a file card takes its place:
+         name, type, size, a "ready" indicator, and Replace / Remove. The input
+         stays in the form (it holds the file) but stops covering the zone and
+         leaves the tab order, so the two buttons can be clicked and reached. -->
     <div class="ap-resume<?= $resumeBad ? ' is-invalid' : '' ?>" data-resume-zone>
-      <div class="ap-resume-prompt" data-resume-prompt>
-        <span class="ap-resume-icon" aria-hidden="true"><?=icon('doc',22)?></span>
-        <span class="ap-resume-title">Drop your resume here, or click to browse</span>
-        <span class="ap-resume-hint" id="resume-hint">Supports PDF, DOC, or DOCX up to 5MB.</span>
-      </div>
-      <div class="ap-resume-picked" data-resume-picked hidden>
-        <span class="ap-resume-file-icon" aria-hidden="true" data-resume-ext>PDF</span>
-        <span class="ap-resume-meta">
-          <span class="ap-resume-name" data-resume-name></span>
-          <span class="ap-resume-size" data-resume-size></span>
-        </span>
-      </div>
       <input type="file" id="f-resume" name="resume" required
              accept=".pdf, .doc, .docx"
              aria-labelledby="resume-heading"
              aria-describedby="resume-hint resume-error"
              <?= $resumeBad ? 'aria-invalid="true"' : '' ?>
+             data-max-bytes="<?= (int)DOC_MAX_BYTES ?>"
              data-resume-input>
+
+      <div class="ap-resume-prompt" data-resume-prompt>
+        <span class="ap-resume-icon" aria-hidden="true"><?=icon('upload',24)?></span>
+        <span class="ap-resume-title">Drop your resume here, or click to browse</span>
+        <span class="ap-resume-hint" id="resume-hint">Supports PDF, DOC, or DOCX up to <?= $resumeMaxMb ?>MB.</span>
+      </div>
+
+      <div class="ap-resume-card" data-resume-card role="group" aria-label="Attached resume" hidden>
+        <span class="ap-resume-badge" aria-hidden="true" data-resume-ext>PDF</span>
+        <div class="ap-resume-meta">
+          <!-- Long names wrap to two lines rather than being cut to a few
+               words; the full name is always in the title and in what a screen
+               reader hears. -->
+          <span class="ap-resume-name" data-resume-name></span>
+          <span class="ap-resume-detail" data-resume-detail></span>
+          <span class="ap-resume-ready">
+            <span class="ap-resume-ready-dot" aria-hidden="true"><?=icon('check',12)?></span>
+            <!-- "Ready", not "uploaded": the file travels with the form when it
+                 is submitted, and saying otherwise would be untrue. -->
+            <span data-resume-ready-text>Ready to submit</span>
+          </span>
+        </div>
+        <div class="ap-resume-actions">
+          <button type="button" class="ap-btn ap-btn-quiet" data-resume-replace>Replace</button>
+          <button type="button" class="ap-btn ap-btn-danger" data-resume-remove>Remove</button>
+        </div>
+      </div>
     </div>
-    <!-- Remove sits OUTSIDE the zone: inside it, the invisible file input
-         covering the zone would take the click instead. -->
-    <button type="button" class="btn ghost small ap-resume-remove" data-resume-remove hidden>Remove file</button>
 
     <div class="ap-progress" data-upload-progress hidden>
       <div class="ap-progress-track" role="progressbar" aria-label="Upload progress"
@@ -331,6 +351,10 @@ $old = $_POST ?? [];
       <span class="ap-progress-text" data-upload-text aria-live="polite">Uploading… 0%</span>
     </div>
 
+    <!-- Status changes (attached, replaced, removed, restored) are announced
+         here; errors are announced by the role="alert" below. Two regions, so
+         a status never interrupts an error or the other way round. -->
+    <p class="sr-only" role="status" aria-live="polite" data-resume-status></p>
     <div class="field-error ap-resume-error" id="resume-error" role="alert"><?= $resumeBad ? e($error) : '' ?></div>
   </div>
 
@@ -361,7 +385,9 @@ $old = $_POST ?? [];
 
 <?php if($relatedJobs): ?>
 <div class="section-head" style="margin-top:44px"><h2 style="font-size:22px">Other open positions</h2></div>
-<div class="grid" style="grid-template-columns:repeat(3,1fr)">
+<!-- Was an inline repeat(3,1fr): three columns even on a 320px phone, which
+     pushed the page 2px wider than the screen. -->
+<div class="grid apply-related">
 <?php foreach($relatedJobs as $rj): $rjTags=job_tags($rj['tags']??''); ?>
 <a class="card job-card" href="job-detail.php?slug=<?=urlencode($rj['slug'])?>">
   <div><span class="meta small"><?=e($rj['department']??$companyName)?></span><h3><?=e($rj['title'])?></h3><span class="meta small"><?=icon('public',12)?> <?=e($rj['location']?:'Remote')?></span></div>

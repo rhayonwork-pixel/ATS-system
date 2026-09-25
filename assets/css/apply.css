@@ -79,41 +79,48 @@ html .apply-layout input[type="checkbox"] { width: 20px; height: 20px; }
 /* ── Resume zone ─────────────────────────────────────────────────────── */
 .ap-resume {
   position: relative;
-  display: flex; align-items: center; justify-content: center;
-  min-height: 132px;
-  padding: 22px 18px;
-  text-align: center;
   border: 2px dashed var(--border-input, var(--border-default));
   border-radius: var(--ap-radius);
   background: color-mix(in srgb, var(--bg-surface-hover) 60%, transparent);
   color: var(--text-primary);
   transition: border-color var(--ap-ease), background-color var(--ap-ease), box-shadow var(--ap-ease);
 }
-/* The real file input covers the zone, invisible: a click anywhere opens the
-   picker, and it is the element that takes keyboard focus. */
+
+/* THE BUG IN THE SCREENSHOT: `hidden` is only the browser's own
+   `display: none`, and any author `display` rule beats it. The prompt had
+   `display: flex`, so hiding it did nothing and it rendered squashed beside the
+   file card. Both states now say so explicitly. */
+.ap-resume-prompt[hidden],
+.ap-resume-card[hidden] { display: none !important; }
+
+/* EMPTY: the real file input covers the zone, invisible, so a click anywhere
+   opens the picker and it is the element that takes keyboard focus. */
 .ap-resume input[type="file"] {
   position: absolute; inset: 0;
   width: 100%; height: 100%;
   opacity: 0;
   cursor: pointer;
 }
-.ap-resume:hover { border-color: var(--accent-primary); }
-/* The input is invisible, so the focus ring is drawn on the zone. */
-.ap-resume.is-focused,
-.ap-resume:focus-within {
+/* ATTACHED: the input keeps the file for the form but steps out of the way,
+   or it would swallow every click meant for Replace and Remove. */
+.ap-resume.has-file input[type="file"] { pointer-events: none; }
+
+.ap-resume:not(.has-file):hover { border-color: var(--accent-primary); }
+
+/* Focus ring for KEYBOARD focus only. The old rule used :focus-within, which
+   also matches after a mouse pick (the input keeps focus once the dialog
+   closes) — that was the second green ring around the attached file. */
+.ap-resume:has(> input:focus-visible) {
   border-color: var(--accent-primary);
   outline: 2px solid var(--accent-primary);
   outline-offset: 2px;
 }
+
 .ap-resume.is-dragover {
   border-style: solid;
   border-color: var(--accent-primary);
   background: color-mix(in srgb, var(--accent-primary) 12%, transparent);
   box-shadow: inset 0 0 0 3px color-mix(in srgb, var(--accent-primary) 18%, transparent);
-}
-.ap-resume.has-file {
-  border-style: solid;
-  border-color: var(--status-success-text);
 }
 .ap-resume.is-invalid {
   border-color: var(--status-danger-text);
@@ -121,38 +128,118 @@ html .apply-layout input[type="checkbox"] { width: 20px; height: 20px; }
 }
 .ap-resume.is-uploading { pointer-events: none; opacity: .75; }
 
-.ap-resume-prompt { display: flex; flex-direction: column; align-items: center; gap: 6px; pointer-events: none; }
-.ap-resume-icon { color: var(--accent-primary); }
+/* Both states fade in when they appear. Removing `hidden` restarts the
+   animation, so every switch — attach, replace, remove — gets it. */
+@keyframes ap-state-in {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: none; }
+}
+.ap-resume-prompt,
+.ap-resume-card { animation: ap-state-in 200ms ease-out; }
+
+/* ── Empty state ─────────────────────────────────────────────────────── */
+.ap-resume-prompt {
+  display: flex; flex-direction: column; align-items: center; gap: 6px;
+  min-height: 132px;
+  padding: 22px 18px;
+  justify-content: center;
+  text-align: center;
+  pointer-events: none;
+}
+.ap-resume-icon { color: var(--accent-primary); display: inline-flex; }
 .ap-resume-title { font-weight: 650; font-size: 14px; }
 .ap-resume-hint { font-size: 12.5px; color: var(--text-secondary); }
 
-.ap-resume-picked {
-  display: flex; align-items: center; gap: 12px;
-  width: 100%;
-  text-align: left;
-  pointer-events: none;
+/* ── Attached state: the file card ───────────────────────────────────── *
+   The dashed "drop here" border becomes a plain one: nothing is being asked
+   for any more. The green comes from the ready mark, not from the frame. */
+.ap-resume.has-file {
+  border-style: solid;
+  border-width: 1px;
+  border-color: var(--border-default);
+  background: var(--bg-surface);
 }
-.ap-resume-picked[hidden] { display: none; }
-.ap-resume-file-icon {
-  flex: 0 0 auto;
-  display: grid; place-items: center;
-  width: 42px; height: 42px;
-  border-radius: 9px;
-  font-size: 10.5px; font-weight: 800; letter-spacing: .04em;
-  background: color-mix(in srgb, var(--accent-primary) 16%, transparent);
-  color: var(--accent-primary);
-}
-.ap-resume-meta { min-width: 0; display: flex; flex-direction: column; gap: 2px; }
-.ap-resume-name {
-  font-weight: 650; font-size: 13.5px;
-  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-}
-.ap-resume-size { font-size: 12px; color: var(--text-secondary); }
+.ap-resume.has-file.is-invalid { border-color: var(--status-danger-text); }
 
-.ap-resume-remove {
-  margin-top: 10px;
-  width: 100%;
-  color: var(--status-danger-text);
+.ap-resume-card {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  grid-template-areas: "badge meta" "actions actions";
+  gap: 12px 12px;
+  padding: 14px;
+  text-align: left;
+}
+.ap-resume-badge {
+  grid-area: badge;
+  display: grid; place-items: center;
+  width: 44px; height: 52px;
+  border-radius: 8px;
+  font-size: 10.5px; font-weight: 800; letter-spacing: .05em;
+  background: color-mix(in srgb, var(--accent-primary) 14%, transparent);
+  color: var(--accent-primary);
+  border: 1px solid color-mix(in srgb, var(--accent-primary) 30%, transparent);
+}
+.ap-resume-meta {
+  grid-area: meta;
+  min-width: 0;
+  display: flex; flex-direction: column; gap: 3px;
+  align-self: center;
+}
+/* Two lines, then an ellipsis — a long "Firstname Lastname - CV (1).pdf"
+   stays recognisable instead of being cut to its first few words. */
+.ap-resume-name {
+  font-weight: 650; font-size: 14px; line-height: 1.35;
+  overflow-wrap: anywhere;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.ap-resume-detail { font-size: 12.5px; color: var(--text-secondary); }
+.ap-resume-ready {
+  display: inline-flex; align-items: center; gap: 6px;
+  margin-top: 2px;
+  font-size: 12.5px; font-weight: 700;
+  color: var(--status-success-text);
+}
+.ap-resume-ready-dot {
+  display: inline-grid; place-items: center;
+  width: 18px; height: 18px;
+  border-radius: 50%;
+  background: var(--status-success-bg);
+  border: 1px solid var(--status-success-border);
+}
+.ap-resume-ready-dot svg { width: 11px; height: 11px; stroke-width: 2.6; }
+
+.ap-resume-actions {
+  grid-area: actions;
+  display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
+}
+
+/* ── Buttons ─────────────────────────────────────────────────────────── *
+   Defined here rather than borrowed from .btn.ghost: in the dark theme
+   .btn.ghost has no rule of its own outside modals, so it rendered as a
+   filled primary button — white text on mint, which failed contrast and made
+   "Remove" look like the main action. */
+.ap-btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  min-height: var(--ap-tap);
+  padding: 0 14px;
+  border-radius: 8px;
+  border: 1px solid var(--border-strong, var(--border-default));
+  background: transparent;
+  color: var(--text-primary);
+  font: inherit; font-size: 13.5px; font-weight: 700;
+  cursor: pointer;
+  transition: background-color var(--ap-ease), border-color var(--ap-ease), color var(--ap-ease), transform var(--ap-ease);
+}
+.ap-btn:hover { background: var(--bg-surface-hover); border-color: var(--accent-primary); }
+.ap-btn:active { transform: scale(.98); }
+.ap-btn:focus-visible { outline: 2px solid var(--accent-primary); outline-offset: 2px; }
+.ap-btn-danger { color: var(--status-danger-text); border-color: color-mix(in srgb, var(--status-danger-text) 45%, transparent); }
+.ap-btn-danger:hover {
+  background: color-mix(in srgb, var(--status-danger-text) 12%, transparent);
+  border-color: var(--status-danger-text);
 }
 
 /* ── Upload progress ─────────────────────────────────────────────────── */
@@ -180,5 +267,12 @@ html .apply-layout input[type="checkbox"] { width: 20px; height: 20px; }
 #submit-btn[aria-busy="true"] { cursor: progress; opacity: .7; }
 
 @media (prefers-reduced-motion: reduce) {
-  .ap-resume, .ap-progress-fill { transition-duration: .01ms; }
+  .ap-resume, .ap-progress-fill, .ap-btn { transition-duration: .01ms; }
+  .ap-resume-prompt, .ap-resume-card { animation: none; }
 }
+
+/* ── Other open positions ────────────────────────────────────────────── *
+   As many columns as fit, one on a phone. */
+.apply-related { grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr)); }
+.apply-related .job-card { min-width: 0; }
+.apply-related .tag-row { flex-wrap: wrap; }
