@@ -1,0 +1,115 @@
+{
+  "_readme": [
+    "Single source of truth for job-description parsing. BOTH engines read this file:",
+    "tools/extract_job_data.py (preferred, layout-aware) and app/Services/JobDescriptionParser.php",
+    "(fallback, used when Python is unavailable -- e.g. InfinityFree shared hosting).",
+    "",
+    "Keep every regex to the subset PCRE and Python's re both understand:",
+    "no named groups, no possessive quantifiers, no \\p{...} classes, no lookbehind.",
+    "Matching is always case-insensitive and always against a lowercased, punctuation-trimmed line.",
+    "",
+    "Adding a synonym here changes both engines at once. Adding it to only one of them is a bug."
+  ],
+  "version": 2,
+
+  "sections": {
+    "responsibilities": [
+      "responsibilities", "key responsibilities", "main responsibilities", "core responsibilities",
+      "duties", "duties and responsibilities", "roles and responsibilities", "job duties",
+      "what you will do", "what you'll do", "what you will be doing", "the role", "role overview",
+      "your impact", "day to day", "day-to-day", "essential functions", "scope of work", "job functions"
+    ],
+    "qualifications": [
+      "qualifications", "required qualifications", "minimum qualifications", "basic qualifications",
+      "requirements", "job requirements", "minimum requirements", "who you are", "what we are looking for",
+      "what we're looking for", "what you bring", "candidate profile", "essential criteria", "must have",
+      "must haves", "knowledge skills and abilities"
+    ],
+    "skills": [
+      "required skills", "skills", "technical skills", "key skills", "core skills",
+      "core competencies", "competencies", "skills and qualifications", "technical requirements",
+      "must have skills", "hard skills"
+    ],
+    "preferred_skills": [
+      "preferred qualifications", "preferred skills", "nice to have", "nice to haves", "nice-to-have",
+      "bonus points", "bonus points for", "desirable", "desirable criteria", "preferred experience",
+      "it would be great if", "pluses", "good to have", "advantageous", "optional skills"
+    ],
+    "benefits": [
+      "benefits", "what we offer", "what you get", "perks", "perks and benefits", "benefits and perks",
+      "compensation and benefits", "why join us", "why work with us", "our offer", "package",
+      "rewards", "we offer"
+    ],
+    "description": [
+      "about the role", "about this role", "job summary", "summary", "position summary", "job description",
+      "overview", "job overview", "role summary", "purpose", "job purpose", "about the position",
+      "about us", "about the company", "company overview", "introduction"
+    ],
+    "education": ["education", "educational requirements", "educational attainment", "academic requirements"],
+    "experience": ["experience", "experience required", "required experience", "work experience", "years of experience"],
+    "salary": ["salary", "salary range", "compensation", "pay", "pay range", "remuneration", "salary and benefits"],
+    "location": ["location", "work location", "job location", "place of work", "work setup", "work arrangement"],
+    "deadline": ["application deadline", "deadline", "closing date", "apply by", "applications close", "last date to apply"],
+    "how_to_apply": ["how to apply", "application process", "to apply", "next steps", "hiring process", "contact"]
+  },
+
+  "labels": {
+    "title": ["job title", "position title", "position", "role", "title", "job position", "vacancy", "designation", "post"],
+    "company": ["company", "company name", "employer", "organisation", "organization", "client", "business name", "hiring company", "firm"],
+    "department": ["department", "dept", "business unit", "team", "division", "function", "group", "reports to department"],
+    "location": ["location", "work location", "job location", "place of work", "based in", "office", "work setup", "work arrangement", "worksite"],
+    "employment_type": ["employment type", "job type", "employment status", "work type", "contract type", "type", "engagement", "status", "schedule"],
+    "salary": ["salary", "salary range", "compensation", "pay range", "rate", "budget", "salary package", "monthly rate", "offered salary", "pay"],
+    "experience": ["experience", "experience required", "years of experience", "minimum experience", "required experience", "work experience"],
+    "education": ["education", "educational attainment", "education level", "educational requirement", "academic qualification"],
+    "deadline": ["application deadline", "deadline", "closing date", "apply by", "applications close", "last day to apply", "valid until", "open until"],
+    "department_head": ["reports to", "reporting to", "supervisor", "manager"],
+    "headcount": ["headcount", "number of openings", "vacancies", "no. of positions", "slots"]
+  },
+
+  "employment_type": {
+    "internship": ["internship", "intern", "ojt", "on-the-job training", "trainee", "apprentice", "practicum"],
+    "part_time": ["part time", "part-time", "parttime", "half time", "20 hours"],
+    "contract": ["contract", "contractual", "fixed term", "fixed-term", "freelance", "consultant", "consultancy", "temporary", "project based", "project-based", "seasonal"],
+    "full_time": ["full time", "full-time", "fulltime", "permanent", "regular", "plantilla", "40 hours"]
+  },
+
+  "preferred_markers": ["preferred", "preferably", "nice to have", "nice-to-have", "bonus", "a plus", "is a plus", "advantage", "desirable", "good to have", "ideally"],
+  "required_markers": ["required", "must have", "must-have", "minimum", "at least", "essential", "mandatory", "proven"],
+
+  "date_patterns": [
+    "([0-9]{4})-([0-9]{2})-([0-9]{2})",
+    "(?:^|[^0-9])([0-9]{1,2})[/-]([0-9]{1,2})[/-]([0-9]{2,4})",
+    "(january|february|march|april|may|june|july|august|september|october|november|december)\\s+([0-9]{1,2})\\s*,?\\s*([0-9]{4})",
+    "(jan|feb|mar|apr|may|jun|jul|aug|sep|sept|oct|nov|dec)[a-z]*\\.?\\s+([0-9]{1,2})\\s*,?\\s*([0-9]{4})",
+    "([0-9]{1,2})\\s+(january|february|march|april|may|june|july|august|september|october|november|december)\\s+([0-9]{4})",
+    "([0-9]{1,2})\\s+(jan|feb|mar|apr|may|jun|jul|aug|sep|sept|oct|nov|dec)[a-z]*\\.?\\s+([0-9]{4})"
+  ],
+
+  "bullet_marks": ["•", "●", "▪", "◦", "⁃", "∙", "·", "‣", "−", "-", "*", "+", "–", "—", "➤", "➜", "✓", "✔", "o"],
+
+  "noise_patterns": [
+    "^page\\s+[0-9]+(\\s+of\\s+[0-9]+)?$",
+    "^[0-9]+\\s*/\\s*[0-9]+$",
+    "^confidential$",
+    "^internal use only$",
+    "^www\\.[^\\s]+$",
+    "^https?://[^\\s]+$",
+    "^[-=_*—–\\s]{4,}$"
+  ],
+
+  "title_stopwords": [
+    "job description", "job descriptions", "job posting", "job advertisement", "job ad", "vacancy announcement",
+    "hiring", "we are hiring", "now hiring", "job opening", "career opportunity", "position description"
+  ],
+
+  "limits": {
+    "max_heading_chars": 70,
+    "max_title_chars": 180,
+    "max_location_chars": 160,
+    "max_salary_chars": 255,
+    "max_short_field_chars": 255,
+    "min_text_chars": 120,
+    "max_tags": 6
+  }
+}

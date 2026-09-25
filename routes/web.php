@@ -58,6 +58,8 @@ return [
     'POST /application-status.php'=> 'action=withdraw — candidate withdraws their own application',
     'GET  /my-document.php'      => 'Candidate-facing document download (id + email prove ownership)',
     'GET  /download.php'         => 'Protected file download (resumes, uploads)',
+    'POST /upload-parser.php'    => 'Parse an uploaded job description PDF into form fields (AJAX)',
+    'GET  /job-attachment.php'   => 'Serve the PDF a posting was imported from (staff only)',
     'GET  /parse-cv.php'         => 'Resume parsing endpoint',
     'GET  /admin.php'            => 'Admin console',
     'GET  /payroll.php'          => 'Payroll (legacy — see migrations/017)',

@@ -6,6 +6,13 @@
 # Runtime logs written by EmailService and friends.
 storage/logs/
 
+# Uploaded job description PDFs. Real files, not fixtures.
+storage/job_attachments/*.pdf
+
+# Local Python environment for tools/extract_job_data.py. Recreate it with
+# tools/README.md; the app runs without it (it falls back to the PHP reader).
+tools/.venv/
+
 # OS / editor noise
 Thumbs.db
 desktop.ini

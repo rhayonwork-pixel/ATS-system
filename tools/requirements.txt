@@ -1,0 +1,6 @@
+pdfplumber>=0.11
+
+# Alternatives extract_job_data.py will use if pdfplumber is absent.
+# Install either one INSTEAD of pdfplumber if you prefer:
+#   PyMuPDF>=1.24     layout + weight, no table pass in this script
+#   pypdf>=4.0        plain text only

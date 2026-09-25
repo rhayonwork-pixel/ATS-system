@@ -1,0 +1,333 @@
+/* ============================================================================
+   ACME ATS — JOB POST: PDF IMPORT
+   Loaded only by job-post.php, after every global stylesheet.
+
+   No dark selector and no palette literals: every colour resolves through the
+   semantic tokens that theme-tokens.css and light-theme-tokens.css define per
+   theme, so this follows the active theme without either theme being edited.
+   ========================================================================== */
+
+.jp-entry { --jp-ease: 200ms ease-in-out; }
+.jp-entry-head { margin-bottom: 16px; }
+.jp-entry-head h2 { margin: 4px 0 0; }
+
+/* ── Dual entry ──────────────────────────────────────────────────────── */
+.jp-tabs {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 12px;
+  margin-bottom: 18px;
+}
+.jp-tab {
+  display: flex; align-items: center; gap: 12px;
+  min-height: 64px;
+  padding: 14px 16px;
+  text-align: left;
+  background: var(--bg-surface);
+  color: var(--text-primary);
+  border: 1.5px solid var(--border-default);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: border-color var(--jp-ease), background var(--jp-ease), box-shadow var(--jp-ease), transform var(--jp-ease);
+}
+.jp-tab span { display: flex; flex-direction: column; gap: 2px; }
+.jp-tab small { color: var(--text-secondary); font-size: 12px; }
+.jp-tab:hover { border-color: var(--accent-primary); background: var(--bg-surface-hover); }
+.jp-tab:active { transform: scale(.99); }
+.jp-tab.is-active {
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 0 3px var(--accent-glow, rgba(37, 99, 235, .18));
+}
+.jp-tab:focus-visible { outline: 2px solid var(--accent-primary); outline-offset: 2px; }
+
+/* ── Dropzone ────────────────────────────────────────────────────────── */
+.jp-dropzone {
+  position: relative;
+  display: flex; flex-direction: column; align-items: center; gap: 6px;
+  padding: 34px 20px;
+  text-align: center;
+  border: 2px dashed var(--border-strong, var(--border-default));
+  border-radius: 14px;
+  background: var(--bg-canvas-soft, var(--bg-surface-hover));
+  cursor: pointer;
+  transition: border-color var(--jp-ease), background var(--jp-ease);
+}
+.jp-dropzone:hover { border-color: var(--accent-primary); }
+.jp-dropzone:focus-visible { outline: 2px solid var(--accent-primary); outline-offset: 3px; }
+.jp-dropzone.is-over {
+  border-color: var(--accent-primary);
+  background: var(--accent-soft, var(--bg-surface-hover));
+}
+/* While a parse is running the zone stops inviting another file. */
+.jp-dropzone.is-busy { opacity: .6; pointer-events: none; }
+.jp-dz-icon { color: var(--accent-primary); }
+.jp-dz-title { font-weight: 650; }
+.jp-dz-hint, .jp-dz-file { font-size: 12px; color: var(--text-muted); }
+.jp-dz-file { font-weight: 600; color: var(--text-secondary); }
+/* The input covers the zone so a click anywhere opens the picker, and it stays
+   focusable rather than being display:none. */
+.jp-dropzone input[type="file"] {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  opacity: 0; cursor: pointer;
+}
+.jp-dz-actions { display: flex; align-items: center; gap: 12px; margin-top: 14px; flex-wrap: wrap; }
+.jp-dz-actions .btn { min-height: 44px; }
+.jp-dz-status { font-size: 13px; color: var(--text-secondary); }
+
+/* ── Review banner and auto-filled fields ────────────────────────────── */
+.jp-review-banner {
+  display: flex; gap: 10px; align-items: flex-start;
+  margin-bottom: 18px;
+  padding: 14px 16px;
+  border-radius: 12px;
+  border: 1px solid var(--status-info-border);
+  background: var(--status-info-bg);
+  color: var(--status-info-text);
+  line-height: 1.5;
+}
+.jp-review-banner strong { display: block; }
+.jp-attached { margin: -8px 0 16px; }
+
+/* There is deliberately no auto-filled styling here any more. A field the
+   parser filled is visually identical to one somebody typed — same background,
+   same border, same weight — and its status light is what says it has content.
+   Two different markers for one state was clutter, and it made a parsed field
+   look like it needed something the user could not act on. */
+.jp-hint { display: block; margin-top: 6px; }
+
+/* ── Toasts ──────────────────────────────────────────────────────────── */
+.jp-toasts {
+  position: fixed;
+  right: 20px; bottom: 20px;
+  z-index: 1000;                       /* above the page, below a modal */
+  display: flex; flex-direction: column; gap: 10px;
+  width: min(380px, calc(100vw - 40px));
+}
+.jp-toast {
+  position: relative;
+  display: flex; flex-direction: column; gap: 4px;
+  padding: 14px 40px 14px 16px;
+  border-radius: 12px;
+  border: 1px solid var(--border-default);
+  background: var(--bg-surface-elevated, var(--bg-surface));
+  color: var(--text-primary);
+  box-shadow: var(--shadow-lg, var(--shadow-md));
+  animation: jp-toast-in 200ms ease-in-out;
+}
+.jp-toast span { font-size: 13px; color: var(--text-secondary); }
+.jp-toast.is-ok    { border-left: 4px solid var(--status-success-text); }
+.jp-toast.is-warn  { border-left: 4px solid var(--status-warning-text); }
+.jp-toast.is-error { border-left: 4px solid var(--status-danger-text); }
+.jp-toast.is-going { opacity: 0; transform: translateY(6px); transition: opacity 200ms ease-in-out, transform 200ms ease-in-out; }
+.jp-toast-x {
+  position: absolute; top: 6px; right: 6px;
+  width: 32px; height: 32px;
+  display: grid; place-items: center;
+  font-size: 18px; line-height: 1;
+  color: var(--text-muted);
+  background: none; border: 0; border-radius: 8px; cursor: pointer;
+}
+.jp-toast-x:hover { background: var(--bg-surface-hover); color: var(--text-primary); }
+.jp-toast-x:focus-visible { outline: 2px solid var(--accent-primary); outline-offset: 2px; }
+
+@keyframes jp-toast-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: none; }
+}
+
+@media (max-width: 600px) {
+  .jp-toasts { right: 12px; left: 12px; bottom: 12px; width: auto; }
+  .jp-dropzone { padding: 26px 14px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .jp-toast, .jp-tab, .jp-dropzone {
+    animation-duration: .01ms !important;
+    transition-duration: .01ms !important;
+  }
+}
+
+/* ============================================================================
+   STATUS LIGHTS, CLEAR FORM, PASTE PANEL
+   Added with the field-status refactor. Same rules as above: no dark selector,
+   no palette literals outside the three state colours the brief specifies.
+   ========================================================================== */
+
+/* ── Per-field status light ──────────────────────────────────────────── *
+   Colour never carries the state on its own: every dot is aria-hidden and is
+   followed by a visually hidden word ("empty", "filled", "needs attention"),
+   which is what a screen reader announces. */
+.jp-light {
+  display: inline-block;
+  width: 8px; height: 8px;
+  margin-left: 8px;
+  border-radius: 50%;
+  vertical-align: middle;
+  background: #CBD5E1;                       /* empty — the brief's grey */
+  box-shadow: 0 0 0 2px var(--bg-surface);
+  transition: background var(--jp-ease), box-shadow var(--jp-ease);
+}
+.jp-light.is-filled { background: #22C55E; } /* filled  */
+.jp-light.is-error  { background: #EF4444; } /* invalid */
+
+/* A field that failed validation states it in words as well as in red. */
+.field.is-invalid > input,
+.field.is-invalid > select,
+.field.is-invalid > textarea {
+  border-color: #EF4444;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, .14);
+}
+.field.is-invalid > label { color: var(--status-danger-text); }
+
+/* ── Clear form ──────────────────────────────────────────────────────── */
+.job-form-actions { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.job-form-actions-spacer { flex: 1 1 auto; }
+.jp-clear { color: var(--status-danger-text); }
+.jp-clear:hover { background: var(--status-danger-bg); }
+
+.jp-toast-undo {
+  align-self: flex-start;
+  margin-top: 4px;
+  padding: 6px 12px;
+  min-height: 32px;
+  font: inherit; font-weight: 700; font-size: 13px;
+  color: var(--accent-primary);
+  background: none;
+  border: 1px solid var(--accent-primary);
+  border-radius: 8px;
+  cursor: pointer;
+}
+.jp-toast-undo:hover { background: var(--accent-soft, var(--bg-surface-hover)); }
+.jp-toast-undo:focus-visible { outline: 2px solid var(--accent-primary); outline-offset: 2px; }
+
+/* ── Loading spinner on the dropzone ─────────────────────────────────── *
+   The dropzone already dims while busy; this is the moving part that says the
+   file is being read rather than ignored. */
+.jp-dropzone.is-busy::after {
+  content: "";
+  position: absolute; top: 50%; left: 50%;
+  width: 26px; height: 26px;
+  margin: -13px 0 0 -13px;
+  border: 3px solid var(--border-default);
+  border-top-color: var(--accent-primary);
+  border-radius: 50%;
+  animation: jp-spin 700ms linear infinite;
+}
+@keyframes jp-spin { to { transform: rotate(360deg); } }
+
+/* ── Responsive: the brief's two breakpoints ─────────────────────────── */
+@media (max-width: 767px) {
+  /* Single column everywhere, and nothing narrower than a thumb. */
+  .job-form .form-grid { grid-template-columns: 1fr; }
+  .job-form-actions { flex-direction: column; align-items: stretch; }
+  .job-form-actions .btn { width: 100%; }
+  .job-form-actions-spacer { display: none; }
+  .jp-tabs { grid-template-columns: 1fr; }
+}
+@media (min-width: 768px) {
+  .job-form .form-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+  /* Textareas are always full width: a two-column responsibilities box is
+     unreadable at any size. */
+  .job-form .field:has(textarea) { grid-column: 1 / -1; }
+}
+
+/* Every control on this page clears the 44px target, including the ones the
+   global .btn.small rule renders at 36px. `html` is present only to match the
+   specificity of light-theme-v3.css's own min-height rule. */
+html .job-form input,
+html .job-form select,
+html .job-form textarea,
+html .job-form .btn {
+  min-height: 44px;
+}
+html .job-form input[type="checkbox"] { min-height: 0; width: 18px; height: 18px; }
+
+.job-form input:focus-visible,
+.job-form select:focus-visible,
+.job-form textarea:focus-visible,
+.job-form .btn:focus-visible {
+  outline: 2px solid var(--accent-primary);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .jp-dropzone.is-busy::after { animation-duration: 3s; }
+  .jp-light { transition-duration: .01ms; }
+}
+
+/* ============================================================================
+   REVIEW MODE — auto-filled field highlighting
+   Applied after a document is parsed; cleared when the reviewer focuses the
+   field. See markAutoFilled() / clearAutoFilled() in job-post-import.js and
+   $autoBadge() in job-post.php (the no-JavaScript path renders the same state).
+   ========================================================================== */
+
+.field.auto-filled,
+.field.auto-filled-leaving {
+  /* The brief's colours are #3B82F6 / #EFF6FF. The border is used exactly; the
+     wash goes through --status-info-bg, which both themes define (#DBEAFE in
+     light, a translucent blue in dark). A literal #EFF6FF would be a near-white
+     block in dark mode with white text on it. */
+  --jp-auto-border: #3B82F6;
+  --jp-auto-bg: var(--status-info-bg, #EFF6FF);
+}
+
+/* !important is needed, not preferred. The base input skin is written as
+   `input:not([type="checkbox"]):not([type="radio"])...` — six attribute
+   selectors, so specificity (0,6,1), which no sane class selector can outrank.
+   This is a transient state that must sit on top of the normal skin, and the
+   project already overrides that same rule this way in
+   components-light-fixes.css. */
+.field.auto-filled > input,
+.field.auto-filled > select,
+.field.auto-filled > textarea {
+  border: 2px solid var(--jp-auto-border) !important;
+  background-color: var(--jp-auto-bg) !important;
+  /* 2px in, 1px out: the field does not resize when the highlight clears. */
+  padding-block: calc(0.625rem - 1px);
+}
+
+/* Both states carry the transition, so the highlight fades OUT as well as in
+   rather than snapping back to the default style. */
+.field.auto-filled > input,
+.field.auto-filled > select,
+.field.auto-filled > textarea,
+.field.auto-filled-leaving > input,
+.field.auto-filled-leaving > select,
+.field.auto-filled-leaving > textarea {
+  transition: border-color 250ms ease-in-out,
+              background-color 250ms ease-in-out,
+              box-shadow 250ms ease-in-out;
+}
+
+/* Focus wins over review mode: the moment the cursor is in the field it is a
+   normal field being edited, and the focus ring must not fight the highlight. */
+.field.auto-filled > input:focus,
+.field.auto-filled > select:focus,
+.field.auto-filled > textarea:focus {
+  border-color: var(--accent-primary) !important;
+  background-color: var(--bg-input, var(--bg-surface)) !important;
+}
+
+.auto-filled-badge {
+  display: inline-flex; align-items: center; gap: 4px;
+  margin-left: 8px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 11px; font-weight: 700; letter-spacing: .01em;
+  white-space: nowrap;
+  color: var(--status-info-text);
+  background: var(--status-info-bg);
+  border: 1px solid var(--status-info-border);
+}
+.auto-filled-badge svg { flex: 0 0 auto; }
+
+@media (prefers-reduced-motion: reduce) {
+  .field.auto-filled > input,
+  .field.auto-filled > select,
+  .field.auto-filled > textarea,
+  .field.auto-filled-leaving > input,
+  .field.auto-filled-leaving > select,
+  .field.auto-filled-leaving > textarea { transition-duration: .01ms; }
+}

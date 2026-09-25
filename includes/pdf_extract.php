@@ -237,8 +237,17 @@ function pdf_decode_literal(string $s, array $map, int $width): string {
     return $s;
 }
 
-/** Walk one content stream and rebuild its text in reading order. */
-function pdf_content_text(string $buf, array $fonts): string {
+/**
+ * Walk one content stream and rebuild its text in reading order.
+ *
+ * $spaceGap is the cursor movement, as a fraction of the em, that counts as a
+ * word break. It is a parameter rather than a constant because the right value
+ * depends on the writer: a PDF that positions every glyph individually (Chrome
+ * and InDesign both do) leaves letter-sized gaps everywhere, and at the default
+ * threshold every one of them becomes a space — "S e n i o r". pdf_extract_text()
+ * detects that and re-runs with a wider gap.
+ */
+function pdf_content_text(string $buf, array $fonts, float $spaceGap = PDF_SPACE_GAP): string {
     $token = '/
         \/(?P<font>[A-Za-z0-9\#+._-]+)\s+(?P<size>[\d.]+)\s+Tf
       | (?P<a>-?[\d.]+)\s+(?P<b>-?[\d.]+)\s+-?[\d.]+\s+-?[\d.]+\s+(?P<mx>-?[\d.]+)\s+(?P<my>-?[\d.]+)\s+Tm
@@ -258,11 +267,11 @@ function pdf_content_text(string $buf, array $fonts): string {
 
     $em = static function () use (&$size, &$scale) { return max(0.01, $size * $scale); };
 
-    $place = static function (string $txt) use (&$parts, &$pen, &$prevY, &$x, &$y, $em) {
+    $place = static function (string $txt) use (&$parts, &$pen, &$prevY, &$x, &$y, $em, $spaceGap) {
         if ($txt === '') return;
         if ($prevY !== null && $y !== null && abs($y - $prevY) > $em() * PDF_LINE_GAP) {
             $parts[] = "\n";
-        } elseif ($pen !== null && $x !== null && ($x - $pen) > $em() * PDF_SPACE_GAP) {
+        } elseif ($pen !== null && $x !== null && ($x - $pen) > $em() * $spaceGap) {
             $parts[] = ' ';
         }
         $parts[] = $txt;
@@ -325,6 +334,22 @@ function pdf_cleanup_text(string $t): string {
  * Extract the text layer of a PDF file.
  * Returns ['text' => string, 'error' => string|null, 'quality' => 'good'|'poor'].
  */
+/**
+ * How much of this text is loose single letters.
+ *
+ * "S e n i o r B a c k e n d" is almost all one-character tokens; ordinary
+ * prose is under a tenth (a, I, and initials). This is the signal that the
+ * space threshold was too small for the file in hand.
+ */
+function pdf_letter_spacing_ratio(string $text): float {
+    $tokens = preg_split('/\s+/u', trim($text)) ?: [];
+    $tokens = array_values(array_filter($tokens, static fn($t) => $t !== ''));
+    if (count($tokens) < 20) return 0.0;
+    $singles = 0;
+    foreach ($tokens as $t) if (mb_strlen($t) === 1) $singles++;
+    return $singles / count($tokens);
+}
+
 function pdf_extract_text(string $path): array {
     if (!is_readable($path)) return ['text' => '', 'error' => 'The uploaded file could not be read.', 'quality' => 'poor'];
     $data = file_get_contents($path);
@@ -344,6 +369,7 @@ function pdf_extract_text(string $path): array {
     }
 
     $out = [];
+    $streams = [];          // [inflated content, font maps] per stream, for the retry below
     foreach ($pages as $dict) {
         $res = pdf_dict_entry($dict, 'Resources');
         if ($res !== '' && strncmp($res, '<<', 2) !== 0) {
@@ -358,11 +384,50 @@ function pdf_extract_text(string $path): array {
             $o = $objs[(int)$ref] ?? null;
             if (!$o) continue;
             $buf = pdf_inflate($o[0], $o[1]);
-            if ($buf !== null && $buf !== '') $out[] = pdf_content_text($buf, $fonts);
+            if ($buf !== null && $buf !== '') {
+                $streams[] = [$buf, $fonts];
+                $out[] = pdf_content_text($buf, $fonts);
+            }
         }
     }
 
     $text = pdf_cleanup_text(implode("\n", $out));
+
+    // Letter-spaced output ("S e n i o r B a c k e n d") means the word-break
+    // threshold was too small for this writer.
+    //
+    // The cause is that this reader estimates each glyph's advance as a fixed
+    // fraction of the em, because it does not read per-character /Widths. In a
+    // PDF that positions every glyph with its own Tm/Td -- Chrome's "Print to
+    // PDF" and InDesign both do -- a wide letter advances further than the
+    // estimate, so the leftover looks like a word break and a space is
+    // inserted between every pair of letters.
+    //
+    // Re-reading the same content streams with a larger threshold fixes it, but
+    // the right value varies by document, so a few are tried and the best kept:
+    // fewest loose single letters, while still keeping a believable number of
+    // spaces. Too large a gap swallows real word breaks and glues sentences
+    // together, which the density floor below rejects.
+    //
+    // None of this runs for a PDF that read correctly the first time.
+    $ratio = pdf_letter_spacing_ratio($text);
+    if ($ratio > 0.30 && $streams) {
+        $density = static function (string $t): float {
+            $len = max(1, mb_strlen($t));
+            return (substr_count($t, ' ') + substr_count($t, "\n")) / $len;
+        };
+        $best = $text; $bestRatio = $ratio;
+        foreach ([0.45, 0.6, 0.8, 1.0, 1.2] as $gap) {
+            $retry = [];
+            foreach ($streams as [$buf, $fonts]) $retry[] = pdf_content_text($buf, $fonts, $gap);
+            $candidate = pdf_cleanup_text(implode("\n", $retry));
+            if ($candidate === '' || $density($candidate) < 0.08) continue;   // words glued together
+            $candidateRatio = pdf_letter_spacing_ratio($candidate);
+            if ($candidateRatio < $bestRatio) { $best = $candidate; $bestRatio = $candidateRatio; }
+        }
+        $text = $best; $ratio = $bestRatio;
+    }
+
     if ($text === '' || mb_strlen($text) < 40) {
         return [
             'text' => $text,
@@ -371,10 +436,12 @@ function pdf_extract_text(string $path): array {
         ];
     }
 
-    // A text layer with almost no spaces usually means a writer that positions
-    // every glyph individually. Readable, but worth flagging before they save.
+    // Two opposite failure modes, both worth flagging before the recruiter
+    // saves: almost no spaces (words run together), and too many (every letter
+    // separated, if the retry above could not repair it).
     $spaces = substr_count($text, ' ') + substr_count($text, "\n");
-    $quality = ($spaces / max(1, mb_strlen($text))) < 0.06 ? 'poor' : 'good';
+    $tooFew = ($spaces / max(1, mb_strlen($text))) < 0.06;
+    $quality = ($tooFew || $ratio > 0.30) ? 'poor' : 'good';
 
     return ['text' => $text, 'error' => null, 'quality' => $quality];
 }
@@ -384,8 +451,39 @@ function pdf_extract_text(string $path): array {
 // ---------------------------------------------------------------------------
 
 /** Section heading synonyms → the field they fill. */
+/**
+ * Shared parsing vocabulary.
+ *
+ * The synonym lists below are the FALLBACK. The live values come from
+ * config/job_parse_rules.json, which tools/extract_job_data.py reads too, so a
+ * new heading taught to one engine is understood by both. The hardcoded arrays
+ * stay as a safety net for an install where that file is missing or malformed —
+ * parsing then degrades to the original vocabulary instead of failing.
+ */
+function jd_rules(): array {
+    static $rules = null;
+    if ($rules !== null) return $rules;
+    $rules = [];
+    $path = __DIR__ . '/../config/job_parse_rules.json';
+    if (is_readable($path)) {
+        $decoded = json_decode((string)file_get_contents($path), true);
+        if (is_array($decoded)) $rules = $decoded;
+    }
+    return $rules;
+}
+
+/** One rules group, with the caller's defaults for anything the file omits. */
+function jd_rule_group(string $group, array $default): array {
+    $fromFile = jd_rules()[$group] ?? null;
+    if (!is_array($fromFile) || !$fromFile) return $default;
+    foreach ($default as $field => $synonyms) {
+        $fromFile[$field] = array_values(array_unique(array_merge($fromFile[$field] ?? [], $synonyms)));
+    }
+    return $fromFile;
+}
+
 function jd_section_map(): array {
-    return [
+    return jd_rule_group('sections', [
         'description'      => ['job description', 'job summary', 'position summary', 'role summary', 'about the role', 'about this role', 'overview', 'job overview', 'summary', 'purpose of the role'],
         'responsibilities' => ['responsibilities', 'key responsibilities', 'main responsibilities', 'duties', 'duties and responsibilities', 'what you will do', "what you'll do", 'role responsibilities', 'essential functions', 'key duties'],
         'qualifications'   => ['qualifications', 'requirements', 'minimum qualifications', 'basic qualifications', 'job requirements', 'who you are', 'what we are looking for', "what we're looking for", 'candidate profile'],
@@ -394,12 +492,12 @@ function jd_section_map(): array {
         'experience'       => ['experience', 'work experience', 'experience required', 'years of experience', 'professional experience'],
         'education'        => ['education', 'educational requirements', 'education requirements', 'academic requirements'],
         'benefits'         => ['benefits', 'what we offer', 'perks', 'compensation and benefits'],
-    ];
+    ]);
 }
 
 /** Inline "Label: value" synonyms → the field they fill. */
 function jd_label_map(): array {
-    return [
+    return jd_rule_group('labels', [
         'title'           => ['job title', 'position title', 'position', 'role', 'title', 'job position', 'vacancy'],
         'department'      => ['department', 'dept', 'business unit', 'team', 'division', 'function'],
         'location'        => ['location', 'work location', 'job location', 'place of work', 'based in', 'office'],
@@ -407,7 +505,7 @@ function jd_label_map(): array {
         'salary'          => ['salary', 'salary range', 'compensation', 'pay range', 'rate', 'budget', 'salary package'],
         'experience'      => ['experience', 'experience required', 'years of experience', 'minimum experience'],
         'education'       => ['education', 'educational attainment', 'education level'],
-    ];
+    ]);
 }
 
 function jd_normalise_heading(string $line): string {
@@ -448,16 +546,28 @@ function jd_parse_fields(string $text): array {
         'salary' => '', 'description' => '', 'responsibilities' => '', 'qualifications' => '',
         'skills' => '', 'preferred_skills' => '', 'experience' => '', 'education' => '', 'benefits' => '',
     ];
+    // The vocabulary comes from config/job_parse_rules.json, which may name
+    // fields this function predates ("deadline", "how_to_apply"). Every field
+    // either map can produce is initialised, so a new synonym group cannot
+    // reach an undefined key further down.
+    foreach (array_merge(array_keys(jd_section_map()), array_keys(jd_label_map())) as $fieldName) {
+        $out[$fieldName] = $out[$fieldName] ?? '';
+    }
 
     $lines = preg_split('/\R/u', $text) ?: [];
-    $lines = array_map(static fn($l) => trim($l), $lines);
+    // Each line is kept in two forms: trimmed for detection (a heading is a
+    // heading whether or not it is indented) and original for content, because
+    // the leading indent is the nesting level of a sub-item and dropping it
+    // flattens every nested list into one level.
+    $rawLines = array_map(static fn($l) => rtrim((string)$l), $lines);
+    $lines = array_map(static fn($l) => trim((string)$l), $lines);
 
     $labels = jd_label_map();
     $sections = [];
     $current = null;
     $firstMeaningful = null;
 
-    foreach ($lines as $line) {
+    foreach ($lines as $lineIndex => $line) {
         if ($line === '') { if ($current) $sections[$current][] = ''; continue; }
 
         // Section heading?
@@ -489,7 +599,7 @@ function jd_parse_fields(string $text): array {
         }
         if ($matchedLabel) continue;
 
-        if ($current) { $sections[$current][] = $line; continue; }
+        if ($current) { $sections[$current][] = $rawLines[$lineIndex] ?? $line; continue; }
         if ($firstMeaningful === null && mb_strlen($line) <= 90) $firstMeaningful = $line;
     }
 
