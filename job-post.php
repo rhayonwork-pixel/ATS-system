@@ -507,7 +507,7 @@ include __DIR__.'/includes/header.php';
   <h2><?=icon('tag',18)?> Listing options</h2>
   <div class="form-grid">
     <div class="field<?=$autoClass('tags')?>" data-field="tags"><label>Tags <span class="hint">comma-separated, max 6</span> <?=$light('tags')?><?=$autoBadge('tags')?></label><input name="tags" value="<?=e($val('tags'))?>" placeholder="React, Remote, Senior"></div>
-    <div class="field"><label>Applicant limit <span class="hint">optional</span></label><input type="number" min="0" name="applicant_limit" value="<?=e($val('applicant_limit'))?>" placeholder="Unlimited"></div>
+    <div class="field"><label for="jp-spots">Spots available <span class="hint">optional — shown to applicants, never closes the role</span></label><input id="jp-spots" type="number" min="0" name="applicant_limit" value="<?=e($val('applicant_limit'))?>" placeholder="Not shown"></div>
   </div>
   <div class="form-grid">
     <div class="field<?=$autoClass('application_deadline')?>" data-field="application_deadline">

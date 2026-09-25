@@ -1,0 +1,184 @@
+/* ============================================================================
+   ACME ATS — APPLY PAGE
+   Loaded only by apply.php, after every global stylesheet.
+
+   Every colour is a semantic token that theme-tokens.css and
+   light-theme-tokens.css define for BOTH themes, so this follows whichever
+   theme is active. No dark selector and no palette literals: the resume zone
+   this replaces had a hardcoded #f4f9f2 hover, which painted a near-white block
+   over the dark theme.
+   ========================================================================== */
+
+.apply-layout {
+  --ap-tap: 44px;
+  --ap-radius: 12px;
+  --ap-ease: 200ms ease-in-out;
+}
+
+/* Every control in the form clears the 44px touch target. `html` matches the
+   specificity of light-theme-v3.css's own `html[data-theme="light"] input`
+   min-height rule, which would otherwise win below 768px. */
+html .apply-layout input:not([type="checkbox"]):not([type="radio"]):not([type="file"]),
+html .apply-layout select,
+html .apply-layout .btn {
+  min-height: var(--ap-tap);
+}
+html .apply-layout input[type="checkbox"] { width: 20px; height: 20px; }
+
+.apply-spots strong { color: var(--text-primary); }
+
+/* ── Phone ───────────────────────────────────────────────────────────── *
+   One grid row on wider screens. Below 768px it wraps to two: the country
+   select takes the whole first row, and the dial code sits beside the number
+   on the second. Neither control is ever squeezed narrower than it can be
+   read, and nothing overlaps. */
+.ap-phone-row {
+  display: grid;
+  grid-template-columns: minmax(0, 13rem) auto minmax(0, 1fr);
+  gap: 8px;
+  align-items: stretch;
+}
+.ap-phone-country { min-width: 0; width: 100%; }
+.ap-phone-dial {
+  display: flex; align-items: center; justify-content: center;
+  min-width: 3.5rem;
+  padding: 0 12px;
+  border: 1px solid var(--border-input, var(--border-default));
+  border-radius: 8px;
+  background: var(--bg-surface-hover);
+  color: var(--text-primary);
+  font-weight: 700; font-size: 14px;
+  font-variant-numeric: tabular-nums;
+}
+.ap-phone-number { min-width: 0; width: 100%; }
+
+@media (max-width: 768px) {
+  .ap-phone-row { grid-template-columns: auto minmax(0, 1fr); }
+  .ap-phone-country { grid-column: 1 / -1; }
+}
+
+/* ── Inline errors (shared) ──────────────────────────────────────────── */
+.ap-phone.invalid .ap-phone-number,
+.apply-layout [aria-invalid="true"]:not([type="file"]) {
+  border-color: var(--status-danger-text) !important;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--status-danger-text) 18%, transparent);
+}
+.ap-phone .field-error,
+.ap-resume-error {
+  margin-top: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--status-danger-text);
+}
+/* styles.css hides .field-error until its .field is .invalid; the resume one
+   is not inside a .field, so it shows whenever it has something to say. */
+.ap-resume-error { display: block; }
+.ap-resume-error:empty { display: none; }
+.phone-valid-msg { color: var(--status-success-text); font-weight: 700; font-size: 12.5px; margin-top: 6px; }
+
+/* ── Resume zone ─────────────────────────────────────────────────────── */
+.ap-resume {
+  position: relative;
+  display: flex; align-items: center; justify-content: center;
+  min-height: 132px;
+  padding: 22px 18px;
+  text-align: center;
+  border: 2px dashed var(--border-input, var(--border-default));
+  border-radius: var(--ap-radius);
+  background: color-mix(in srgb, var(--bg-surface-hover) 60%, transparent);
+  color: var(--text-primary);
+  transition: border-color var(--ap-ease), background-color var(--ap-ease), box-shadow var(--ap-ease);
+}
+/* The real file input covers the zone, invisible: a click anywhere opens the
+   picker, and it is the element that takes keyboard focus. */
+.ap-resume input[type="file"] {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  opacity: 0;
+  cursor: pointer;
+}
+.ap-resume:hover { border-color: var(--accent-primary); }
+/* The input is invisible, so the focus ring is drawn on the zone. */
+.ap-resume.is-focused,
+.ap-resume:focus-within {
+  border-color: var(--accent-primary);
+  outline: 2px solid var(--accent-primary);
+  outline-offset: 2px;
+}
+.ap-resume.is-dragover {
+  border-style: solid;
+  border-color: var(--accent-primary);
+  background: color-mix(in srgb, var(--accent-primary) 12%, transparent);
+  box-shadow: inset 0 0 0 3px color-mix(in srgb, var(--accent-primary) 18%, transparent);
+}
+.ap-resume.has-file {
+  border-style: solid;
+  border-color: var(--status-success-text);
+}
+.ap-resume.is-invalid {
+  border-color: var(--status-danger-text);
+  background: color-mix(in srgb, var(--status-danger-text) 8%, transparent);
+}
+.ap-resume.is-uploading { pointer-events: none; opacity: .75; }
+
+.ap-resume-prompt { display: flex; flex-direction: column; align-items: center; gap: 6px; pointer-events: none; }
+.ap-resume-icon { color: var(--accent-primary); }
+.ap-resume-title { font-weight: 650; font-size: 14px; }
+.ap-resume-hint { font-size: 12.5px; color: var(--text-secondary); }
+
+.ap-resume-picked {
+  display: flex; align-items: center; gap: 12px;
+  width: 100%;
+  text-align: left;
+  pointer-events: none;
+}
+.ap-resume-picked[hidden] { display: none; }
+.ap-resume-file-icon {
+  flex: 0 0 auto;
+  display: grid; place-items: center;
+  width: 42px; height: 42px;
+  border-radius: 9px;
+  font-size: 10.5px; font-weight: 800; letter-spacing: .04em;
+  background: color-mix(in srgb, var(--accent-primary) 16%, transparent);
+  color: var(--accent-primary);
+}
+.ap-resume-meta { min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.ap-resume-name {
+  font-weight: 650; font-size: 13.5px;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.ap-resume-size { font-size: 12px; color: var(--text-secondary); }
+
+.ap-resume-remove {
+  margin-top: 10px;
+  width: 100%;
+  color: var(--status-danger-text);
+}
+
+/* ── Upload progress ─────────────────────────────────────────────────── */
+.ap-progress { margin-top: 12px; display: flex; flex-direction: column; gap: 6px; }
+.ap-progress[hidden] { display: none; }
+.ap-progress-track {
+  position: relative;
+  height: 8px;
+  border-radius: 999px;
+  overflow: hidden;
+  background: var(--bg-surface-hover);
+}
+/* Scaled rather than resized: transform is composited, so the bar stays
+   smooth even while the page's main thread is busy with the upload. */
+.ap-progress-fill {
+  position: absolute; inset: 0;
+  transform: scaleX(0);
+  transform-origin: left center;
+  background: var(--accent-primary);
+  transition: transform 180ms linear;
+}
+.ap-progress-text { font-size: 12.5px; color: var(--text-secondary); font-variant-numeric: tabular-nums; }
+
+/* ── Submit ──────────────────────────────────────────────────────────── */
+#submit-btn[aria-busy="true"] { cursor: progress; opacity: .7; }
+
+@media (prefers-reduced-motion: reduce) {
+  .ap-resume, .ap-progress-fill { transition-duration: .01ms; }
+}
