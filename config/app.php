@@ -1,4 +1,11 @@
-<?php
+w<?php
+/**
+ * Application configuration.
+ *
+ * Every value here can be overridden by .env (see .env.example) so the exact
+ * same codebase runs unmodified on XAMPP, a Cloudflare Tunnel, and
+ * InfinityFree — only .env changes between environments, never PHP files.
+ */
 /**
  * Application configuration.
  *
