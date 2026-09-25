@@ -6,13 +6,6 @@ w<?php
  * same codebase runs unmodified on XAMPP, a Cloudflare Tunnel, and
  * InfinityFree — only .env changes between environments, never PHP files.
  */
-/**
- * Application configuration.
- *
- * Every value here can be overridden by .env (see .env.example) so the exact
- * same codebase runs unmodified on XAMPP, a Cloudflare Tunnel, and
- * InfinityFree — only .env changes between environments, never PHP files.
- */
 
 require_once __DIR__ . '/env.php';
 
